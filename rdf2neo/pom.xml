@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>uk.ac.rothamsted</groupId>
+    <artifactId>rdf2neo-pom</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>rdf2neo</artifactId>
+  
+  <name>rdf2neo - Core lib</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+	<dependencies>
+
+		<dependency>
+			<groupId>com.machinezoo.noexception</groupId>
+			<artifactId>noexception</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.ac.ebi</groupId>
+			<artifactId>jutils-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>info.marcobrandizi</groupId>
+			<artifactId>rdfutils-jena</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j.driver</groupId>
+			<artifactId>neo4j-java-driver</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		            			      
+	</dependencies>
+ 
+	<build>
+		
+		<plugins>
+		
+		  <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-surefire-plugin</artifactId>
+		    <configuration>
+		      <properties>
+		        <property>
+		        	<!-- Prints out spaces and test name before/after every test method and automatically -->
+		          <name>listener</name>
+		          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
+		        </property>
+		       </properties>
+		    </configuration>
+		  </plugin>
+
+		
+			<!-- 
+				A small plug-in that starts Neo4j, we maintain our own version of this at 
+				https://github.com/Rothamsted/neo4j-server-maven-plugin
+			 -->
+			<plugin>
+				<groupId>com.github.harti2006</groupId>
+				<artifactId>neo4j-server-maven-plugin</artifactId>
+				<version>0.2-SNAPSHOT</version>
+				<configuration>
+					<!-- port>7474</port --> 
+					<version>${neo4j.server.version}</version>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-neo4j-server</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-neo4j-server</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+				
+	    <plugin>
+	      <artifactId>maven-failsafe-plugin</artifactId>
+	      <version>2.20.1</version>
+				<executions>
+          <execution>
+          		<id>failsafe-test</id>
+            <goals>
+	            	<goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+          		<id>failsafe-verify</id>
+          		<goals>
+          			<goal>verify</goal>
+          		</goals>
+          </execution>
+        </executions>	      
+	    </plugin>
+				
+		</plugins>	
+		
+	</build> 
+ 	
+ 
+</project>

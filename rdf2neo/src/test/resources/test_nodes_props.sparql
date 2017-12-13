@@ -1,0 +1,10 @@
+PREFIX ex: <http://www.example.com/res/>
+SELECT ?iri ?name ?value
+{
+  VALUES ( ?iri ?name ?value ) {
+    ( ex:1 'attrib1' 10.0)
+    ( ex:1 'attrib2' 'a string')
+
+    ( ex:2 'attrib3' 'another string')
+  }
+}

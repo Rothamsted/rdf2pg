@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>uk.ac.rothamsted</groupId>
+  <artifactId>rdf2neo-pom</artifactId>
+  <packaging>pom</packaging>
+  
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <name>rdf2neo - top POM</name>
+  <url></url>
+      
+  <modules>
+  		<module>rdf2neo</module>
+  </modules>
+  
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<neo4j.server.version>3.3.1</neo4j.server.version>
+  </properties>
+  
+  <dependencyManagement>
+  		<dependencies>
+
+			<dependency>
+				<groupId>com.machinezoo.noexception</groupId>
+				<artifactId>noexception</artifactId>
+				<version>1.1.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>uk.ac.ebi</groupId>
+				<artifactId>jutils</artifactId>
+				<version>6.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>uk.ac.ebi</groupId>
+				<artifactId>jutils-io</artifactId>
+				<version>6.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-core</artifactId>
+				<version>6.6.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-queryparser</artifactId>
+				<version>6.6.0</version>
+			</dependency>
+		  		
+			<dependency>
+				<groupId>org.neo4j.driver</groupId>
+				<artifactId>neo4j-java-driver</artifactId>
+				<version>1.4.5</version>
+			</dependency>            			      
+  			<dependency>
+				<groupId>info.marcobrandizi</groupId>
+				<artifactId>rdfutils-jena</artifactId>
+				<version>2.0-SNAPSHOT</version>
+  			</dependency>  			
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+	      <version>0.9.29</version>
+				<scope>test</scope>
+			</dependency>
+
+  		</dependencies>
+  		
+  </dependencyManagement>
+
+
+	<pluginRepositories>
+	
+		<pluginRepository>
+			<id>ondex-releases</id>
+			<name>Internal Releases</name>
+			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
+		</pluginRepository>
+		
+		<pluginRepository>
+			<id>ondex-snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
+		</pluginRepository>
+
+	</pluginRepositories>
+
+</project>

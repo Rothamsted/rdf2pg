@@ -1,0 +1,9 @@
+PREFIX ex: <http://www.example.com/res/>
+SELECT ?iri ?label
+{
+  VALUES ( ?iri ?label ) {
+    ( ex:1 ex:TestNode)
+    ( ex:2 'TestNode')
+    ( ex:3 <http://www.example.com/foo#SuperTestNode>)
+  }
+}
