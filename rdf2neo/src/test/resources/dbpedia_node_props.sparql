@@ -1,0 +1,21 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+SELECT DISTINCT ?iri ?name ?value
+{
+  ?iri a ?label.
+  FILTER ( strStarts ( STR ( ?label ), STR ( schema: ) ) ).
+
+  ?iri ?name ?value.
+  FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). 
+
+  VALUES ( ?name ) {
+    ( rdfs:label )
+    ( rdfs:comment )
+    ( dbo:areaTotal )
+    ( dbo:populationTotal )
+    ( dbo:elevation )
+  }
+}

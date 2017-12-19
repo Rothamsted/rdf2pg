@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,8 @@ public class CypherNodeHandler implements Consumer<Set<String>>
 	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 
+	private String defaultLabel = "Resource";
+	
 	
 	public CypherNodeHandler ( NeoDataManager dataMgr, Driver neo4jDriver )
 	{
@@ -44,21 +48,19 @@ public class CypherNodeHandler implements Consumer<Set<String>>
 	public void accept ( Set<String> nodeIris )
 	{
 		// Let's collect node attributes on a per-label basis
-		Map<String, List<Map<String, Object>>> cyData = new HashMap<> ();
+		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
 		for ( String nodeIri: nodeIris )
 		{
 			Node node = dataMgr.getNode ( nodeIri );
+
+			SortedSet<String> labels = new TreeSet<> ( node.getLabels () );
 			
-			// TODO: check for empty labels 
-			String labelsKey = node.getLabels ()
-				.stream ()
-				.sorted ()
-				.map ( label -> '`' + label + '`' )
-				.collect ( Collectors.joining ( ":" ) );
+			// No empty please
+			if ( labels.isEmpty () ) labels.add ( this.defaultLabel );
 			
-			List<Map<String, Object>> cyNodes = cyData.get ( labelsKey );
-			if ( cyNodes == null ) cyData.put ( labelsKey, cyNodes = new LinkedList<> () );
+			List<Map<String, Object>> cyNodes = cyData.get ( labels );
+			if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
 
 			Map<String, Object> cyAttrs = new HashMap<> ();
 			for ( Entry<String, Set<Object>> attre: node.getProperties ().entrySet () )
@@ -80,23 +82,33 @@ public class CypherNodeHandler implements Consumer<Set<String>>
 			"CREATE (n:%s)\n" +
 			"SET n = node";
 		
-		for ( Entry<String, List<Map<String, Object>>> cyDataE: cyData.entrySet () )
+		for ( Entry<SortedSet<String>, List<Map<String, Object>>> cyDataE: cyData.entrySet () )
 		{
-			String labelsStr = cyDataE.getKey ();
+			SortedSet<String> labels = cyDataE.getKey ();
+
+			String labelsStr = labels
+				.stream ()
+				.map ( label -> '`' + label + '`' )
+				.collect ( Collectors.joining ( ":" ) );
+			
 			String cyCreateStr = String.format ( cypherCreateNodes, labelsStr );
 			List<Map<String, Object>> attribs = cyDataE.getValue ();
 			
 			this.runCypher ( cyCreateStr, "nodes", attribs );
-		}
+			
+			// And now, index it
+			for ( String label: labels ) this.runCypher ( String.format ( "CREATE INDEX ON :`%s`(iri)", label ) );
+		}		
 	}
 	
 	protected void runCypher ( String cypher, Object... keyVals  )
 	{
-		log.info ( "Cypher: {} params: {}", cypher, ArrayUtils.toString ( keyVals ) );
+		if ( log.isTraceEnabled () )
+			log.trace ( "Cypher: {} params: {}", cypher, ArrayUtils.toString ( keyVals ) );
 		
-		Session session = this.neo4jDriver.session ();
-		session.run ( cypher, parameters ( keyVals ) );
-		session.close ();
+		try ( Session session = this.neo4jDriver.session () ) {
+			session.run ( cypher, parameters ( keyVals ) );
+		}
 	}
 
 }

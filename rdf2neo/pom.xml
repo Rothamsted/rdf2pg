@@ -83,6 +83,7 @@
 				<configuration>
 					<!-- port>7474</port --> 
 					<version>${neo4j.server.version}</version>
+					<deleteDb>true</deleteDb>
 				</configuration>
 				<executions>
 					<execution>
@@ -103,6 +104,9 @@
 	    <plugin>
 	      <artifactId>maven-failsafe-plugin</artifactId>
 	      <version>2.20.1</version>
+	      <configuration>
+	      		<trimStackTrace>false</trimStackTrace>
+	      </configuration>
 				<executions>
           <execution>
           		<id>failsafe-test</id>

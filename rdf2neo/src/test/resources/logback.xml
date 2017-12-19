@@ -34,5 +34,5 @@
   </root>
 
   <!-- Add Loggers this way if you want finer reports for selected components -->
-  <!-- logger name = "uk.ac.ebi.utils.threading" level = "TRACE" / -->
+  <logger name = "uk.ac.rothamsted.rdf.neo4j" level = "TRACE" />
 </configuration>

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.AuthTokens;
@@ -35,28 +36,31 @@ public class CypherNodeHandlerIT
 	@Test
 	public void testNodes () throws Exception
 	{
-		NeoDataManagerTest dmtest = new NeoDataManagerTest ();
-		dmtest.testLuceneNodeFunctions ();
-		
-		// DB is created with an expired password, which needs to be changed.
-		// TODO: move it onto a utility module
-		NeoDataManager dataMgr = dmtest.getDataMgr ();
-		Driver driver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-		
-		
-		CypherNodeHandler handler = new CypherNodeHandler ( dataMgr, driver );
-		handler.accept ( dataMgr.getNodeIris ().collect ( Collectors.toSet () ) );
-
-		Session session = driver.session ( AccessMode.READ );
-		StatementResult cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
-		Assert.assertEquals ( "Wrong count for TestNode", 2, cursor.next ().get ( "ct" ).asLong () );
-		
-		cursor = session.run ( "MATCH ( n:TestNode { iri:'" + iri ( "ex:2" ) + "'} ) RETURN properties ( n ) AS props" );
-		assertTrue ( "ex:2 not returned!", cursor.hasNext () );
-		
-		Map<String, Object> map = cursor.next ().get ( "props" ).asMap ();
-		assertEquals (  "Wrong property!", "another string", map.get ( "attrib3" ) );
-		
-		driver.close ();
+		try 
+		{
+			NeoDataManagerTest dmtest = new NeoDataManagerTest ();
+			dmtest.testLuceneNodeFunctions ();
+			
+			// DB is created with an expired password, which needs to be changed.
+			// TODO: move it onto a utility module
+			NeoDataManager dataMgr = dmtest.getDataMgr ();
+			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			
+			
+			CypherNodeHandler handler = new CypherNodeHandler ( dataMgr, neoDriver );
+			handler.accept ( dataMgr.getNodeIris ().collect ( Collectors.toSet () ) );
+	
+			Session session = neoDriver.session ( AccessMode.READ );
+			StatementResult cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
+			Assert.assertEquals ( "Wrong count for TestNode", 2, cursor.next ().get ( "ct" ).asLong () );
+			
+			cursor = session.run ( "MATCH ( n:TestNode { iri:'" + iri ( "ex:2" ) + "'} ) RETURN properties ( n ) AS props" );
+			assertTrue ( "ex:2 not returned!", cursor.hasNext () );
+			
+			Map<String, Object> map = cursor.next ().get ( "props" ).asMap ();
+			assertEquals (  "Wrong property!", "another string", map.get ( "attrib3" ) );
+		}
+		finally {
+		}
 	}
 }

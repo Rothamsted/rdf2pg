@@ -1,0 +1,34 @@
+# Used to get test data from https://dbpedia.org/sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+CONSTRUCT {
+ ?iri a ?type.
+
+ ?iri dbo:areaTotal ?areaTotal. 
+ ?iri dbo:populationTotal ?populationTotal.
+ ?iri dbo:elevation ?elevation. 
+ 
+ ?iri rdfs:label ?label.
+ ?iri rdfs:comment ?comment.
+
+}
+WHERE
+{
+  ?iri a ?type.
+  FILTER ( strStarts ( STR ( ?type ), STR ( schema: ) ) )
+
+ OPTIONAL { ?iri dbo:areaTotal ?areaTotal } 
+ OPTIONAL { ?iri dbo:populationTotal ?populationTotal }
+ OPTIONAL { ?iri dbo:elevation ?elevation }
+ 
+ FILTER ( CONCAT ( ?areaTotal, ?populationTotal, ?elevation ) != '' )
+
+ ?iri rdfs:label ?label.
+ ?iri rdfs:comment ?comment. 
+
+}
+#ORDER BY RAND()
+LIMIT 1000

@@ -18,6 +18,7 @@ public class CypherLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManag
 	{
 		super ();
 		this.setDestinationSupplier ( () -> new HashSet<> () );
+		this.setDestinationMaxSize ( 10000 );
 	}
 
 	@Override
@@ -26,7 +27,7 @@ public class CypherLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManag
 	}
 
 	@Override
-	public void process ( NeoDataManager dataMgr )
+	public void process ( NeoDataManager dataMgr, Object...opts )
 	{
 		@SuppressWarnings ( "unchecked" )
 		Set<String> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
@@ -36,6 +37,7 @@ public class CypherLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManag
 			chunk[ 0 ] = handleNewTask ( chunk[ 0 ] );
 		});
 		
-		handleNewTask ( chunk [ 0 ] );
+		handleNewTask ( chunk [ 0 ], true );
+		this.waitExecutor ( "Waiting for Cyhper Loading tasks to finish" );
 	}
 }
