@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.jena.rdf.model.Resource;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 import org.slf4j.Logger;
@@ -26,38 +27,47 @@ import org.slf4j.LoggerFactory;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-public class CypherNodeHandler implements Consumer<Set<String>>
+public class CypherNodeHandler implements Consumer<Set<Resource>>
 {
-	protected NeoDataManager dataMgr;
-	protected Driver neo4jDriver;
-	
-	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
-
+	private String labelsSparql, nodePropsSparql;
 	private String defaultLabel = "Resource";
 	
+	private NeoDataManager dataMgr;
+	private Driver neo4jDriver;
 	
-	public CypherNodeHandler ( NeoDataManager dataMgr, Driver neo4jDriver )
+	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
+	
+	public CypherNodeHandler ()
+	{
+	}
+	
+	public CypherNodeHandler (
+		NeoDataManager dataMgr, Driver neo4jDriver, String labelsSparql, String nodePropsSparql 
+	)
 	{
 		super ();
 		this.dataMgr = dataMgr;
 		this.neo4jDriver = neo4jDriver;
+		this.labelsSparql = labelsSparql;
+		this.nodePropsSparql = nodePropsSparql;
 	}
 
 	
 	@Override
-	public void accept ( Set<String> nodeIris )
+	public void accept ( Set<Resource> nodeRess )
 	{
 		// Let's collect node attributes on a per-label basis
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
-		for ( String nodeIri: nodeIris )
+		for ( Resource nodeRes: nodeRess )
 		{
-			Node node = dataMgr.getNode ( nodeIri );
+			
+			Node node = dataMgr.getNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
 			SortedSet<String> labels = new TreeSet<> ( node.getLabels () );
 			
-			// No empty please
-			if ( labels.isEmpty () ) labels.add ( this.defaultLabel );
+			// We always need a default, to be able to fetch the nodes during relation creation stage
+			labels.add ( this.defaultLabel );
 			
 			List<Map<String, Object>> cyNodes = cyData.get ( labels );
 			if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
@@ -72,7 +82,7 @@ public class CypherNodeHandler implements Consumer<Set<String>>
 				cyAttrs.put ( attre.getKey (), cyAttrVal );
 			}
 			
-			cyAttrs.put ( "iri", nodeIri );
+			cyAttrs.put ( "iri", nodeRes.getURI () );
 			cyNodes.add ( cyAttrs );
 		}
 
@@ -111,4 +121,56 @@ public class CypherNodeHandler implements Consumer<Set<String>>
 		}
 	}
 
+	
+	public String getLabelsSparql ()
+	{
+		return labelsSparql;
+	}
+
+	public void setLabelsSparql ( String labelsSparql )
+	{
+		this.labelsSparql = labelsSparql;
+	}
+
+	
+	public String getNodePropsSparql ()
+	{
+		return nodePropsSparql;
+	}
+
+	public void setNodePropsSparql ( String nodePropsSparql )
+	{
+		this.nodePropsSparql = nodePropsSparql;
+	}
+
+	
+	public String getDefaultLabel ()
+	{
+		return defaultLabel;
+	}
+
+	public void setDefaultLabel ( String defaultLabel )
+	{
+		this.defaultLabel = defaultLabel;
+	}
+
+	public NeoDataManager getDataMgr ()
+	{
+		return dataMgr;
+	}
+
+	public void setDataMgr ( NeoDataManager dataMgr )
+	{
+		this.dataMgr = dataMgr;
+	}
+
+	public Driver getNeo4jDriver ()
+	{
+		return neo4jDriver;
+	}
+
+	public void setNeo4jDriver ( Driver neo4jDriver )
+	{
+		this.neo4jDriver = neo4jDriver;
+	}	
 }

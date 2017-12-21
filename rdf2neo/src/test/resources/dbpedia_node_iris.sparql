@@ -1,0 +1,8 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT DISTINCT ?iri
+{
+  ?iri a ?label.
+  FILTER ( strStarts ( STR ( ?label ), STR ( schema: ) ) ).
+}

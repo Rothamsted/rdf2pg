@@ -5,9 +5,11 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.Ignore;
+import org.apache.jena.rdf.model.Resource;
 import org.junit.Test;
 import org.neo4j.driver.v1.AccessMode;
 import org.neo4j.driver.v1.AuthTokens;
@@ -18,6 +20,7 @@ import org.neo4j.driver.v1.StatementResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import junit.framework.Assert;
 import uk.ac.rothamsted.rdf.neo4j.load.load.support.CypherNodeHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.load.support.NeoDataManager;
@@ -36,19 +39,24 @@ public class CypherNodeHandlerIT
 	@Test
 	public void testNodes () throws Exception
 	{
-		try 
+		try (	
+			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+		)
 		{
 			NeoDataManagerTest dmtest = new NeoDataManagerTest ();
-			dmtest.testLuceneNodeFunctions ();
+			dmtest.testBasics ();
 			
-			// DB is created with an expired password, which needs to be changed.
-			// TODO: move it onto a utility module
 			NeoDataManager dataMgr = dmtest.getDataMgr ();
-			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			
+			CypherNodeHandler handler = 
+				new CypherNodeHandler ( dataMgr, neoDriver, NeoDataManagerTest.SPARQL_LABELS, NeoDataManagerTest.SPARQL_PROPS );
 			
-			CypherNodeHandler handler = new CypherNodeHandler ( dataMgr, neoDriver );
-			handler.accept ( dataMgr.getNodeIris ().collect ( Collectors.toSet () ) );
+			Set<Resource> jnodes = Stream.of ( "ex:1", "ex:2", "ex:3" )
+			.map ( NamespaceUtils::iri )
+			.map ( iri -> dataMgr.getDataSet ().getDefaultModel ().getResource ( iri ) )
+			.collect ( Collectors.toSet () );
+
+			handler.accept ( jnodes );
 	
 			Session session = neoDriver.session ( AccessMode.READ );
 			StatementResult cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
@@ -59,8 +67,6 @@ public class CypherNodeHandlerIT
 			
 			Map<String, Object> map = cursor.next ().get ( "props" ).asMap ();
 			assertEquals (  "Wrong property!", "another string", map.get ( "attrib3" ) );
-		}
-		finally {
 		}
 	}
 }

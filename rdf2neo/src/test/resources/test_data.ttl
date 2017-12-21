@@ -1,0 +1,13 @@
+PREFIX ex: <http://www.example.com/res/>
+
+  ex:1 a ex:TestNode;
+  		ex:attrib1 10.0;
+  		ex:attrib2 'a string'
+  .
+  
+  ex:2 a ex:TestNode;
+  		ex:attrib3 'another string'
+  	.
+  
+  ex:3 a ex:SuperTestNode, ex:AdditionalLabel.
+  

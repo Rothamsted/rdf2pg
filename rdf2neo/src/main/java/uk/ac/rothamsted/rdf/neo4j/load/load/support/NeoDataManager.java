@@ -1,50 +1,36 @@
 package uk.ac.rothamsted.rdf.neo4j.load.load.support;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.IMMUTABLE;
-import static java.util.Spliterator.NONNULL;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolutionMap;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.jena.tdb2.TDB2Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.machinezoo.noexception.throwing.ThrowingRunnable;
 import com.machinezoo.noexception.throwing.ThrowingSupplier;
 
+import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
 
 /**
@@ -54,261 +40,82 @@ import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
  * <dl><dt>Date:</dt><dd>7 Dec 2017</dd></dl>
  *
  */
-public class NeoDataManager
+public class NeoDataManager implements AutoCloseable
 {
 	private Function<String, String> labelIdConverter = new DefaultIri2IdConverter (); 
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
 	
-	private Directory index;
-	private IndexWriter idxWriter;
-	private IndexSearcher idxSearcher;
-	private StandardAnalyzer analyzer = new StandardAnalyzer ();
-
+	private String tdbPath = null;
+	private Dataset dataSet = null;
+	
+	private LoadingCache<String, Query> queryCache; 
+	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 	
 	public NeoDataManager () 
 	{
 		wrapTask ( () -> 
 		{
-			Path tmpDirPath = Files.createTempDirectory ( "neo2rdf_idx_" );
-			log.debug ( "Creating index on '{}'", tmpDirPath.toAbsolutePath ().toString () );
-			index = FSDirectory.open ( tmpDirPath );
-		});
-	}
-
-	public void openIdxWriter ()
-	{
-		wrapTask ( () ->
-		{
-			if ( this.idxWriter != null ) return;
+			this.tdbPath = Files.createTempDirectory ( "neo2rdf_tdb_" ).toAbsolutePath ().toString ();
+			log.debug ( "Creating TDB on '{}'", tdbPath );
+			this.dataSet = TDB2Factory.connectDataset ( tdbPath );
 			
-			IndexWriterConfig cfg = new IndexWriterConfig ( this.analyzer );
-			this.idxWriter = new IndexWriter ( index, cfg );
-		});
-	}
-
-	public void closeIdxWriter ()
-	{
-		wrapTask ( () -> 
-		{
-			if ( this.idxWriter == null ) return;
-			this.idxWriter.close ();
-			this.idxWriter = null;
-		});
-	}
-	
-	public void openIdxSearcher ()
-	{
-		wrapTask ( () ->
-		{
-			if ( this.idxSearcher != null ) return;
-			
-			IndexReader idxRdr = DirectoryReader.open ( this.index );
-			this.idxSearcher = new IndexSearcher ( idxRdr );
-		});
-	}
-
-	public void closeIdxSearcher ()
-	{
-		wrapTask ( () -> 
-		{
-			if ( this.idxSearcher == null ) return;
-			this.idxSearcher.getIndexReader ().close ();
-		});
-	}
-		
-	
-	protected ScoreDoc[] search ( QueryParser queryParser, String queryStr, ScoreDoc after, int n ) 
-	{
-		return wrapFun ( () ->
-		{
-			this.openIdxSearcher ();
-			Query q = queryParser.parse ( queryStr );
-			TopDocs topDocs = after == null  
-				? this.idxSearcher.search ( q, n )
-				: this.idxSearcher.searchAfter ( after, q, n );
-			return topDocs.scoreDocs;
-		});
-	}
-
-	protected ScoreDoc[] search ( String queryStr, ScoreDoc after, int n )
-	{
-		return search ( new QueryParser ( "iri", this.analyzer ), queryStr, after, n );
-	}
-
-	
-	
-	// TODO: Move to jutil
-	protected Iterator<ScoreDoc> searchAll ( QueryParser queryParser, String queryStr )
-	{
-		Iterator<ScoreDoc> itr = new Iterator<ScoreDoc>() 
-		{
-			private ScoreDoc[] buffer = null;
-			private int idx = -1;
-			private boolean hasFinished = false;
-			
-			@Override
-			public boolean hasNext ()
-			{
-				if ( this.hasFinished ) return false;
-				
-				if ( buffer == null ) {
-					buffer = search ( queryParser, queryStr, null, 1000000 );
-					if ( buffer == null || buffer.length == 0 ) { 
-						hasFinished = true;
-						return false;
-					}
-					idx = 0;
-				}
-				if ( idx >= buffer.length ) 
+			Cache<String, Query> cache = CacheBuilder
+				.newBuilder ()
+				.maximumSize ( 1000 )
+				.build ( new CacheLoader<String, Query> () 
 				{
-					buffer = search ( queryParser, queryStr, buffer [ buffer.length - 1 ], 1000000 );
-					if ( buffer == null || buffer.length == 0 ) {
-						hasFinished = true;
-						return false;
-					} 
-					idx = 0;
-				}
-				return true;
-			}
-
-			@Override
-			public ScoreDoc next ()
-			{
-				if ( hasFinished ) throw new NoSuchElementException ( "Lucene Result Iterator has no more elements" );
-				if ( buffer == null || idx < 0 || idx >= buffer.length )
-					// First time or at the end of the current buffer and without any hasNext() call, let's try
-					// to call it for you
-					if ( !hasNext () ) throw new NoSuchElementException ( "Lucene Result Iterator has no more elements" );
-				
-				return buffer [ idx++ ];
-			}
-		}; // iterator
+					@Override
+					public Query load ( String sparql ) throws Exception {
+						return QueryFactory.create ( sparql, Syntax.syntaxARQ );
+					}
+				});
+			queryCache = (LoadingCache<String, Query>) cache;
+		});
+	}
+	
+	
+	
+	
+	public Node getNode ( Resource nodeRes, String labelsSparql, String propsSparql )
+	{
+		Model model = this.dataSet.getDefaultModel ();
 		
-		return itr;
-	}
-	
-	protected Iterator<ScoreDoc> searchAll ( String queryStr )
-	{
-		return searchAll ( new QueryParser ( "iri", this.analyzer ), queryStr );
-	}
-	
-	public void indexNodeLabelRow ( QuerySolution row )
-	{
-		wrapTask ( () -> 
-		{
-			Document doc = new Document ();
-			doc.add ( new TextField ( "docType", "nodeLabel", Store.YES ) );
+		QuerySolutionMap params = new QuerySolutionMap ();
+		params.add ( "iri", nodeRes );
+		Query qry = this.queryCache.getUnchecked ( labelsSparql );
 
-			// TODO: check blank nodes? also, in the statements below
-			String iri = row.getResource ( "iri" ).toString ();
-			Field iriField = new TextField ( "iri", iri, Store.YES );
-			doc.add ( iriField );
-			doc.add ( new TextField ( 
-				"label", this.getNodeId ( row.get ( "label" ), this.getLabelIdConverter () ), Store.YES 
-			));
-			
-			this.idxWriter.addDocument ( doc );
-			
-			// The list of all available IDs, used to reconstruct nodes from its fields
-			this.indexNodeIri ( iri );
-		});
-	}
-	
-	public void indexNodeLabelRows ( ResultSet rs )  
-	{
-		wrapTask ( () -> {
-			rs.forEachRemaining ( this::indexNodeLabelRow );
-			this.idxWriter.commit ();
-		});
-	}
-	
-	
-
-	public void indexNodePropertyRow ( QuerySolution row )
-	{
-		wrapTask ( () -> 
-		{
-			Document doc = new Document ();
-			doc.add ( new TextField ( "docType", "nodeProperty", Store.YES ) );
-
-			// TODO: check blank nodes? also, in the statements below
-			String iri = row.getResource ( "iri" ).toString ();
-			Field iriField = new TextField ( "iri", iri, Store.YES );
-			doc.add ( iriField );
-			doc.add ( new TextField ( 
-				"name", this.getNodeId ( row.get ( "name" ), this.getPropertyIdConverter () ), Store.YES 
-			));
-			
-			// TODO Datatype conversions
-			doc.add ( new TextField ( "value",
-				JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get (), 
-				Store.YES 
-			));
-			
-			this.idxWriter.addDocument ( doc );
-			this.indexNodeIri ( iri );
-		});
-	}
-	
-	protected void indexNodeIri ( String iri )
-	{
-		Document doc = new Document ();
-		doc.add ( new TextField ( "docType", "nodeIri", Store.YES ) );
-		doc.add ( new TextField ( "nodeIri", iri, Store.YES ) );
-		// It seems that only StringField wotk with the updateDocument() below :-(
-		doc.add ( new StringField ( "key", iri, Store.NO ) );
-		wrapTask ( () -> this.idxWriter.updateDocument ( new Term ( "key", iri ), doc ) );		
-	}
-	
-	
-	
-	
-	public void indexNodePropertyRows ( ResultSet rs )  
-	{
-		wrapTask ( () -> {
-			rs.forEachRemaining ( this::indexNodePropertyRow );
-			this.idxWriter.commit ();
-		});		
-	}	
-	
-	public Node getNode ( String iri )
-	{
-		return wrapFun ( () -> 
-		{
-			Node result = new Node ( iri );
-
-			// labels
-			Iterable<ScoreDoc> docs = () -> this.searchAll ( "docType:\"nodeLabel\" AND iri:\"" + iri + "\"" );
-			for ( ScoreDoc docRef: docs )
-			{
-				Document doc = this.idxSearcher.doc ( docRef.doc );
-				result.addLabel ( doc.get ( "label" ) );
-			}
-
-			// Properties
-			docs = () -> this.searchAll ( "docType:\"nodeProperty\" AND iri:\"" + iri + "\"" );
-			for ( ScoreDoc docRef: docs )
-			{
-				Document doc = this.idxSearcher.doc ( docRef.doc );
-				result.addPropValue ( doc.get ( "name" ), doc.get ( "value" ) );
-			}
-			
-			return result;
-		});
-	}
-
-
-	public Stream<String> getNodeIris ()
-	{
-		Iterator<ScoreDoc> docs = this.searchAll ( "docType:\"nodeIri\"" );
-		Spliterator<ScoreDoc> splDocs = Spliterators.spliteratorUnknownSize ( docs, DISTINCT | IMMUTABLE | NONNULL  );
+		Node node = new Node ( nodeRes.getURI () );
 		
-		return StreamSupport.stream ( splDocs, false )
-		  .map ( docRef -> 
-				wrapFun ( () -> (String) this.idxSearcher.doc ( docRef.doc ).get ( "nodeIri" ) ) 
+		// The node's labels
+		dataSet.begin ( ReadWrite.READ );
+		QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+		qx.execSelect ().forEachRemaining ( row ->
+			node.addLabel ( this.getNodeId ( row.get ( "label" ), this.getLabelIdConverter () ) )
 		);
+		dataSet.end ();
+		
+		// and the properties
+		qry = this.queryCache.getUnchecked ( propsSparql );
+		dataSet.begin ( ReadWrite.READ );
+		qx = QueryExecutionFactory.create ( qry, model, params );
+		qx.execSelect ().forEachRemaining ( row ->
+		{
+			String propName = this.getNodeId ( row.get ( "name" ), this.getPropertyIdConverter () );
+			String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
+			node.addPropValue ( propName, propValue );
+		});
+		dataSet.end ();
+		
+		return node;
 	}
+
+	public Node getNode ( String nodeIri, String labelsSparql, String propsSparql )
+	{
+		Resource nodeRes = this.dataSet.getDefaultModel ().getResource ( nodeIri );
+		return getNode ( nodeRes, labelsSparql, propsSparql ); 
+	}
+
 	
 	private String getNodeId ( RDFNode node, Function<String, String> idConverter )
 	{
@@ -321,6 +128,17 @@ public class NeoDataManager
 		return id;
 	}
 	
+	public void processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
+	{
+		Dataset ds = this.dataSet;
+		Model model = ds.getDefaultModel ();
+		ds.begin ( ReadWrite.READ );
+		SparqlUtils.select ( nodeIrisSparql, model )
+		  .forEachRemaining ( qs -> 
+			  action.accept ( qs.getResource ( "iri" ) )
+		);
+		ds.end ();
+	}
 	
 	public Function<String, String> getLabelIdConverter ()
 	{
@@ -343,6 +161,11 @@ public class NeoDataManager
 	}
 
 	
+	public Dataset getDataSet ()
+	{
+		return dataSet;
+	}
+
 	
 	protected static void wrapTask ( ThrowingRunnable task )
 	{
@@ -362,14 +185,15 @@ public class NeoDataManager
 			throw new RuntimeException ( "Error while indexing imported data: " + ex.getMessage (), ex );
 		}
 	}
-	
-	
+
+
+
+
 	@Override
-	protected void finalize () throws Throwable
+	public void close ()
 	{
-		this.closeIdxWriter ();
-		this.closeIdxSearcher ();
-		super.finalize ();
+		if ( this.dataSet == null ) return;
+		this.dataSet.close ();
 	}
-	
+			
 }
