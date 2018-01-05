@@ -1,0 +1,25 @@
+PREFIX ex: <http://www.example.com/res/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+SELECT DISTINCT ?iri ?type ?fromIri ?toIri
+{
+	{ 
+		?fromIri ?type ?toIri.
+		
+		FILTER ( strStarts ( str ( ?type ), str ( dbo: ) ) ).
+		FILTER ( isIRI ( ?toIri ) ).		
+		
+		BIND ( 
+			IRI ( 
+		  		CONCAT ( 
+		  		  STR ( ex: ),
+		  		  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
+		  		) 
+		  	)
+		  AS ?iri
+		)
+	}
+}

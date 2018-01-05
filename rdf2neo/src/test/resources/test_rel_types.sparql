@@ -1,0 +1,26 @@
+PREFIX ex: <http://www.example.com/res/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?iri ?type ?fromIri ?toIri
+{
+	{ 
+		?fromIri ?type ?toIri.
+		?type rdfs:subPropertyOf* ex:relation.
+		
+		BIND ( 
+			IRI ( 
+		  		CONCAT ( 
+		  		  STR ( ex: ),
+		  		  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
+		  		) 
+		  	)
+		  AS ?iri
+		)
+	}
+	UNION {
+	  ?iri a ex:Relation;
+	   	ex:property ?type;
+	    ex:from ?fromIri;
+	    ex:to ?toIri.
+	}
+}

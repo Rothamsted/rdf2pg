@@ -1,10 +1,12 @@
 # Used to get test data from https://dbpedia.org/sparql
+#
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX dbo: <http://dbpedia.org/ontology/>
 
-CONSTRUCT {
+CONSTRUCT 
+{
  ?iri a ?type.
 
  ?iri dbo:areaTotal ?areaTotal. 
@@ -12,23 +14,39 @@ CONSTRUCT {
  ?iri dbo:elevation ?elevation. 
  
  ?iri rdfs:label ?label.
- ?iri rdfs:comment ?comment.
+ #?iri rdfs:comment ?comment.
 
+  ?iri dbo:country ?country. ?country a ?countryType.
+  ?countryInv dbo:country ?iri. ?countryInv a ?countryType.
+
+  ?iri dbo:city ?city. ?city a ?cityType.
+  ?cityInv dbo:city ?iri. ?cityInv a ?cityInvType.
+
+  ?iri dbo:capital ?cap. ?cap a ?capType.
+  ?capInv dbo:capital ?iri. ?capInv a ?capInvType.
 }
 WHERE
 {
   ?iri a ?type.
   FILTER ( strStarts ( STR ( ?type ), STR ( schema: ) ) )
 
- OPTIONAL { ?iri dbo:areaTotal ?areaTotal } 
- OPTIONAL { ?iri dbo:populationTotal ?populationTotal }
- OPTIONAL { ?iri dbo:elevation ?elevation }
+  OPTIONAL { ?iri dbo:areaTotal ?areaTotal } 
+  OPTIONAL { ?iri dbo:populationTotal ?populationTotal }
+  OPTIONAL { ?iri dbo:elevation ?elevation }
  
- FILTER ( CONCAT ( ?areaTotal, ?populationTotal, ?elevation ) != '' )
+  FILTER ( CONCAT ( ?areaTotal, ?populationTotal, ?elevation ) != '' )
 
- ?iri rdfs:label ?label.
- ?iri rdfs:comment ?comment. 
+  ?iri rdfs:label ?label. FILTER ( lang ( ?label ) = 'en' )
+  #?iri rdfs:comment ?comment. 
 
+  OPTIONAL { ?iri dbo:country ?country. ?country a ?countryType }
+  OPTIONAL { ?countryInv dbo:country ?iri. ?countryInv a ?countryType }
+
+  OPTIONAL { ?iri dbo:city ?city. ?city a ?cityType }
+  OPTIONAL { ?cityInv dbo:city ?iri. ?cityInv a ?cityInvType }
+
+  OPTIONAL { ?iri dbo:capital ?cap. ?cap a ?capType }
+  OPTIONAL { ?capInv dbo:capital ?iri. ?capInv a ?capInvType }
 }
 #ORDER BY RAND()
-LIMIT 1000
+LIMIT 10000

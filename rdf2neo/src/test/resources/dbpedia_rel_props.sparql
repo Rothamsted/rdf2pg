@@ -1,0 +1,4 @@
+SELECT DISTINCT ?iri ?name ?value
+{
+  VALUES (?iri ?name ?value) {}
+}

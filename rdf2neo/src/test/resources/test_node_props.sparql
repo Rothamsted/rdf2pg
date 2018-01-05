@@ -1,0 +1,10 @@
+PREFIX ex: <http://www.example.com/res/>
+
+SELECT DISTINCT ?name ?value
+{
+	?iri a ?label.
+	FILTER ( ?label != ex:Relation ).
+
+	?iri ?name ?value.
+	FILTER ( isLiteral ( ?value ) ).
+}

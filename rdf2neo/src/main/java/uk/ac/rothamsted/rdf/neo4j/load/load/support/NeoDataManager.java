@@ -5,6 +5,8 @@ import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -13,12 +15,16 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.QuerySolutionMap;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb2.DatabaseMgr;
 import org.apache.jena.tdb2.TDB2Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +50,14 @@ public class NeoDataManager implements AutoCloseable
 {
 	private Function<String, String> labelIdConverter = new DefaultIri2IdConverter (); 
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
+	private Function<String, String> relationIdConverter = new DefaultIri2IdConverter (); 
 	
 	private String tdbPath = null;
 	private Dataset dataSet = null;
 	
+	/**
+	 * TODO: move the query caching to {@link SparqlUtils}.
+	 */
 	private LoadingCache<String, Query> queryCache; 
 	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
@@ -58,8 +68,8 @@ public class NeoDataManager implements AutoCloseable
 		{
 			this.tdbPath = Files.createTempDirectory ( "neo2rdf_tdb_" ).toAbsolutePath ().toString ();
 			log.debug ( "Creating TDB on '{}'", tdbPath );
-			this.dataSet = TDB2Factory.connectDataset ( tdbPath );
-			
+			this.dataSet = TDBFactory.createDataset ( tdbPath );
+						
 			Cache<String, Query> cache = CacheBuilder
 				.newBuilder ()
 				.maximumSize ( 1000 )
@@ -88,24 +98,20 @@ public class NeoDataManager implements AutoCloseable
 		Node node = new Node ( nodeRes.getURI () );
 		
 		// The node's labels
+		Function<String, String> labelIdConverter = this.getLabelIdConverter ();
 		dataSet.begin ( ReadWrite.READ );
-		QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
-		qx.execSelect ().forEachRemaining ( row ->
-			node.addLabel ( this.getNodeId ( row.get ( "label" ), this.getLabelIdConverter () ) )
-		);
-		dataSet.end ();
+		try {
+			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+			qx.execSelect ().forEachRemaining ( row ->
+				node.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
+			);
+		}
+		finally {
+			if ( dataSet.isInTransaction () ) dataSet.end ();
+		}
 		
 		// and the properties
-		qry = this.queryCache.getUnchecked ( propsSparql );
-		dataSet.begin ( ReadWrite.READ );
-		qx = QueryExecutionFactory.create ( qry, model, params );
-		qx.execSelect ().forEachRemaining ( row ->
-		{
-			String propName = this.getNodeId ( row.get ( "name" ), this.getPropertyIdConverter () );
-			String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
-			node.addPropValue ( propName, propValue );
-		});
-		dataSet.end ();
+		this.addCypherProps ( node, propsSparql );
 		
 		return node;
 	}
@@ -117,7 +123,7 @@ public class NeoDataManager implements AutoCloseable
 	}
 
 	
-	private String getNodeId ( RDFNode node, Function<String, String> idConverter )
+	private String getCypherId ( RDFNode node, Function<String, String> idConverter )
 	{
 		String id = node.canAs ( Resource.class )
 			? node.as ( Resource.class ).getURI ()
@@ -128,17 +134,107 @@ public class NeoDataManager implements AutoCloseable
 		return id;
 	}
 	
-	public void processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
+	private void addCypherProps ( CypherEntity cyEnt, String propsSparql )
+	{
+		Model model = this.dataSet.getDefaultModel ();
+		
+		QuerySolutionMap params = new QuerySolutionMap ();
+		params.add ( "iri", model.getResource ( cyEnt.getIri () ) );
+
+		Query qry = this.queryCache.getUnchecked ( propsSparql );
+		Function<String, String> propIdConverter = this.getPropertyIdConverter ();
+		
+		boolean wasInTransaction = dataSet.isInTransaction ();
+		if ( !wasInTransaction ) dataSet.begin ( ReadWrite.READ );
+		try
+		{
+			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+			qx.execSelect ().forEachRemaining ( row ->
+			{
+				String propName = this.getCypherId ( row.get ( "name" ), propIdConverter );
+				String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
+				cyEnt.addPropValue ( propName, propValue );
+			});
+		}
+		finally {
+			if ( !wasInTransaction && dataSet.isInTransaction () ) dataSet.end ();
+		}
+	}
+	
+	
+	public long processNodeIris ( String nodeIrisSparql, long offset, long limit, Consumer<Resource> action )
 	{
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
+		
+		Query nodeIrisQuery = this.queryCache.getUnchecked ( nodeIrisSparql );
+		nodeIrisQuery.setLimit ( limit );
+		nodeIrisQuery.setOffset ( offset );
+		
 		ds.begin ( ReadWrite.READ );
-		SparqlUtils.select ( nodeIrisSparql, model )
-		  .forEachRemaining ( qs -> 
-			  action.accept ( qs.getResource ( "iri" ) )
-		);
-		ds.end ();
+		try {
+			QueryExecution qx = QueryExecutionFactory.create ( nodeIrisQuery, model );
+			ResultSet cursor = qx.execSelect ();
+			if ( !cursor.hasNext () ) return -1;
+			do {
+				QuerySolution qs = cursor.next ();
+				action.accept ( qs.getResource ( "iri" ) );
+			}
+			while ( cursor.hasNext () );
+			return offset + limit;
+		}
+		finally {
+			if ( ds.isInTransaction () ) ds.end ();
+		}
 	}
+	
+	
+	
+	public Relation getRelation ( QuerySolution relRow )
+	{
+		Resource relRes = relRow.get ( "iri" ).asResource ();
+		Relation relation = new Relation ( relRes.getURI () );
+		
+		// The node's labels
+		relation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getRelationIdConverter () ) );
+		relation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
+		relation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
+				
+		return relation;
+	}
+	
+	public void setRelationProps ( Relation relation, String propsSparql )
+	{
+		this.addCypherProps ( relation, propsSparql );
+	}
+	
+	public long processRelationIris ( String relationIrisSparql, long offset, long limit, Consumer<QuerySolution> action )
+	{
+		Dataset ds = this.dataSet;
+		Model model = ds.getDefaultModel ();
+		
+		Query relIrisQuery = this.queryCache.getUnchecked ( relationIrisSparql );
+		relIrisQuery.setLimit ( limit );
+		relIrisQuery.setOffset ( offset );
+		
+		boolean wasInTransaction = ds.isInTransaction ();
+		if ( !wasInTransaction ) ds.begin ( ReadWrite.READ );
+		try {
+			QueryExecution qx = QueryExecutionFactory.create ( relIrisQuery, model );
+			ResultSet cursor = qx.execSelect ();
+			if ( !cursor.hasNext () ) return -1;
+			do {
+				QuerySolution qs = cursor.next ();
+				action.accept ( qs );
+			}
+			while ( cursor.hasNext () );
+			return offset + limit;
+		}
+		finally {
+			if ( !wasInTransaction && ds.isInTransaction () ) ds.end ();
+		}
+	}
+	
 	
 	public Function<String, String> getLabelIdConverter ()
 	{
@@ -149,6 +245,19 @@ public class NeoDataManager implements AutoCloseable
 	{
 		this.labelIdConverter = labelIdConverter;
 	}
+	
+	public Function<String, String> getRelationIdConverter ()
+	{
+		return relationIdConverter;
+	}
+
+	public void setRelationIdConverter ( Function<String, String> relationIdConverter )
+	{
+		this.relationIdConverter = relationIdConverter;
+	}
+
+
+
 
 	public Function<String, String> getPropertyIdConverter ()
 	{

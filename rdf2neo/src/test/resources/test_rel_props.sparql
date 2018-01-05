@@ -1,0 +1,8 @@
+PREFIX ex: <http://www.example.com/res/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?iri ?name ?value
+{
+  ?iri a ex:Relation; ?name ?value.
+  FILTER ( isLiteral ( ?value ) )
+}

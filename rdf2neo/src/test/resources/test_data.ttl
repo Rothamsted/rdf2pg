@@ -1,4 +1,5 @@
-PREFIX ex: <http://www.example.com/res/>
+@prefix ex: <http://www.example.com/res/>
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
   ex:1 a ex:TestNode;
   		ex:attrib1 10.0;
@@ -10,4 +11,17 @@ PREFIX ex: <http://www.example.com/res/>
   	.
   
   ex:3 a ex:SuperTestNode, ex:AdditionalLabel.
+
+
+  ex:1 ex:relatedTo ex:2.
+  ex:3 ex:derivedFrom ex:1.
+
+  ex:2_3 a ex:Relation;
+    ex:from ex:2;
+    ex:to ex:3;
+    ex:property ex:relatedTo;
+    ex:note "Reified Relation", "Another Note"
+  .
   
+  ex:relatedTo rdfs:subPropertyOf ex:relation.
+  ex:derivedFrom rdfs:subPropertyOf ex:relatedTo.
