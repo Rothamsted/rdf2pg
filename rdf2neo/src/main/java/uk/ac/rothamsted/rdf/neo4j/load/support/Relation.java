@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.neo4j.load.load.support;
+package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 /**
  * TODO: comment me!

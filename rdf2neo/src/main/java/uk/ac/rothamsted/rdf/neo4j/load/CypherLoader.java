@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import info.marcobrandizi.rdfutils.jena.elt.RDFProcessor;
 import info.marcobrandizi.rdfutils.jena.elt.TDBLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyRelationLoadingProcessor;
 import uk.ac.ebi.utils.threading.HackedBlockingQueue;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.NeoDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
 
 /**
  * TODO: comment me!
@@ -58,7 +58,6 @@ public class CypherLoader<RS>
 			// Nodes
 			this.cyNodeLoadingHandler.setDataMgr ( dataMgr );
 			CyNodeLoadingProcessor cyNodeLoader = new CyNodeLoadingProcessor ();
-			cyNodeLoader.setNodeIrisSparql ( this.nodeIrisSparql );
 			cyNodeLoader.setDestinationMaxSize ( this.cypherChunkSize );
 			cyNodeLoader.setConsumer ( this.cyNodeLoadingHandler );
 			cyNodeLoader.process ( dataMgr );
@@ -66,24 +65,12 @@ public class CypherLoader<RS>
 			// Relations
 			this.cyRelationLoadingHandler.setDataMgr ( dataMgr );
 			CyRelationLoadingProcessor cyRelLoader = new CyRelationLoadingProcessor ();
-			cyRelLoader.setRelationIrisSparql ( this.cyRelationLoadingHandler.getRelationTypesSparql () );
 			cyRelLoader.setDestinationMaxSize ( this.cypherChunkSize );
 			cyRelLoader.setConsumer ( this.cyRelationLoadingHandler );
 			cyRelLoader.process ( dataMgr );
 			
 			log.info ( "RDF-Cypher conversion finished" );
 		}
-	}
-
-		
-	public String getNodeIrisSparql ()
-	{
-		return nodeIrisSparql;
-	}
-
-	public void setNodeIrisSparql ( String nodeIrisSparql )
-	{
-		this.nodeIrisSparql = nodeIrisSparql;
 	}
 
 	

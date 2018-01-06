@@ -30,10 +30,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.Relation;
+import uk.ac.ebi.utils.io.IOUtils;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.Relation;
 
 /**
  * TODO: comment me!
@@ -52,7 +53,7 @@ public class CypherHandlersIT
 	}
 
 	@Before
-	public void initNeo ()
+	public void initNeo () throws IOException
 	{
 		initNeoStatic ();
 
@@ -68,16 +69,14 @@ public class CypherHandlersIT
 			@SuppressWarnings ( "static-access" )
 			NeoDataManager dataMgr = dmtest.getDataMgr ();
 			
-			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ( 
-				dataMgr, neoDriver, NeoDataManagerTest.SPARQL_NODE_LABELS, NeoDataManagerTest.SPARQL_NODE_PROPS 
-			);
+			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
+			handler.setDataMgr ( dataMgr );
+			handler.setNeo4jDriver ( neoDriver );
+			handler.setNodeIrisSparql ( IOUtils.readResource ( "test_node_iris.sparql" ) );
+			handler.setLabelsSparql ( NeoDataManagerTest.SPARQL_NODE_LABELS );
+			handler.setNodePropsSparql ( NeoDataManagerTest.SPARQL_NODE_PROPS );
 			
-			Set<Resource> jnodes = Stream.of ( "ex:1", "ex:2", "ex:3" )
-			.map ( NamespaceUtils::iri )
-			.map ( iri -> dataMgr.getDataSet ().getDefaultModel ().getResource ( iri ) )
-			.collect ( Collectors.toSet () );
-
-			handler.accept ( jnodes );
+			handler.accept ( 0l );
 		}
 	}
 	
@@ -125,17 +124,13 @@ public class CypherHandlersIT
 			@SuppressWarnings ( "static-access" )
 			NeoDataManager dataMgr = dmtest.getDataMgr ();
 			
-			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ( 
-				dataMgr, neoDriver, NeoDataManagerTest.SPARQL_REL_TYPES, NeoDataManagerTest.SPARQL_REL_PROPS 
-			);
+			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
+			handler.setDataMgr ( dataMgr );
+			handler.setNeo4jDriver ( neoDriver );
+			handler.setRelationTypesSparql ( NeoDataManagerTest.SPARQL_REL_TYPES );
+			handler.setRelationPropsSparql ( NeoDataManagerTest.SPARQL_REL_PROPS  );
 
-			Set<Relation> relations = new HashSet<> ();
-			dataMgr.processRelationIris ( NeoDataManagerTest.SPARQL_REL_TYPES, 0, (long) 1E6, row -> 
-			{
-				Relation rel = dataMgr.getRelation ( row );
-				relations.add ( rel );
-			});
-			handler.accept ( relations );
+			handler.accept ( 0L );
 				
 			Session session = neoDriver.session ( AccessMode.READ );
 

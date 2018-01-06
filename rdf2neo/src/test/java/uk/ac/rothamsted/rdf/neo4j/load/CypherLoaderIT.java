@@ -9,8 +9,8 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 
 import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
 
 /**
@@ -41,8 +41,7 @@ public class CypherLoaderIT
 
 			// TODO: configurator, multiple config sets
 			
-			cyloader.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
-			
+			cyNodehandler.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
 			cyNodehandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
 			cyNodehandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
 			cyNodehandler.setNeo4jDriver ( neoDriver );

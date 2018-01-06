@@ -25,9 +25,9 @@ import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.Node;
-import uk.ac.rothamsted.rdf.neo4j.load.load.support.Relation;
+import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.Node;
+import uk.ac.rothamsted.rdf.neo4j.load.support.Relation;
 
 /**
  * TODO: comment me!

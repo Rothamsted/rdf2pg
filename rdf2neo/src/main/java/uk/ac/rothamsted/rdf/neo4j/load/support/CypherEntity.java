@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.neo4j.load.load.support;
+package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import java.util.HashMap;
 import java.util.HashSet;

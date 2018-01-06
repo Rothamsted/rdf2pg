@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.neo4j.load.load.support;
+package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 
@@ -99,7 +99,8 @@ public class NeoDataManager implements AutoCloseable
 		
 		// The node's labels
 		Function<String, String> labelIdConverter = this.getLabelIdConverter ();
-		dataSet.begin ( ReadWrite.READ );
+		boolean wasInTnx = dataSet.isInTransaction ();
+		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
 		try {
 			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
 			qx.execSelect ().forEachRemaining ( row ->
@@ -107,7 +108,7 @@ public class NeoDataManager implements AutoCloseable
 			);
 		}
 		finally {
-			if ( dataSet.isInTransaction () ) dataSet.end ();
+			if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
 		}
 		
 		// and the properties
@@ -144,8 +145,8 @@ public class NeoDataManager implements AutoCloseable
 		Query qry = this.queryCache.getUnchecked ( propsSparql );
 		Function<String, String> propIdConverter = this.getPropertyIdConverter ();
 		
-		boolean wasInTransaction = dataSet.isInTransaction ();
-		if ( !wasInTransaction ) dataSet.begin ( ReadWrite.READ );
+		boolean wasInTnx = dataSet.isInTransaction ();
+		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
 		try
 		{
 			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
@@ -157,7 +158,7 @@ public class NeoDataManager implements AutoCloseable
 			});
 		}
 		finally {
-			if ( !wasInTransaction && dataSet.isInTransaction () ) dataSet.end ();
+			if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
 		}
 	}
 	
@@ -166,10 +167,11 @@ public class NeoDataManager implements AutoCloseable
 	{
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
-		
-		Query nodeIrisQuery = this.queryCache.getUnchecked ( nodeIrisSparql );
+
+		// We cannot cache this because it's stateful and hence it cannot be shared
+		Query nodeIrisQuery = QueryFactory.create ( nodeIrisSparql, Syntax.syntaxARQ );
 		nodeIrisQuery.setLimit ( limit );
-		nodeIrisQuery.setOffset ( offset );
+		nodeIrisQuery.setOffset ( offset );			
 		
 		ds.begin ( ReadWrite.READ );
 		try {
@@ -212,13 +214,14 @@ public class NeoDataManager implements AutoCloseable
 	{
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
-		
-		Query relIrisQuery = this.queryCache.getUnchecked ( relationIrisSparql );
+
+		// We cannot cache this because it's stateful and hence it cannot be shared
+		Query relIrisQuery = QueryFactory.create ( relationIrisSparql, Syntax.syntaxARQ );
 		relIrisQuery.setLimit ( limit );
 		relIrisQuery.setOffset ( offset );
 		
-		boolean wasInTransaction = ds.isInTransaction ();
-		if ( !wasInTransaction ) ds.begin ( ReadWrite.READ );
+		boolean wasInTnx = ds.isInTransaction ();
+		if ( !wasInTnx ) ds.begin ( ReadWrite.READ );
 		try {
 			QueryExecution qx = QueryExecutionFactory.create ( relIrisQuery, model );
 			ResultSet cursor = qx.execSelect ();
@@ -231,7 +234,7 @@ public class NeoDataManager implements AutoCloseable
 			return offset + limit;
 		}
 		finally {
-			if ( !wasInTransaction && ds.isInTransaction () ) ds.end ();
+			if ( !wasInTnx && ds.isInTransaction () ) ds.end ();
 		}
 	}
 	

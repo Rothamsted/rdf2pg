@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.neo4j.load.load.support;
+package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static org.neo4j.driver.v1.Values.parameters;
 
@@ -25,13 +25,17 @@ import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
  */
-public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>> 
+public abstract class CypherLoadingHandler<T> implements Consumer<Long> 
 {
 	private NeoDataManager dataMgr;
 	private Driver neo4jDriver;
-	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
-	
+
+	private long sparqlQuerySize = 100000;
 	private String defaultLabel = "Resource";
+
+	private long overflowQueryOffset = -1;
+	
+	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	public CypherLoadingHandler ()
 	{
@@ -71,6 +75,8 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>
 		// Re-attempt a couple of times, in case of exceptions due to deadlocks over locking nodes.
 		MultipleAttemptsExecutor attempter = new MultipleAttemptsExecutor ( TransientException.class );
 		attempter.setMaxAttempts ( 5 );
+		attempter.setMinPauseTime ( 20 * 1000 );
+		attempter.setMaxPauseTime ( 80 * 1000 );
 		
 		attempter.execute ( () -> 
 		{
@@ -110,4 +116,31 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>
 		this.defaultLabel = defaultLabel;
 	}
 
+	public long getSparqlQuerySize ()
+	{
+		return sparqlQuerySize;
+	}
+
+	public void setSparqlQuerySize ( long sparqlQuerySize )
+	{
+		this.sparqlQuerySize = sparqlQuerySize;
+	}
+
+	
+	public boolean dataFinished ()
+	{
+		return overflowQueryOffset != -1;
+	}
+
+	protected void notifyDataFinished ( long overflowQueryOffset )
+	{
+		if ( this.dataFinished() && overflowQueryOffset >= this.overflowQueryOffset ) return;
+		this.overflowQueryOffset = overflowQueryOffset;
+	}
+
+	protected long getOverflowQueryOffset ()
+	{
+		return overflowQueryOffset;
+	}
+	
 }
