@@ -10,11 +10,11 @@ import java.util.Set;
  * <dl><dt>Date:</dt><dd>5 Dec 2017</dd></dl>
  *
  */
-public class Node extends CypherEntity
+public class CyNode extends CypherEntity
 {
 	private Set<String> labels = new HashSet<> ();
 
-	public Node ( String iri )
+	public CyNode ( String iri )
 	{
 		super ( iri );
 	}

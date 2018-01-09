@@ -34,7 +34,7 @@ import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.Relation;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelation;
 
 /**
  * TODO: comment me!

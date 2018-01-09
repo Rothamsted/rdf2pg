@@ -44,17 +44,17 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<Long>
 		long newOffset = dataMgr.processRelationIris ( 
 			this.relationTypesSparql, sparqlQueryOffset, limit, 
 			row -> { 
-				Relation relation = dataMgr.getRelation ( row );
-				dataMgr.setRelationProps ( relation, this.relationPropsSparql );
+				CyRelation cyRelation = dataMgr.getCyRelation ( row );
+				dataMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
 	
-				String type = relation.getType ();
+				String type = cyRelation.getType ();
 				List<Map<String, Object>> cyRels = cyData.get ( type );
 				if ( cyRels == null ) cyData.put ( type, cyRels = new LinkedList<> () );
 
 				Map<String, Object> cyparams = new HashMap<> (); 
-				cyparams.put ( "fromIri", String.valueOf ( relation.getFromIri () ) );
-				cyparams.put ( "toIri", String.valueOf ( relation.getToIri () ) );
-				cyparams.put ( "properties", this.getCypherProperties ( relation ) );
+				cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
+				cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
+				cyparams.put ( "properties", this.getCypherProperties ( cyRelation ) );
 				cyRels.add ( cyparams );				
 		});
 		

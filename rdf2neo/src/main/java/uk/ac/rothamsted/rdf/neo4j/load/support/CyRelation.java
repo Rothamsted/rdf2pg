@@ -7,11 +7,11 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
  */
-public class Relation extends CypherEntity
+public class CyRelation extends CypherEntity
 {
 	private String type, fromIri, toIri; 
 	
-	public Relation ( String iri ) {
+	public CyRelation ( String iri ) {
 		super ( iri );
 	}
 

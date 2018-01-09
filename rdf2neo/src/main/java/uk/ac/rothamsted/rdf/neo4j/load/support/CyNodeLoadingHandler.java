@@ -52,9 +52,9 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Long>
 		( 
 			this.nodeIrisSparql, sparqlQueryOffset, limit, 
 			nodeRes -> {
-				Node node = dataMgr.getNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+				CyNode cyNode = dataMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
-				SortedSet<String> labels = new TreeSet<> ( node.getLabels () );
+				SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 				
 				// We always need a default, to be able to fetch the nodes during relation creation stage
 				labels.add ( defaultLabel );
@@ -62,7 +62,7 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Long>
 				List<Map<String, Object>> cyNodes = cyData.get ( labels );
 				if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
 
-				cyNodes.add ( this.getCypherProperties ( node ) );
+				cyNodes.add ( this.getCypherProperties ( cyNode ) );
 		}); 
 		
 		

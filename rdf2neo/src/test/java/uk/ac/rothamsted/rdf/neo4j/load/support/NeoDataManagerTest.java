@@ -26,8 +26,8 @@ import com.google.common.collect.Sets;
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.Node;
-import uk.ac.rothamsted.rdf.neo4j.load.support.Relation;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyNode;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelation;
 
 /**
  * TODO: comment me!
@@ -93,16 +93,16 @@ public class NeoDataManagerTest
 		Dataset ds = dataMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		
-		Node node = dataMgr.getNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
-		assertNotNull ( "Node 1 not found!", node );
+		CyNode cyNode = dataMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
+		assertNotNull ( "CyNode 1 not found!", cyNode );
 		log.info ( "Got node 1" );
 
-		assertEquals ( "Node 1's Label not found!", 1, node.getLabels ().size () );
-		assertEquals ( "Node 1's Label not found!", "TestNode", node.getLabels ().iterator ().next () );
+		assertEquals ( "CyNode 1's Label not found!", 1, cyNode.getLabels ().size () );
+		assertEquals ( "CyNode 1's Label not found!", "TestNode", cyNode.getLabels ().iterator ().next () );
 		
-		assertEquals ( "Node 1's wrong properties count!", 2, node.getProperties ().size () );
-		assertEquals ( "Node 1's prop1 not found!", "10.0", node.getPropValue ( "attrib1" ) );
-		assertEquals ( "Node 1's prop2 not found!", "a string", node.getPropValue ( "attrib2" ) );
+		assertEquals ( "CyNode 1's wrong properties count!", 2, cyNode.getProperties ().size () );
+		assertEquals ( "CyNode 1's prop1 not found!", "10.0", cyNode.getPropValue ( "attrib1" ) );
+		assertEquals ( "CyNode 1's prop2 not found!", "a string", cyNode.getPropValue ( "attrib2" ) );
 		
 		log.info ( "End" );
 	}
@@ -113,16 +113,16 @@ public class NeoDataManagerTest
 	{
 		log.info ( "Verifying Relations" );
 
-		List<Relation> relations = new ArrayList<> ();
+		List<CyRelation> cyRelations = new ArrayList<> ();
 		dataMgr.processRelationIris ( SPARQL_REL_TYPES, 0, (long) 1E6, 
 			row -> 
 			{
-				Relation rel = dataMgr.getRelation ( row );
-				dataMgr.setRelationProps ( rel, SPARQL_REL_PROPS );
-				relations.add ( rel );
+				CyRelation rel = dataMgr.getCyRelation ( row );
+				dataMgr.setCyRelationProps ( rel, SPARQL_REL_PROPS );
+				cyRelations.add ( rel );
 		});
 		
-		Relation relation = relations.stream ()
+		CyRelation cyRelation = cyRelations.stream ()
 		.filter ( rel -> 
 			"relatedTo".equals ( rel.getType () ) 
 			&& iri ( "ex:1" ).equals ( rel.getFromIri () ) 
@@ -130,9 +130,9 @@ public class NeoDataManagerTest
 		)
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "{ex:1 ex:relatedTo ex:2} not found!", relation );
+		assertNotNull ( "{ex:1 ex:relatedTo ex:2} not found!", cyRelation );
 		
-		relation = relations.stream ()
+		cyRelation = cyRelations.stream ()
 		.filter ( rel -> 
 			"derivedFrom".equals ( rel.getType () ) 
 			&& iri ( "ex:3" ).equals ( rel.getFromIri () ) 
@@ -140,19 +140,19 @@ public class NeoDataManagerTest
 		)
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "{ex:3 ex:derivedFrom ex:1} not found!", relation );
+		assertNotNull ( "{ex:3 ex:derivedFrom ex:1} not found!", cyRelation );
 
-		relation = relations.stream ()
+		cyRelation = cyRelations.stream ()
 		.filter ( rel -> iri ( "ex:2_3" ).equals ( rel.getIri () ) )
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "reified relation not found!", relation );
-		assertEquals ( "reified relation's type wrong!", "relatedTo", relation.getType () );
-		assertEquals ( "reified relation's fromIri wrong!", iri ( "ex:2" ), relation.getFromIri () );
-		assertEquals ( "reified relation's toIri wrong!", iri ( "ex:3" ),  relation.getToIri () );		
-		assertEquals ( "reified relation, wrong properties count!", 1, relation.getProperties ().size () );
+		assertNotNull ( "reified relation not found!", cyRelation );
+		assertEquals ( "reified relation's type wrong!", "relatedTo", cyRelation.getType () );
+		assertEquals ( "reified relation's fromIri wrong!", iri ( "ex:2" ), cyRelation.getFromIri () );
+		assertEquals ( "reified relation's toIri wrong!", iri ( "ex:3" ),  cyRelation.getToIri () );		
+		assertEquals ( "reified relation, wrong properties count!", 1, cyRelation.getProperties ().size () );
 		
-		Set<String> values = relation.getPropValues ( "note" );
+		Set<String> values = cyRelation.getPropValues ( "note" );
 		Set<String> refValues = new HashSet<> ( Arrays.asList ( new String[] { "Reified Relation", "Another Note" } ) ) ;
 		assertTrue ( 
 			"reified relation, wrong property value for 'note'!", 

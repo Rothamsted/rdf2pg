@@ -87,7 +87,7 @@ public class NeoDataManager implements AutoCloseable
 	
 	
 	
-	public Node getNode ( Resource nodeRes, String labelsSparql, String propsSparql )
+	public CyNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
 	{
 		Model model = this.dataSet.getDefaultModel ();
 		
@@ -95,7 +95,7 @@ public class NeoDataManager implements AutoCloseable
 		params.add ( "iri", nodeRes );
 		Query qry = this.queryCache.getUnchecked ( labelsSparql );
 
-		Node node = new Node ( nodeRes.getURI () );
+		CyNode cyNode = new CyNode ( nodeRes.getURI () );
 		
 		// The node's labels
 		Function<String, String> labelIdConverter = this.getLabelIdConverter ();
@@ -104,7 +104,7 @@ public class NeoDataManager implements AutoCloseable
 		try {
 			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
 			qx.execSelect ().forEachRemaining ( row ->
-				node.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
+				cyNode.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
 			);
 		}
 		finally {
@@ -112,15 +112,15 @@ public class NeoDataManager implements AutoCloseable
 		}
 		
 		// and the properties
-		this.addCypherProps ( node, propsSparql );
+		this.addCypherProps ( cyNode, propsSparql );
 		
-		return node;
+		return cyNode;
 	}
 
-	public Node getNode ( String nodeIri, String labelsSparql, String propsSparql )
+	public CyNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
 	{
 		Resource nodeRes = this.dataSet.getDefaultModel ().getResource ( nodeIri );
-		return getNode ( nodeRes, labelsSparql, propsSparql ); 
+		return getCyNode ( nodeRes, labelsSparql, propsSparql ); 
 	}
 
 	
@@ -192,22 +192,22 @@ public class NeoDataManager implements AutoCloseable
 	
 	
 	
-	public Relation getRelation ( QuerySolution relRow )
+	public CyRelation getCyRelation ( QuerySolution relRow )
 	{
 		Resource relRes = relRow.get ( "iri" ).asResource ();
-		Relation relation = new Relation ( relRes.getURI () );
+		CyRelation cyRelation = new CyRelation ( relRes.getURI () );
 		
 		// The node's labels
-		relation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getRelationIdConverter () ) );
-		relation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
-		relation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
+		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getRelationIdConverter () ) );
+		cyRelation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
+		cyRelation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
 				
-		return relation;
+		return cyRelation;
 	}
 	
-	public void setRelationProps ( Relation relation, String propsSparql )
+	public void setCyRelationProps ( CyRelation cyRelation, String propsSparql )
 	{
-		this.addCypherProps ( relation, propsSparql );
+		this.addCypherProps ( cyRelation, propsSparql );
 	}
 	
 	public long processRelationIris ( String relationIrisSparql, long offset, long limit, Consumer<QuerySolution> action )
