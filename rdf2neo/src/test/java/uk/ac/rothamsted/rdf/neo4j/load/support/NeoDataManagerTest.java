@@ -68,16 +68,20 @@ public class NeoDataManagerTest
 		
 	
 	@BeforeClass
-	public static void initData () throws IOException
+	public static void initData ()
 	{
 		Dataset ds = dataMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		ds.begin ( ReadWrite.WRITE );
 		try 
 		{
-			if ( m.size () > 0 ) return;
+			//if ( m.size () > 0 ) return;
 			m.read ( IOUtils.openResourceReader ( "test_data.ttl" ), null, "TURTLE" );
 			ds.commit ();
+		}
+		catch ( Exception ex ) {
+			ds.abort ();
+			throw new RuntimeException ( "Test error: " + ex.getMessage (), ex );
 		}
 		finally { 
 			ds.end ();

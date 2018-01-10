@@ -2,6 +2,7 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -48,11 +50,13 @@ import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
  */
 public class NeoDataManager implements AutoCloseable
 {
-	private Function<String, String> labelIdConverter = new DefaultIri2IdConverter (); 
+	private Function<String, String> labelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
-	private Function<String, String> relationIdConverter = new DefaultIri2IdConverter (); 
+	private Function<String, String> relationIdConverter = new DefaultIri2IdConverter ();
 	
-	private String tdbPath = null;
+	private static String configTdbPath = System.getProperty ( "java.io.tmpdir" ) + "neo2rdf_tdb";
+	
+	private String tdbPath;
 	private Dataset dataSet = null;
 	
 	/**
@@ -66,8 +70,15 @@ public class NeoDataManager implements AutoCloseable
 	{
 		wrapTask ( () -> 
 		{
-			this.tdbPath = Files.createTempDirectory ( "neo2rdf_tdb_" ).toAbsolutePath ().toString ();
 			log.debug ( "Creating TDB on '{}'", tdbPath );
+			
+			this.tdbPath = configTdbPath;
+			
+			// Clean-up. TODO: should it be optional? 
+			File tdbDir = new File ( tdbPath );
+			FileUtils.deleteDirectory ( tdbDir  );
+			tdbDir.mkdir ();
+			
 			this.dataSet = TDBFactory.createDataset ( tdbPath );
 						
 			Cache<String, Query> cache = CacheBuilder
@@ -298,14 +309,22 @@ public class NeoDataManager implements AutoCloseable
 		}
 	}
 
+	public String getTdbPath ()
+	{
+		return tdbPath;
+	}
 
-
+	public static void setConfigTdbPath ( String configuredTdbPath )
+	{
+		NeoDataManager.configTdbPath = configuredTdbPath;
+	}
 
 	@Override
 	public void close ()
 	{
 		if ( this.dataSet == null ) return;
 		this.dataSet.close ();
+		this.dataSet = null;
 	}
 			
 }

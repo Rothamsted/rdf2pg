@@ -91,5 +91,38 @@
 		</pluginRepository>
 
 	</pluginRepositories>
+	
+	<repositories>
+	
+		<repository>
+	    <id>EBIBioSamples-GH-repo</id>
+	    <url>https://raw.githubusercontent.com/EBIBioSamples/EBIBioSamples.github.io/maven-repo</url>
+	    <snapshots>
+        <enabled>true</enabled>
+	    </snapshots>
+    </repository>
+
+		<!-- rdfutils -->
+		<repository>
+			<id>marcobrandizi.info</id>
+			<url>http://www.marcobrandizi.info:8081/artifactory/maven</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>	
+		
+	</repositories>
+	
+   <distributionManagement>
+      <repository>
+         <id>ondex-releases</id>
+         <name>Internal Releases</name>
+         <url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
+      </repository>
+      <snapshotRepository>
+         <id>ondex-snapshots</id>
+         <name>Internal Snapshots</name>
+         <url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
+      </snapshotRepository>
+   </distributionManagement>	
 
 </project>
