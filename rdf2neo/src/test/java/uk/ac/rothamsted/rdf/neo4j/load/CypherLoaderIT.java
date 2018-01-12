@@ -12,6 +12,7 @@ import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
+import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
 
 /**
  * TODO: comment me!
@@ -24,7 +25,8 @@ public class CypherLoaderIT
 {
 	@Before
 	public void initNeo () {
-		CypherHandlersIT.initNeoStatic ();
+		CypherHandlersIT.initNeo ();
+		NeoDataManager.setDoCleanTdbDirectory ( true );
 	}
 	
 	@Test
@@ -38,10 +40,10 @@ public class CypherLoaderIT
 			
 			CyNodeLoadingHandler cyNodehandler = cyloader.getCyNodeLoadingHandler ();
 			CyRelationLoadingHandler cyRelhandler = cyloader.getCyRelationLoadingHandler ();
-
+			
 			// TODO: configurator, multiple config sets
 			
-			cyNodehandler.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
+			cyloader.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
 			cyNodehandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
 			cyNodehandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
 			cyNodehandler.setNeo4jDriver ( neoDriver );

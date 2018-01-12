@@ -25,6 +25,7 @@ import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.system.Txn;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.tdb2.DatabaseMgr;
 import org.apache.jena.tdb2.TDB2Factory;
@@ -55,6 +56,7 @@ public class NeoDataManager implements AutoCloseable
 	private Function<String, String> relationIdConverter = new DefaultIri2IdConverter ();
 	
 	private static String configTdbPath = System.getProperty ( "java.io.tmpdir" ) + "neo2rdf_tdb";
+	private static boolean doCleanTdbDirectory = true;
 	
 	private String tdbPath;
 	private Dataset dataSet = null;
@@ -70,14 +72,16 @@ public class NeoDataManager implements AutoCloseable
 	{
 		wrapTask ( () -> 
 		{
-			log.debug ( "Creating TDB on '{}'", tdbPath );
+			log.debug ( "Setting TDB to '{}'", configTdbPath );
 			
 			this.tdbPath = configTdbPath;
 			
-			// Clean-up. TODO: should it be optional? 
-			File tdbDir = new File ( tdbPath );
-			FileUtils.deleteDirectory ( tdbDir  );
-			tdbDir.mkdir ();
+			if ( doCleanTdbDirectory )
+			{
+				File tdbDir = new File ( tdbPath );
+				FileUtils.deleteDirectory ( tdbDir  );
+				tdbDir.mkdir ();
+			}
 			
 			this.dataSet = TDBFactory.createDataset ( tdbPath );
 						
@@ -174,31 +178,25 @@ public class NeoDataManager implements AutoCloseable
 	}
 	
 	
-	public long processNodeIris ( String nodeIrisSparql, long offset, long limit, Consumer<Resource> action )
+	public long processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
 	{
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
 		// We cannot cache this because it's stateful and hence it cannot be shared
-		Query nodeIrisQuery = QueryFactory.create ( nodeIrisSparql, Syntax.syntaxARQ );
-		nodeIrisQuery.setLimit ( limit );
-		nodeIrisQuery.setOffset ( offset );			
+		Query nodeIrisQuery = queryCache.getUnchecked ( nodeIrisSparql );
 		
-		ds.begin ( ReadWrite.READ );
-		try {
+		long[] ctr = { 0L };
+		Txn.executeRead ( ds, () -> 
+		{
 			QueryExecution qx = QueryExecutionFactory.create ( nodeIrisQuery, model );
-			ResultSet cursor = qx.execSelect ();
-			if ( !cursor.hasNext () ) return -1;
-			do {
-				QuerySolution qs = cursor.next ();
-				action.accept ( qs.getResource ( "iri" ) );
-			}
-			while ( cursor.hasNext () );
-			return offset + limit;
-		}
-		finally {
-			if ( ds.isInTransaction () ) ds.end ();
-		}
+			qx.execSelect ().forEachRemaining ( row -> { 
+				action.accept ( row.getResource ( "iri" ) ); 
+				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{} Cypher nodes read from RDF", ctr [ 0 ] ); 
+			});
+		});
+		
+		return ctr [ 0 ];
 	}
 	
 	
@@ -221,32 +219,25 @@ public class NeoDataManager implements AutoCloseable
 		this.addCypherProps ( cyRelation, propsSparql );
 	}
 	
-	public long processRelationIris ( String relationIrisSparql, long offset, long limit, Consumer<QuerySolution> action )
+	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action )
 	{
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
 		// We cannot cache this because it's stateful and hence it cannot be shared
-		Query relIrisQuery = QueryFactory.create ( relationIrisSparql, Syntax.syntaxARQ );
-		relIrisQuery.setLimit ( limit );
-		relIrisQuery.setOffset ( offset );
+		Query relIrisQuery = queryCache.getUnchecked ( relationIrisSparql );
 		
-		boolean wasInTnx = ds.isInTransaction ();
-		if ( !wasInTnx ) ds.begin ( ReadWrite.READ );
-		try {
+		long[] ctr = { 0L };
+		Txn.executeRead ( ds, () -> 
+		{
 			QueryExecution qx = QueryExecutionFactory.create ( relIrisQuery, model );
-			ResultSet cursor = qx.execSelect ();
-			if ( !cursor.hasNext () ) return -1;
-			do {
-				QuerySolution qs = cursor.next ();
-				action.accept ( qs );
-			}
-			while ( cursor.hasNext () );
-			return offset + limit;
-		}
-		finally {
-			if ( !wasInTnx && ds.isInTransaction () ) ds.end ();
-		}
+			qx.execSelect ().forEachRemaining ( row -> { 
+				action.accept ( row ); 
+				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{} Cypher relations read from RDF", ctr [ 0 ] ); 
+			});
+		});
+		
+		return ctr [ 0 ];
 	}
 	
 	
@@ -314,10 +305,16 @@ public class NeoDataManager implements AutoCloseable
 		return tdbPath;
 	}
 
-	public static void setConfigTdbPath ( String configuredTdbPath )
+	public static void setConfigTdbPath ( String configTdbPath )
 	{
-		NeoDataManager.configTdbPath = configuredTdbPath;
+		NeoDataManager.configTdbPath = configTdbPath;
 	}
+	
+	public static void setDoCleanTdbDirectory ( boolean doCleanTdbDirectory )
+	{
+		NeoDataManager.doCleanTdbDirectory = doCleanTdbDirectory;
+	}
+
 
 	@Override
 	public void close ()

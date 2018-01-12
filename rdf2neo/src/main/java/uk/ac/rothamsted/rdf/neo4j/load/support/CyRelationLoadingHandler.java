@@ -1,5 +1,8 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.jena.query.QuerySolution;
 import org.neo4j.driver.v1.Driver;
 
 /**
@@ -16,7 +20,7 @@ import org.neo4j.driver.v1.Driver;
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
  */
-public class CyRelationLoadingHandler extends CypherLoadingHandler<Long>
+public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution>
 {
 	private String relationTypesSparql, relationPropsSparql;
 
@@ -26,48 +30,34 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<Long>
 	}
 		
 	@Override
-	public void accept ( Long sparqlQueryOffset )
+	public void accept ( Set<QuerySolution> relRecords )
 	{
-		Thread.currentThread ().setName ( "cyRelLoad:" + sparqlQueryOffset );
-		if ( this.dataFinished () && sparqlQueryOffset >= this.getOverflowQueryOffset () ) {
-			log.trace ( "{} over {}, skipping", sparqlQueryOffset, this.getOverflowQueryOffset () );
-			return;
-		}
-		
-		log.trace ( "Begin at offset {}", sparqlQueryOffset );
+		this.renameThread ( "cyRelLoad:" );
+		log.trace ( "Begin of {} relations", relRecords.size () );
 		
 		Map<String, List<Map<String, Object>>> cyData = new HashMap<> ();
 
 		NeoDataManager dataMgr = this.getDataMgr ();
-		long limit = this.getSparqlQuerySize ();
 		
-		long newOffset = dataMgr.processRelationIris ( 
-			this.relationTypesSparql, sparqlQueryOffset, limit, 
-			row -> { 
-				CyRelation cyRelation = dataMgr.getCyRelation ( row );
-				dataMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
-	
-				String type = cyRelation.getType ();
-				List<Map<String, Object>> cyRels = cyData.get ( type );
-				if ( cyRels == null ) cyData.put ( type, cyRels = new LinkedList<> () );
+		for ( QuerySolution row: relRecords )
+		{
+			CyRelation cyRelation = dataMgr.getCyRelation ( row );
+			dataMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
 
-				Map<String, Object> cyparams = new HashMap<> (); 
-				cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
-				cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
-				cyparams.put ( "properties", this.getCypherProperties ( cyRelation ) );
-				cyRels.add ( cyparams );				
-		});
-		
-		if ( newOffset == -1 ) {
-			// notify we ran out of data
-			this.notifyDataFinished ( sparqlQueryOffset );
-			log.trace ( "Notifyng end of data at offset {}", sparqlQueryOffset );
-			return;
+			String type = cyRelation.getType ();
+			List<Map<String, Object>> cyRels = cyData.get ( type );
+			if ( cyRels == null ) cyData.put ( type, cyRels = new LinkedList<> () );
+
+			Map<String, Object> cyparams = new HashMap<> (); 
+			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
+			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
+			cyparams.put ( "properties", this.getCypherProperties ( cyRelation ) );
+			cyRels.add ( cyparams );				
 		}
 		
 		// OK, ready to call Neo!
 		//
-		log.trace ( "Offset {}, sending relation(s) to Cypher", sparqlQueryOffset );
+		log.trace ( "Offset {}, sending relation(s) to Cypher", relRecords.size () );
 		
 		String cypherCreateRel = 
 			"UNWIND {relations} AS rel\n" +
@@ -88,8 +78,8 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<Long>
 			
 			relsCtr += props.size (); 
 		}
-		log.trace ( "{} relations(s) sent to Cypher", relsCtr );		
-		log.info ( "Done SPARQL offset {}", sparqlQueryOffset );		
+		
+		log.debug ( "{} actual relations(s) sent to Cypher", relsCtr );		
 	}
 		
 	public String getRelationTypesSparql ()

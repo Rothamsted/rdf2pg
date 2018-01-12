@@ -14,18 +14,20 @@ import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-public class CyNodeLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManager, Long>
+public class CyNodeLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManager, Set<Resource>>
 {
+	private String nodeIrisSparql;
+	
 	public CyNodeLoadingProcessor ()
 	{
 		super ();
 		this.setDestinationMaxSize ( 100000 );
-		this.setDestinationSupplier ( () -> 0l );
+		this.setDestinationSupplier ( () -> new HashSet<> () );
 	}
 
 	@Override
-	protected long getDestinationSize ( Long foo ) {
-		return this.getDestinationMaxSize () + 1;
+	protected long getDestinationSize ( Set<Resource> dest ) {
+		return dest.size ();
 	}
 
 	@Override
@@ -33,15 +35,29 @@ public class CyNodeLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManag
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
-		long limit = this.getDestinationMaxSize ();
-		CyNodeLoadingHandler handler = (CyNodeLoadingHandler) this.getConsumer ();
-		handler.setSparqlQuerySize ( limit );
-
-		for ( long offset = 0; !handler.dataFinished (); offset += limit )
-			handleNewTask ( offset, true );
+		@SuppressWarnings ( "unchecked" )
+		Set<Resource> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
+		
+		dataMgr.processNodeIris ( nodeIrisSparql, res ->
+		{
+			chunk [ 0 ].add ( res );
+			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
+		});
+		
+		handleNewTask ( chunk [ 0 ], true );
 		
 		// We don't need to force the last one, since at this point everything was processed already.
 		this.waitExecutor ( "Waiting for Cyhper Node Loading tasks to finish" );
 		log.info ( "Cypher Nodes Loading ended" );
-	}	
+	}
+
+	public String getNodeIrisSparql ()
+	{
+		return nodeIrisSparql;
+	}
+
+	public void setNodeIrisSparql ( String nodeIrisSparql )
+	{
+		this.nodeIrisSparql = nodeIrisSparql;
+	}
 }

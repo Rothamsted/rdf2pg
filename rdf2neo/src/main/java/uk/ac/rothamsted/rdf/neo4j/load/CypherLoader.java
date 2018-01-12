@@ -58,6 +58,7 @@ public class CypherLoader<RS>
 			// Nodes
 			this.cyNodeLoadingHandler.setDataMgr ( dataMgr );
 			CyNodeLoadingProcessor cyNodeLoader = new CyNodeLoadingProcessor ();
+			cyNodeLoader.setNodeIrisSparql ( this.getNodeIrisSparql () );
 			cyNodeLoader.setDestinationMaxSize ( this.cypherChunkSize );
 			cyNodeLoader.setConsumer ( this.cyNodeLoadingHandler );
 			cyNodeLoader.process ( dataMgr );
@@ -103,6 +104,17 @@ public class CypherLoader<RS>
 	public void setCyRelationLoadingHandler ( CyRelationLoadingHandler cyRelationLoadingHandler )
 	{
 		this.cyRelationLoadingHandler = cyRelationLoadingHandler;
+	}
+
+	public String getNodeIrisSparql ()
+	{
+		return nodeIrisSparql;
+	}
+
+
+	public void setNodeIrisSparql ( String nodeIrisSparql )
+	{
+		this.nodeIrisSparql = nodeIrisSparql;
 	}
 
 

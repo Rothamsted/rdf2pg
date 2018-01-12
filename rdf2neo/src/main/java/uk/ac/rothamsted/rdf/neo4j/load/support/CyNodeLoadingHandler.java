@@ -1,5 +1,8 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,9 +23,9 @@ import org.neo4j.driver.v1.Driver;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-public class CyNodeLoadingHandler extends CypherLoadingHandler<Long>
+public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 {
-	private String nodeIrisSparql, labelsSparql, nodePropsSparql;
+	private String labelsSparql, nodePropsSparql;
 	
 	public CyNodeLoadingHandler ()
 	{
@@ -31,51 +34,35 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Long>
 	
 	
 	@Override
-	public void accept ( Long sparqlQueryOffset )
+	public void accept ( Set<Resource> nodeResources )
 	{
-		Thread.currentThread ().setName ( "cyNodeLoad:" + sparqlQueryOffset );
-		if ( this.dataFinished () && sparqlQueryOffset >= this.getOverflowQueryOffset () ) {
-			log.trace ( "{} over {}, skipping", sparqlQueryOffset, this.getOverflowQueryOffset () );
-			return;
-		}
-		
-		log.trace ( "Begin at offset {}", sparqlQueryOffset );
+		this.renameThread ( "cyNodeLoad:" );
+		log.trace ( "Begin of {} nodes", nodeResources.size () );
 		
 		// Let's collect node attributes on a per-label basis
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
 		String defaultLabel = this.getDefaultLabel ();
-		long limit = this.getSparqlQuerySize ();
 		NeoDataManager dataMgr = this.getDataMgr ();
 
-		long newOffset = dataMgr.processNodeIris 
-		( 
-			this.nodeIrisSparql, sparqlQueryOffset, limit, 
-			nodeRes -> {
-				CyNode cyNode = dataMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+		for ( Resource nodeRes: nodeResources )
+		{
+			CyNode cyNode = dataMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
-				SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
-				
-				// We always need a default, to be able to fetch the nodes during relation creation stage
-				labels.add ( defaultLabel );
-				
-				List<Map<String, Object>> cyNodes = cyData.get ( labels );
-				if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
+			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
+			
+			// We always need a default, to be able to fetch the nodes during relation creation stage
+			labels.add ( defaultLabel );
+			
+			List<Map<String, Object>> cyNodes = cyData.get ( labels );
+			if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
 
-				cyNodes.add ( this.getCypherProperties ( cyNode ) );
-		}); 
-		
-		
-		if ( newOffset == -1 ) {
-			// notify we ran out of data
-			this.notifyDataFinished ( sparqlQueryOffset );
-			log.trace ( "Notifyng end of data at offset {}", sparqlQueryOffset );
-			return;
-		}
+			cyNodes.add ( this.getCypherProperties ( cyNode ) );
+		} 
 		
 		// OK, ready to call Neo!
 		//
-		log.trace ( "Offset {}, sending node(s) to Cypher", sparqlQueryOffset );
+		log.trace ( "Sending {} node(s) to Cypher", nodeResources.size () );
 
 		String cypherCreateNodes = "UNWIND {nodes} AS node\n" + 
 			"CREATE (n:%s)\n" +
@@ -102,21 +89,9 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Long>
 			nodesCtr += props.size ();
 		}
 		
-		log.trace ( "{} node(s) sent to Cypher", nodesCtr );
-		log.info ( "Done SPARQL offset {}", sparqlQueryOffset );
+		log.debug ( "{} actual node(s) sent to Cypher", nodesCtr );
 	}
-	
-	public String getNodeIrisSparql ()
-	{
-		return nodeIrisSparql;
-	}
-
-	public void setNodeIrisSparql ( String nodeIrisSparql )
-	{
-		this.nodeIrisSparql = nodeIrisSparql;
-	}	
-	
-	
+		
 	public String getLabelsSparql ()
 	{
 		return labelsSparql;

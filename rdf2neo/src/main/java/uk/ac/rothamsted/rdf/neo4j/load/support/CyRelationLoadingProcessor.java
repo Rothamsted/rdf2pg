@@ -3,6 +3,9 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.Resource;
+
 import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
 
 /**
@@ -12,18 +15,18 @@ import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-public class CyRelationLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManager, Long>
+public class CyRelationLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManager, Set<QuerySolution>>
 {	
 	public CyRelationLoadingProcessor ()
 	{
 		super ();
 		this.setDestinationMaxSize ( 100000 );
-		this.setDestinationSupplier ( () -> 0l );
+		this.setDestinationSupplier ( () -> new HashSet<> () );
 	}
 
 	@Override
-	protected long getDestinationSize ( Long dest ) {
-		return this.getDestinationMaxSize () + 1;
+	protected long getDestinationSize ( Set<QuerySolution> dest ) {
+		return dest.size ();
 	}
 
 	@Override
@@ -31,12 +34,19 @@ public class CyRelationLoadingProcessor extends SizeBasedBatchProcessor<NeoDataM
 	{
 		log.info ( "Starting Cypher Relations Loading" );
 
-		long limit = this.getDestinationMaxSize ();
+		@SuppressWarnings ( "unchecked" )
+		Set<QuerySolution> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
+		
 		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getConsumer ();
-		handler.setSparqlQuerySize ( limit );
-
-		for ( long offset = 0; !handler.dataFinished (); offset += limit )
-			handleNewTask ( offset, true );
+		String relTypesSparql = handler.getRelationTypesSparql ();
+		
+		dataMgr.processRelationIris ( relTypesSparql, res ->
+		{
+			chunk [ 0 ].add ( res );
+			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
+		});
+		
+		handleNewTask ( chunk [ 0 ], true );
 
 		// We don't need to force the last one, since at this point everything was processed already.
 		this.waitExecutor ( "Waiting for Cyhper Relation Loading tasks to finish" );

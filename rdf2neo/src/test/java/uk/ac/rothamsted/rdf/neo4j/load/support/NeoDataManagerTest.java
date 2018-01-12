@@ -118,7 +118,7 @@ public class NeoDataManagerTest
 		log.info ( "Verifying Relations" );
 
 		List<CyRelation> cyRelations = new ArrayList<> ();
-		dataMgr.processRelationIris ( SPARQL_REL_TYPES, 0, (long) 1E6, 
+		dataMgr.processRelationIris ( SPARQL_REL_TYPES, 
 			row -> 
 			{
 				CyRelation rel = dataMgr.getCyRelation ( row );

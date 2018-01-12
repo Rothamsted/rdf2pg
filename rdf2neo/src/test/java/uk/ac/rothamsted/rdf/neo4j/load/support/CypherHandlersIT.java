@@ -13,7 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.system.Txn;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
@@ -53,9 +57,9 @@ public class CypherHandlersIT
 	}
 
 	@Before
-	public void initNeo () throws IOException
+	public void initNeoData () throws IOException
 	{
-		initNeoStatic ();
+		initNeo ();
 
 		try (	
 				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
@@ -72,15 +76,19 @@ public class CypherHandlersIT
 			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
 			handler.setDataMgr ( dataMgr );
 			handler.setNeo4jDriver ( neoDriver );
-			handler.setNodeIrisSparql ( IOUtils.readResource ( "test_node_iris.sparql" ) );
 			handler.setLabelsSparql ( NeoDataManagerTest.SPARQL_NODE_LABELS );
 			handler.setNodePropsSparql ( NeoDataManagerTest.SPARQL_NODE_PROPS );
 			
-			handler.accept ( 0l );
+			Set<Resource> rdfNodes = 
+				Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
+				.map ( iri -> dataMgr.getDataSet ().getDefaultModel ().createResource ( iri ) )
+				.collect ( Collectors.toSet () );
+
+			handler.accept ( rdfNodes );
 		}
 	}
 	
-	public static void initNeoStatic ()
+	public static void initNeo ()
 	{
 		try (	
 				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
@@ -130,8 +138,16 @@ public class CypherHandlersIT
 			handler.setRelationTypesSparql ( NeoDataManagerTest.SPARQL_REL_TYPES );
 			handler.setRelationPropsSparql ( NeoDataManagerTest.SPARQL_REL_PROPS  );
 
-			handler.accept ( 0L );
-				
+			Set<QuerySolution> relSparqlRows = new HashSet<> ();
+			Dataset dataSet = dataMgr.getDataSet ();
+			Txn.executeRead ( dataSet,  () ->
+				SparqlUtils.select ( NeoDataManagerTest.SPARQL_REL_TYPES, dataMgr.getDataSet ().getDefaultModel () )
+					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
+			);
+
+			handler.accept ( relSparqlRows );
+
+			
 			Session session = neoDriver.session ( AccessMode.READ );
 
 			StatementResult cursor = session.run ( "MATCH ()-[r]->() RETURN COUNT ( r ) AS ct" );
