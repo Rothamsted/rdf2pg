@@ -2,16 +2,11 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -20,17 +15,18 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.QuerySolutionMap;
 import org.apache.jena.query.ReadWrite;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.system.Txn;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.tdb2.DatabaseMgr;
-import org.apache.jena.tdb2.TDB2Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -43,87 +39,123 @@ import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
 
 /**
- * TODO: comment me!
+ * <h1>The RDF source data manager.</h1> 
+ * 
+ * <p>This manages the input Jena TDB store for the Neo4J conversion operations. an instance of this class
+ * is associated to a file path where a TDB sits and various operations provide access to its RDF data.</p> 
+ *  
+ * <p>TODO: rename to something like TDBManager.</p>
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>7 Dec 2017</dd></dl>
  *
  */
+@Component
 public class NeoDataManager implements AutoCloseable
 {
-	private Function<String, String> labelIdConverter = new DefaultIri2IdConverter ();
+	private Function<String, String> cyNodeLabelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
-	private Function<String, String> relationIdConverter = new DefaultIri2IdConverter ();
+	private Function<String, String> cyRelationIdConverter = new DefaultIri2IdConverter ();
 	
-	private static String configTdbPath = System.getProperty ( "java.io.tmpdir" ) + "neo2rdf_tdb";
-	private static boolean doCleanTdbDirectory = true;
-	
-	private String tdbPath;
+	private String tdbPath = null;
 	private Dataset dataSet = null;
 	
 	/**
+	 * A SPARQL query cache. This stores queries that have already been parsed from their string representation. 
+	 * It is used in the data manager methods, to save some time about query parsing.  
+	 * 
 	 * TODO: move the query caching to {@link SparqlUtils}.
 	 */
 	private LoadingCache<String, Query> queryCache; 
 	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
-	
-	public NeoDataManager () 
+
+	public NeoDataManager ()
+	{
+		Cache<String, Query> cache = CacheBuilder
+			.newBuilder ()
+			.maximumSize ( 1000 )
+			.build ( new CacheLoader<String, Query> () 
+			{
+				@Override
+				public Query load ( String sparql ) throws Exception {
+					return QueryFactory.create ( sparql, Syntax.syntaxARQ );
+				}
+			});
+		queryCache = (LoadingCache<String, Query>) cache;		
+	}
+
+	/**
+	 * Calls {@link #open(String)}.
+	 */
+	public NeoDataManager ( String tdbPath ) {
+		this ();
+		open ( tdbPath );
+	}
+
+	/**
+	 * <p>Opens a TDB on the file systema and initialises the {@link #getDataSet() data set} that is managed by this
+	 * class.</p>
+	 * 
+	 * <p>Many of the operations below require that this method is first invoked. {@link #close()} is its counterpart.</p> 
+	 */
+	public void open ( String tdbPath ) 
 	{
 		wrapTask ( () -> 
 		{
-			log.debug ( "Setting TDB to '{}'", configTdbPath );
+			log.debug ( "Setting TDB to '{}'", tdbPath );
 			
-			this.tdbPath = configTdbPath;
-			
-			if ( doCleanTdbDirectory )
-			{
-				File tdbDir = new File ( tdbPath );
-				FileUtils.deleteDirectory ( tdbDir  );
-				tdbDir.mkdir ();
-			}
-			
+			this.tdbPath = tdbPath;
 			this.dataSet = TDBFactory.createDataset ( tdbPath );
-						
-			Cache<String, Query> cache = CacheBuilder
-				.newBuilder ()
-				.maximumSize ( 1000 )
-				.build ( new CacheLoader<String, Query> () 
-				{
-					@Override
-					public Query load ( String sparql ) throws Exception {
-						return QueryFactory.create ( sparql, Syntax.syntaxARQ );
-					}
-				});
-			queryCache = (LoadingCache<String, Query>) cache;
 		});
 	}
 	
+	/**
+	 * Ensures that {@link #open(String)} was called and raises an exception if not. Used in several methods below that 
+	 * require this condition.
+	 */
+	protected void ensureOpen ()
+	{
+		if ( this.dataSet == null ) throw new IllegalStateException ( 
+			"The data manager must be open() before working with it" 
+		);
+	}
 	
-	
-	
+	/**
+	 * Uses the underlining TDB and mapping queries to create a new {@link CyNode} instance.
+	 * 
+	 * @param nodeRes the RDF/Jena resource correspnding to the Cypher node. This provides the ?iri paramter in the queries below.
+	 * @param labelsSparql the node labels query, which is usually taken from {@link CyNodeLoadingHandler#getLabelsSparql()}.
+	 * @param propsSparql the node properties query, which is usually taken from {@link CyNodeLoadingHandler#getNodePropsSparql()}.
+	 */
 	public CyNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
 	{
+		ensureOpen ();
 		Model model = this.dataSet.getDefaultModel ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
 		params.add ( "iri", nodeRes );
-		Query qry = this.queryCache.getUnchecked ( labelsSparql );
 
 		CyNode cyNode = new CyNode ( nodeRes.getURI () );
 		
 		// The node's labels
-		Function<String, String> labelIdConverter = this.getLabelIdConverter ();
-		boolean wasInTnx = dataSet.isInTransaction ();
-		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
-		try {
-			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
-			qx.execSelect ().forEachRemaining ( row ->
-				cyNode.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
-			);
-		}
-		finally {
-			if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
+		if ( labelsSparql != null )
+		{
+			// If it's omitted, it will get the default label.
+			Query qry = this.queryCache.getUnchecked ( labelsSparql );
+			Function<String, String> labelIdConverter = this.getCyNodeLabelIdConverter ();
+			
+			boolean wasInTnx = dataSet.isInTransaction ();
+			if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
+			try {
+				QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+				qx.execSelect ().forEachRemaining ( row ->
+					cyNode.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
+				);
+			}
+			finally {
+				if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
+			}
 		}
 		
 		// and the properties
@@ -132,33 +164,56 @@ public class NeoDataManager implements AutoCloseable
 		return cyNode;
 	}
 
+	/**
+	 * Just a variant of {@link #getCyNode(Resource, String, String)}.
+	 */
 	public CyNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
 	{
+		ensureOpen ();
 		Resource nodeRes = this.dataSet.getDefaultModel ().getResource ( nodeIri );
 		return getCyNode ( nodeRes, labelsSparql, propsSparql ); 
 	}
 
-	
-	private String getCypherId ( RDFNode node, Function<String, String> idConverter )
+	/**
+	 * Gets a Cypher ID by applying an {@link DefaultIri2IdConverter ID conversion function} to an IRI taken from a 
+	 * {@link Resource} RDF/Jena node, or to a lexical value taken from a {@link Literal} RDF/Jena node. 
+	 * 
+	 * Helper method used in other methods in this class.
+	 */
+	protected String getCypherId ( RDFNode node, Function<String, String> idConverter )
 	{
+		if ( node == null ) return null;
+		
 		String id = node.canAs ( Resource.class )
 			? node.as ( Resource.class ).getURI ()
 			: node.asLiteral ().getLexicalForm ();
-		
+					
 		if ( idConverter != null ) id = idConverter.apply ( id );
 		
 		return id;
 	}
 	
-	private void addCypherProps ( CypherEntity cyEnt, String propsSparql )
+	/**
+	 * Take an existing {@link CypherEntity} and adds the properties that can be mapped from the underlining TDB by means 
+	 * of a property query, like {@link CyNodeLoadingHandler#getNodePropsSparql()}, or 
+	 * {@link CyRelationLoadingHandler#getRelationPropsSparql()}.
+	 * 
+	 * It doesn't do anything if the query is null.
+	 * 
+	 */
+	protected void addCypherProps ( CypherEntity cyEnt, String propsSparql )
 	{
+		ensureOpen ();		
 		Model model = this.dataSet.getDefaultModel ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
 		params.add ( "iri", model.getResource ( cyEnt.getIri () ) );
 
+		// It may be omitted, if you don't have any property except the IRI.
+		if ( propsSparql == null ) return;
+		
 		Query qry = this.queryCache.getUnchecked ( propsSparql );
-		Function<String, String> propIdConverter = this.getPropertyIdConverter ();
+		Function<String, String> propIdConverter = this.getCyPropertyIdConverter ();
 		
 		boolean wasInTnx = dataSet.isInTransaction ();
 		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
@@ -168,6 +223,10 @@ public class NeoDataManager implements AutoCloseable
 			qx.execSelect ().forEachRemaining ( row ->
 			{
 				String propName = this.getCypherId ( row.get ( "name" ), propIdConverter );
+				if ( propName == null ) throw new IllegalArgumentException ( 
+					"Null property name for " + cyEnt.getIri () 
+				);
+				
 				String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
 				cyEnt.addPropValue ( propName, propValue );
 			});
@@ -177,9 +236,19 @@ public class NeoDataManager implements AutoCloseable
 		}
 	}
 	
-	
+	/**
+	 * Does something with the results coming from {@link CyNodeLoadingHandler node IRI query}. This method is an helper 
+	 * that contains common operations like transaction markers, logging etc.
+	 * 
+	 */
 	public long processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
 	{
+		if ( nodeIrisSparql == null ) {
+			log.debug ( "null SPARQL for processNodeIris(), skipping" );
+			return 0;
+		}
+		
+		ensureOpen ();		
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
@@ -200,27 +269,47 @@ public class NeoDataManager implements AutoCloseable
 	}
 	
 	
-	
+	/**
+	 * Similarly to {@link #getCyNode(Resource, String, String)}, uses a binding (i.e., row) from a 
+	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation type query} and creates a new {@link CyRelation}
+	 * with the RDF mapped data.
+	 */
 	public CyRelation getCyRelation ( QuerySolution relRow )
-	{
+	{		
 		Resource relRes = relRow.get ( "iri" ).asResource ();
 		CyRelation cyRelation = new CyRelation ( relRes.getURI () );
 		
-		// The node's labels
-		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getRelationIdConverter () ) );
+		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getCyRelationTypeIdConverter () ) );
+
 		cyRelation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
 		cyRelation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
 				
 		return cyRelation;
 	}
 	
+	/**
+	 * Similarly to {@link #addCypherProps(CypherEntity, String)}, takes a {@link CyRelation} and adds the properties that
+	 * can be mapped via {@link CyRelationLoadingHandler#getRelationPropsSparql() relation property query}.
+	 * 
+	 */
 	public void setCyRelationProps ( CyRelation cyRelation, String propsSparql )
 	{
 		this.addCypherProps ( cyRelation, propsSparql );
 	}
 	
+	/**
+	 * Similarly to {@link #processNodeIris(String, Consumer)}, does something with the results from a 
+	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation types query}.
+	 * 
+	 */
 	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action )
 	{
+		if ( relationIrisSparql == null ) {
+			log.debug ( "null SPARQL for processRelationIris(), skipping" );
+			return 0;
+		}
+		
+		ensureOpen ();		
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
@@ -241,40 +330,62 @@ public class NeoDataManager implements AutoCloseable
 	}
 	
 	
-	public Function<String, String> getLabelIdConverter ()
+	/** 
+	 * Methods like {@link #getCyNode(Resource, String, String)} use this {@link DefaultIri2IdConverter ID} converter to 
+	 * get IDs for Cypher node labels from RDF IRIs (or even literal).
+	 * 
+	 */
+	public Function<String, String> getCyNodeLabelIdConverter ()
 	{
-		return labelIdConverter;
+		return cyNodeLabelIdConverter;
 	}
 
-	public void setLabelIdConverter ( Function<String, String> labelIdConverter )
+	@Autowired ( required = false ) @Qualifier ( "nodeLabelIdConverter" )
+	public void setCyNodeLabelIdConverter ( Function<String, String> labelIdConverter )
 	{
-		this.labelIdConverter = labelIdConverter;
+		this.cyNodeLabelIdConverter = labelIdConverter;
 	}
 	
-	public Function<String, String> getRelationIdConverter ()
+	/**
+	 * Similarly to {@link #getCyNodeLabelIdConverter()}, this is used to get a relation type string from 
+	 * a relation type IRI (or even literal). 
+	 * 
+	 */
+	public Function<String, String> getCyRelationTypeIdConverter ()
 	{
-		return relationIdConverter;
+		return cyRelationIdConverter;
 	}
 
-	public void setRelationIdConverter ( Function<String, String> relationIdConverter )
+	@Autowired ( required = false )	@Qualifier ( "relationIdConverter" )
+	public void setCyRelationTypeIdConverter ( Function<String, String> relationIdConverter )
 	{
-		this.relationIdConverter = relationIdConverter;
+		this.cyRelationIdConverter = relationIdConverter;
 	}
 
 
 
-
-	public Function<String, String> getPropertyIdConverter ()
+	/**
+	 * Similarly to {@link #getCyNodeLabelIdConverter()}, this is used to get a Cypher node/relation property name
+	 * from an RDF IRI (or even literal). 
+	 * 
+	 */
+	public Function<String, String> getCyPropertyIdConverter ()
 	{
 		return propertyIdConverter;
 	}
 
-	public void setPropertyIdConverter ( Function<String, String> propertyIdConverter )
+	@Autowired ( required = false )	@Qualifier ( "propertyIdConverter" )
+	public void setCyPropertyIdConverter ( Function<String, String> propertyIdConverter )
 	{
 		this.propertyIdConverter = propertyIdConverter;
 	}
 
 	
+	/**
+	 * This returns the Jena {@link Dataset} corresponding to the TDB triple store at {@link #getTdbPath()} that was 
+	 * opened by {@link #open(String)}. 
+	 * 
+	 */
 	public Dataset getDataSet ()
 	{
 		return dataSet;
@@ -286,7 +397,10 @@ public class NeoDataManager implements AutoCloseable
 		wrapFun ( () -> { task.run (); return null; } ); 
 	}
 
-	
+	/**
+	 * A facility that wraps some code throwing a checked exception with a try/catch and an possibly re-throws an 
+	 * unchecked exception.  
+	 */
 	protected static <V> V wrapFun ( ThrowingSupplier<V> fun )
 	{
 		try {
@@ -303,16 +417,6 @@ public class NeoDataManager implements AutoCloseable
 	public String getTdbPath ()
 	{
 		return tdbPath;
-	}
-
-	public static void setConfigTdbPath ( String configTdbPath )
-	{
-		NeoDataManager.configTdbPath = configTdbPath;
-	}
-	
-	public static void setDoCleanTdbDirectory ( boolean doCleanTdbDirectory )
-	{
-		NeoDataManager.doCleanTdbDirectory = doCleanTdbDirectory;
 	}
 
 

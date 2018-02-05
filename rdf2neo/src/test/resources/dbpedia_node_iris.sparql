@@ -1,8 +1,12 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <http://schema.org/>
 
+# An example of how query for the IRIs about RDF resources that you want to map to Cypher/Neo4J as nodes.
+# 
 SELECT DISTINCT ?iri
 {
+  # This picks up nodes of interests based on their rdf:type, which should be pretty common.
+  #
   ?iri a ?label.
   FILTER ( strStarts ( STR ( ?label ), STR ( schema: ) ) ).
 }

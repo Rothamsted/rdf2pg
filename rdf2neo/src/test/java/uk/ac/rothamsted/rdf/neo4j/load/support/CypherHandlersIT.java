@@ -17,6 +17,7 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.system.Txn;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,15 +34,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
-import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
-import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelation;
 
 /**
- * TODO: comment me!
+ * Runs {@link CypherLoadingHandler}-related tests.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
@@ -55,7 +50,15 @@ public class CypherHandlersIT
 	public static void initData () throws IOException {
 		NeoDataManagerTest.initData ();
 	}
+	
+	@AfterClass
+	public static void closeData () throws IOException {
+		NeoDataManagerTest.closeDataMgr ();
+	}
 
+	/**
+	 * Loads some basic test RDF data into RDF.
+	 */
 	@Before
 	public void initNeoData () throws IOException
 	{
@@ -63,18 +66,12 @@ public class CypherHandlersIT
 
 		try (	
 				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+				CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
+				NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
 			)
 		{
-			NeoDataManagerTest dmtest = new NeoDataManagerTest ();
-			
 			// We need the same nodes in all tests
-			// 
-			
-			@SuppressWarnings ( "static-access" )
-			NeoDataManager dataMgr = dmtest.getDataMgr ();
-			
-			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
-			handler.setDataMgr ( dataMgr );
+			handler.setDataManager ( dataMgr );
 			handler.setNeo4jDriver ( neoDriver );
 			handler.setLabelsSparql ( NeoDataManagerTest.SPARQL_NODE_LABELS );
 			handler.setNodePropsSparql ( NeoDataManagerTest.SPARQL_NODE_PROPS );
@@ -88,6 +85,10 @@ public class CypherHandlersIT
 		}
 	}
 	
+	/**
+	 * Facility to empty the Neo4j test DB. Auto-called by other tests.
+	 * It's here as static method, because we call it from other clasess as well.
+	 */
 	public static void initNeo ()
 	{
 		try (	
@@ -99,7 +100,9 @@ public class CypherHandlersIT
 		}
 	}
 	
-	
+	/**
+	 * Test {@link CyNodeLoadingHandler} to see if nodes are mapped from RDF and loaded into Neo4J
+	 */
 	@Test
 	public void testNodes () throws Exception
 	{
@@ -120,20 +123,19 @@ public class CypherHandlersIT
 	}
 	
 	
+	/**
+	 * Tests {@link CyRelationLoadingHandler} to see if relations are mapped from RDF and loaded into Neo4J.
+	 */
 	@Test
 	public void testRelations () throws Exception
 	{
 		try (	
 			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
+			NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
 		)
 		{
-			NeoDataManagerTest dmtest = new NeoDataManagerTest ();
-			
-			@SuppressWarnings ( "static-access" )
-			NeoDataManager dataMgr = dmtest.getDataMgr ();
-			
-			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
-			handler.setDataMgr ( dataMgr );
+			handler.setDataManager ( dataMgr );
 			handler.setNeo4jDriver ( neoDriver );
 			handler.setRelationTypesSparql ( NeoDataManagerTest.SPARQL_REL_TYPES );
 			handler.setRelationPropsSparql ( NeoDataManagerTest.SPARQL_REL_PROPS  );

@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -25,12 +26,9 @@ import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyNode;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelation;
 
 /**
- * TODO: comment me!
+ * A few tests for the {@link NeoDataManager}.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
@@ -66,10 +64,15 @@ public class NeoDataManagerTest
 	private static NeoDataManager dataMgr = new NeoDataManager ();
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 		
+	public static final String TDB_PATH = "target/NeoDataManagerTest_tdb";
 	
+	/**
+	 * Loads the test TDB used in this class with a bounch of RDF data.
+	 */
 	@BeforeClass
 	public static void initData ()
 	{
+		dataMgr.open ( TDB_PATH );
 		Dataset ds = dataMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		ds.begin ( ReadWrite.WRITE );
@@ -86,6 +89,12 @@ public class NeoDataManagerTest
 		finally { 
 			ds.end ();
 		}
+	}
+	
+	@AfterClass
+	public static void closeDataMgr ()
+	{
+		dataMgr.close ();
 	}
 	
 	
@@ -165,11 +174,5 @@ public class NeoDataManagerTest
 		
 		log.info ( "End" );
 	}	
-	
-	
-	public static NeoDataManager getDataMgr ()
-	{
-		return dataMgr;
-	}
 	
 }

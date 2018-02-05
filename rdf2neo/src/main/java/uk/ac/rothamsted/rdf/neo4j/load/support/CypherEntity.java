@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO: comment me!
+ * Subclasses of this represents Cypher entities that can be loaded by the language, i.e., nodes/classes.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
@@ -25,7 +25,9 @@ public abstract class CypherEntity
 		this.iri = iri;
 	}
 
-
+	/** 
+	 * For us, every cypher entity must have an IRI/URI identifier.
+	 */
 	public String getIri ()
 	{
 		return iri;
@@ -36,6 +38,10 @@ public abstract class CypherEntity
 		this.iri = iri;
 	}
 
+	/** 
+	 * Both nodes and relations have properties. For the moment, a property is a name and a set of values. The latter
+	 * is translated to an array. We don't support ordered and duplicated values, since this doesn't exist in RDF.  
+	 */
 	public Map<String, Set<Object>> getProperties ()
 	{
 		return properties;

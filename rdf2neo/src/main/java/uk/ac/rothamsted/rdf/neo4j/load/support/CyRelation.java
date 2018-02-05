@@ -1,7 +1,7 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 /**
- * TODO: comment me!
+ * Represents a Cypher/Neo4J relation.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
@@ -25,6 +25,9 @@ public class CyRelation extends CypherEntity
 		this.type = type;
 	}
 
+	/**
+	 * We identify the arc's nodes by means of their IRIs/URIs.  
+	 */
 	public String getFromIri ()
 	{
 		return fromIri;
@@ -35,6 +38,9 @@ public class CyRelation extends CypherEntity
 		this.fromIri = fromIri;
 	}
 
+	/**
+	 * @see #getFromIri()
+	 */
 	public String getToIri ()
 	{
 		return toIri;

@@ -1,4 +1,4 @@
-# Used to get test data from https://dbpedia.org/sparql
+# Used outside of Java code, to get test data from https://dbpedia.org/sparql
 #
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

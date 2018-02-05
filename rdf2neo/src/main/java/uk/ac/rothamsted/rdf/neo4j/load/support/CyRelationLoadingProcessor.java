@@ -1,34 +1,32 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.Resource;
-
-import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
- * TODO: comment me!
+ * <H1>The Relation Loading processor</H1>
+ * 
+ * <p>Similarly to the {@link CyNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
+ * tuples of relation basic properties () and then send them to a 
+ * {@link CyRelationLoadingHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
+ * this processor does things in multi-thread fashion.</p>
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-public class CyRelationLoadingProcessor extends SizeBasedBatchProcessor<NeoDataManager, Set<QuerySolution>>
+@Component
+public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution>
 {	
-	public CyRelationLoadingProcessor ()
-	{
-		super ();
-		this.setDestinationMaxSize ( 100000 );
-		this.setDestinationSupplier ( () -> new HashSet<> () );
-	}
-
-	@Override
-	protected long getDestinationSize ( Set<QuerySolution> dest ) {
-		return dest.size ();
-	}
-
+	/**
+	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
+	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
+	 */
 	@Override
 	public void process ( NeoDataManager dataMgr, Object...opts )
 	{
@@ -38,18 +36,27 @@ public class CyRelationLoadingProcessor extends SizeBasedBatchProcessor<NeoDataM
 		Set<QuerySolution> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
 		
 		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getConsumer ();
-		String relTypesSparql = handler.getRelationTypesSparql ();
 		
-		dataMgr.processRelationIris ( relTypesSparql, res ->
+		dataMgr.processRelationIris ( handler.getRelationTypesSparql (), res ->
 		{
 			chunk [ 0 ].add ( res );
+			// This decides if the chunk is big enough and, if yes, submits a new task and returns a new empty chunk.
 			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
 		});
-		
+
+		// Last chunk has always to be submitted.
 		handleNewTask ( chunk [ 0 ], true );
 
-		// We don't need to force the last one, since at this point everything was processed already.
 		this.waitExecutor ( "Waiting for Cyhper Relation Loading tasks to finish" );
 		log.info ( "Cypher Relations Loading ended" );
 	}
+
+	/**
+	 * Does nothing but invoking {@link #setConsumer(Consumer)}. It's here just to accommodate Spring annotations. 
+	 */
+	@Autowired
+	public CyRelationLoadingProcessor setConsumer ( CyRelationLoadingHandler handler ) {
+		super.setConsumer ( handler );
+		return this;
+	}	
 }

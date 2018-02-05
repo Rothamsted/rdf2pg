@@ -1,0 +1,54 @@
+# Used outside of Java code, to get test data from https://dbpedia.org/sparql
+#
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbp:	<http://dbpedia.org/property/>
+PREFIX dct: <http://dublincore.org/2012/06/14/dcterms#>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+
+CONSTRUCT 
+{
+  ?iri a ?type.
+  ?iri dbo:birthPlace <http://dbpedia.org/resource/Shizuoka,_Shizuoka>.
+   
+  ?iri a ?type.
+  ?iri rdfs:label ?label.
+   
+  ?iri dbo:birthDate ?birthDate.
+  ?iri dbo:deathDate ?deathDate.
+  ?iri dct:description ?descr.
+  ?iri foaf:gender ?gender.
+  ?iri dct:subject ?subject.
+  
+	 ?iri dbo:team ?team.
+	 ?team a ?teamType;
+	   rdfs:label ?teamLabel.      
+	  
+  ?iri dbp:totalgoals ?goals. 
+}
+WHERE
+{
+  ?iri dbo:birthPlace <http://dbpedia.org/resource/Shizuoka,_Shizuoka>.
+  
+  ?iri a ?type.
+  FILTER ( strStarts ( STR ( ?type ), STR ( schema: ) ) )
+  
+ 	?iri rdfs:label ?label.
+  FILTER ( lang ( ?label ) = 'en' )
+   
+  OPTIONAL { ?iri dbo:birthDate ?birthDate }
+  OPTIONAL { ?iri dbo:deathDate ?deathDate }
+  OPTIONAL { ?iri dct:description ?descr }
+  OPTIONAL { ?iri foaf:gender ?gender }
+  OPTIONAL { ?iri dct:subject ?subject }
+  OPTIONAL { 
+    ?iri dbo:team ?team.
+    ?team a ?teamType. FILTER ( strStarts ( STR ( ?teamType ), STR ( schema: ) ) )
+    ?team rdfs:label ?teamLabel. FILTER ( lang ( ?teamLabel ) = 'en' )          
+  }
+  OPTIONAL { ?iri dbp:totalgoals ?goals }
+}
+#ORDER BY RAND()
+LIMIT 10000

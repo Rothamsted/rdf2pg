@@ -1,5 +1,8 @@
 PREFIX ex: <http://www.example.com/res/>
 
+# Typically, this will be same query as the node IRIs, but reporting the ?label variable in the results
+# Here the ?iri variable is bound to a particular node, using the results coming from the node IRI query.
+#
 SELECT DISTINCT ?label
 {
 	?iri a ?label.

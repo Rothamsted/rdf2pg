@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO: comment me!
+ * Represents a Cypher/Neo4J node.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>5 Dec 2017</dd></dl>
@@ -19,6 +19,7 @@ public class CyNode extends CypherEntity
 		super ( iri );
 	}
 
+	/** Node labels (i.e., types ) */
 	public Set<String> getLabels ()
 	{
 		return labels;
@@ -31,6 +32,7 @@ public class CyNode extends CypherEntity
 
 	public boolean addLabel ( String label ) 
 	{
+		if ( label == null ) return false;
 		if ( this.labels == null ) this.labels = new HashSet<> ();
 		return this.labels.add ( label );
 	}

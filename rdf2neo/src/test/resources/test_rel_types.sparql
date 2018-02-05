@@ -1,9 +1,21 @@
 PREFIX ex: <http://www.example.com/res/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
+# 
+# An example of how to define mapping from RDF relations, either plain relations or reified ones.
+#
+# - ?iri is the resource about the relation, and uniquely identifies a triple or a relation between two nodes.
+# - ?fromIri, ?toIri are the resources representing the relation's endpoint nodes. 
+#   These must correspond to the IRIs reported by the
+#   node IRI query.
+# - ?type is a tag (usually an IRI, but it can be a string) representing the relation type. For IRIs, you can configure
+# an IRI->ShortID converter.
+# 
 SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 {
 	{ 
+	  # Non-reified relations
+	  # 
 		?fromIri ?type ?toIri.
 		?type rdfs:subPropertyOf* ex:relation.
 		
@@ -17,7 +29,12 @@ SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 		  AS ?iri
 		)
 	}
-	UNION {
+	UNION 
+	{
+	  # Reified relations. These will typically be the instances of special classes, with properties to represent 
+	  # the relation endpoints and type, plus possible further properties about the relation (fetched by the 
+	  # relation property query).
+	  # 
 	  ?iri a ex:Relation;
 	   	ex:property ?type;
 	    ex:from ?fromIri;

@@ -4,14 +4,29 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX dbo: <http://dbpedia.org/ontology/>
 
+# 
+# An example of how to define mapping from RDF relations, either plain relations or reified ones.
+#
+# - ?iri is the resource about the relation, and uniquely identifies a triple or a relation between two nodes.
+# - ?fromIri, ?toIri are the resources representing the relation's endpoint nodes. 
+#   These must correspond to the IRIs reported by the
+#   node IRI query.
+# - ?type is a tag (usually an IRI, but it can be a string) representing the relation type. For IRIs, you can configure
+# an IRI->ShortID converter.
+# 
 SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 {
 	{ 
+	  # Plain relations, non-reified
+	  #
 		?fromIri ?type ?toIri.
 		
 		FILTER ( strStarts ( str ( ?type ), str ( dbo: ) ) ).
 		FILTER ( isIRI ( ?toIri ) ).		
 		
+		# Plain relations must get their fictitious IRI from constructs like this.
+		# Using the triple components ensures there is a unique IRI identifing the triple.
+		#
 		BIND ( 
 			IRI ( 
 		  		CONCAT ( 

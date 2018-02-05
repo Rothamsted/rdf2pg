@@ -3,11 +3,15 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX dbo: <http://dbpedia.org/ontology/>
 
+# An example of how to return pairs of name/value that represent the properties of a Cypher node.
+# 
+# - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter.
+# - ?value is a literal and, for the moment, is converted into a string, using its lexical value. We'll offer
+# more customisation soon (e.g., mapping XSD types to Cypher/Java types).
+# - ?iri is bound to a specific node IRI, to get the properties for that node. 
+# 
 SELECT DISTINCT ?iri ?name ?value
 {
-  ?iri a ?label.
-  FILTER ( strStarts ( STR ( ?label ), STR ( schema: ) ) ).
-
   ?iri ?name ?value.
   FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). 
 

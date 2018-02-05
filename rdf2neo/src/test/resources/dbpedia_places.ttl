@@ -1,3 +1,5 @@
+# Test data used in unit tests.
+#
 @prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dbr:	<http://dbpedia.org/resource/> .
 @prefix yago:	<http://dbpedia.org/class/yago/> .

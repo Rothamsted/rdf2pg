@@ -1,0 +1,37 @@
+PREFIX ex: <http://www.example.com/res/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+# See dbpedia_rel_* queries. This is a set of queries for a subset of data, to show how you can use 
+# MultiConfigCyLoader to load data from different query sets (see also multi_config.xml) 
+# 
+SELECT DISTINCT ?iri ?type ?fromIri ?toIri
+{
+	{ 
+	  # Plain relations, non-reified
+	  #
+		?fromIri ?type ?toIri.
+		
+		VALUES ( ?type ) {
+		  ( dct:subject )
+		  ( dbo:team )
+		  ( dbo:birthPlace )
+		}
+		
+		FILTER ( isIRI ( ?toIri ) ).	# Just in case of problems	
+		
+		# Fictitious IRI for plain relations
+		#
+		BIND ( 
+			IRI ( 
+		  		CONCAT ( 
+		  		  STR ( ex: ),
+		  		  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
+		  		) 
+		  	)
+		  AS ?iri
+		)
+	}
+}

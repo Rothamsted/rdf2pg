@@ -1,6 +1,9 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <http://schema.org/>
 
+# Typically, this will be same query as the node IRIs, but reporting the ?label variable in the results
+# Here the ?iri variable is bound to a particular node, using the results coming from the node IRI query.
+#
 SELECT DISTINCT ?iri ?label
 {
   ?iri a ?label.

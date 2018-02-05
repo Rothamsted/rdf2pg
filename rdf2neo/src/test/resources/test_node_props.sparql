@@ -1,5 +1,12 @@
 PREFIX ex: <http://www.example.com/res/>
 
+# An example of how to return pairs of name/value that represent the properties of a Cypher node.
+# 
+# - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter.
+# - ?value is a literal and, for the moment, is converted into a string, using its lexical value. We'll offer
+# more customisation soon (e.g., mapping XSD types to Cypher/Java types).
+# - ?iri is bound to a specific node IRI, to get the properties for that node. 
+# 
 SELECT DISTINCT ?name ?value
 {
 	?iri a ?label.

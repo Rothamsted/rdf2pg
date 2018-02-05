@@ -1,6 +1,10 @@
 PREFIX ex: <http://www.example.com/res/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
+# Another example of how to get relation properties.
+# This is similar to node property queries, ?iri is the resource that represent the Cypher relation being mapped from
+# RDF. Usually, this is the instance of a reified relation having some property
+# 
 SELECT DISTINCT ?iri ?name ?value
 {
   ?iri a ex:Relation; ?name ?value.
