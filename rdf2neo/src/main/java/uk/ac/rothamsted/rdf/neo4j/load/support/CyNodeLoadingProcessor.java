@@ -22,7 +22,7 @@ import uk.ac.ebi.utils.threading.BatchProcessor;
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-@Component
+@Component @Scope ( scopeName = "loadingSession" )
 public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 {
 	private String nodeIrisSparql;

@@ -30,8 +30,8 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "prototype" )
-public class SimpleCyLoader implements CypherLoader
+@Component @Scope ( scopeName = "loadingSession" )
+public class SimpleCyLoader implements CypherLoader, AutoCloseable
 {	
 	private CyNodeLoadingProcessor cyNodeLoader;
 	private CyRelationLoadingProcessor cyRelationLoader;
@@ -58,14 +58,12 @@ public class SimpleCyLoader implements CypherLoader
 	@Override
 	public void load ( String tdbPath, Object... opts )
 	{		
-		try (
-			// These are to be closed at the end of loading
-			// Note that we are assuming the relation handler has the same objects
+		try
+		{
 			NeoDataManager dataMgr = this.getDataManager ();
 			CyNodeLoadingProcessor cyNodeLoader = this.getCyNodeLoader ();
 			CyRelationLoadingProcessor cyRelLoader = this.getCyRelationLoader ();
-		)
-		{
+
 			dataManager.open ( tdbPath );
 			Dataset ds = dataMgr.getDataSet ();
 			
@@ -90,6 +88,24 @@ public class SimpleCyLoader implements CypherLoader
 			throw new RuntimeException ( "Error while running the RDF/Cypher loader:" + ex.getMessage (), ex );
 		}
 	}
+	
+	/**
+	 * Closes dependency objects.
+	 */
+	@Override
+	public void close ()
+	{
+		try
+		{
+			if ( this.getDataManager () != null ) this.dataManager.close ();
+			if ( this.getCyNodeLoader () != null ) this.cyNodeLoader.close ();
+			if ( this.getCyRelationLoader () != null ) this.cyRelationLoader.close ();
+		}
+		catch ( Exception ex ) {
+			throw new RuntimeException ( "Internal error while running the Cypher Loader: " + ex.getMessage (), ex );
+		}
+	}
+
 
 	/**
 	 * The manager to access to the underlining RDF source.

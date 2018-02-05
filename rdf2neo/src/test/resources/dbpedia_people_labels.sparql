@@ -1,5 +1,7 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX ex: <http://www.example.com/res/>
 
 # See dbpedia_node_* queries. This is a set of queries for a subset of data, to show how you can use 
 # MultiConfigCyLoader to load data from different query sets (see also multi_config.xml) 
@@ -14,5 +16,9 @@ SELECT DISTINCT ?iri ?label
  		?team dbo:team ?iri.
  		?iri a ?label.
  		FILTER ( strStarts ( STR ( ?label ), STR ( schema: ) ) )
+ 	}
+ 	UNION {
+ 	  BIND ( ex:Topic AS ?label ) 
+ 	  ?iri a ?label  
  	}
 }

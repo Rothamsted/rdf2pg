@@ -3,12 +3,13 @@ package uk.ac.rothamsted.rdf.neo4j.load;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.neo4j.load.spring.SimpleCyLoaderFactory;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
@@ -140,25 +141,26 @@ public class MultiConfigCyLoader implements CypherLoader
 		{
 			for ( ConfigItem cfg: this.getConfigItems () )
 			{		
-				SimpleCyLoader cypherLoader = this.getCypherLoaderFactory ().getObject ();
-				
-				cypherLoader.setName ( cfg.getName () );
-				
-				CyNodeLoadingProcessor cyNodeLoader = cypherLoader.getCyNodeLoader ();
-				CyRelationLoadingProcessor cyRelLoader = cypherLoader.getCyRelationLoader ();
-				
-				CyNodeLoadingHandler cyNodehandler = (CyNodeLoadingHandler) cyNodeLoader.getConsumer ();
-				CyRelationLoadingHandler cyRelhandler = (CyRelationLoadingHandler) cyRelLoader.getConsumer ();
-				
-				cyNodeLoader.setNodeIrisSparql ( cfg.getNodeIrisSparql () );
-	
-				cyNodehandler.setLabelsSparql ( cfg.getLabelsSparql () );
-				cyNodehandler.setNodePropsSparql ( cfg.getNodePropsSparql () );
-				
-				cyRelhandler.setRelationTypesSparql ( cfg.getRelationTypesSparql () );
-				cyRelhandler.setRelationPropsSparql ( cfg.getRelationPropsSparql () );
-	
-				cypherLoader.load ( tdbPath, mode == 0, mode == 1 );
+				try ( SimpleCyLoader cypherLoader = this.getCypherLoaderFactory ().getObject (); )
+				{
+					cypherLoader.setName ( cfg.getName () );
+					
+					CyNodeLoadingProcessor cyNodeLoader = cypherLoader.getCyNodeLoader ();
+					CyRelationLoadingProcessor cyRelLoader = cypherLoader.getCyRelationLoader ();
+					
+					CyNodeLoadingHandler cyNodehandler = (CyNodeLoadingHandler) cyNodeLoader.getConsumer ();
+					CyRelationLoadingHandler cyRelhandler = (CyRelationLoadingHandler) cyRelLoader.getConsumer ();
+					
+					cyNodeLoader.setNodeIrisSparql ( cfg.getNodeIrisSparql () );
+		
+					cyNodehandler.setLabelsSparql ( cfg.getLabelsSparql () );
+					cyNodehandler.setNodePropsSparql ( cfg.getNodePropsSparql () );
+					
+					cyRelhandler.setRelationTypesSparql ( cfg.getRelationTypesSparql () );
+					cyRelhandler.setRelationPropsSparql ( cfg.getRelationPropsSparql () );
+		
+					cypherLoader.load ( tdbPath, mode == 0, mode == 1 );
+				} // try				
 			} // for config items
 		} // for mode
 	}
@@ -173,7 +175,8 @@ public class MultiConfigCyLoader implements CypherLoader
 		return configItems;
 	}
 
-	@Autowired ( required = false ) @Qualifier ( "loaderConfig" )
+	
+	@Autowired ( required = false ) // @Qualifier ( "loaderConfig" )
 	public void setConfigItems ( List<ConfigItem> configItems )
 	{
 		this.configItems = configItems;
@@ -190,7 +193,7 @@ public class MultiConfigCyLoader implements CypherLoader
 		return cypherLoaderFactory;
 	}
 
-	@Autowired @Qualifier ( "simpleCyLoaderFactory" )
+	@Resource ( name = "simpleCyLoaderFactory" )
 	public void setCypherLoaderFactory ( ObjectFactory<SimpleCyLoader> cypherLoaderFactory )
 	{
 		this.cypherLoaderFactory = cypherLoaderFactory;

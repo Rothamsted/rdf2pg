@@ -4,6 +4,9 @@ PREFIX schema: <http://schema.org/>
 PREFIX dbo: <http://dbpedia.org/ontology/>
 PREFIX dct: <http://dublincore.org/2012/06/14/dcterms#>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dct: <http://dublincore.org/2012/06/14/dcterms#>
+PREFIX dbp:	<http://dbpedia.org/property/>
 
 # See dbpedia_node_* queries. This is a set of queries for a subset of data, to show how you can use 
 # MultiConfigCyLoader to load data from different query sets (see also multi_config.xml) 

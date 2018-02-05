@@ -1,6 +1,9 @@
 @prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dbr:	<http://dbpedia.org/resource/> .
 @prefix schema:	<http://schema.org/> .
+@prefix dct: <http://dublincore.org/2012/06/14/dcterms#>.
+@prefix ex: <http://www.example.com/res/>.
+
 dbr:Imagawa_Yoshimoto	rdf:type	schema:Person .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 dbr:Imagawa_Yoshimoto	rdfs:label	"Imagawa Yoshimoto"@en .
@@ -1832,4 +1835,7 @@ dbr:Ryuji_Okada	rdf:type	schema:Person ;
 		"1974-09-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ;
-	dbp:totalgoals	0 .
+	dbp:totalgoals	0;
+	dct:subject ex:exampleSubject.
+
+ex:exampleSubject a ex:Topic.

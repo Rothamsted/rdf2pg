@@ -7,6 +7,7 @@ PREFIX dbo: <http://dbpedia.org/ontology/>
 PREFIX dbp:	<http://dbpedia.org/property/>
 PREFIX dct: <http://dublincore.org/2012/06/14/dcterms#>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX ex: <http://www.example.com/res/>
 
 CONSTRUCT 
 {
@@ -21,12 +22,16 @@ CONSTRUCT
   ?iri dct:description ?descr.
   ?iri foaf:gender ?gender.
   ?iri dct:subject ?subject.
+  ?iri dct:subject ex:exampleSubject.
   
 	 ?iri dbo:team ?team.
 	 ?team a ?teamType;
 	   rdfs:label ?teamLabel.      
 	  
-  ?iri dbp:totalgoals ?goals. 
+  ?iri dbp:totalgoals ?goals.
+  
+  ?subject a ex:Topic.
+  ex:exampleSubject a ex:Topic.
 }
 WHERE
 {

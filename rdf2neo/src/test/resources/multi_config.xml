@@ -7,89 +7,95 @@
 
     <context:component-scan base-package = "uk.ac.rothamsted.rdf.neo4j" />
 
-		<!-- Here it's where you define the different mapping query sets -->
+		<!-- 
+		  Each ConfigItem is a mapping query set
 		
-		<util:list id = "loaderConfig" list-class = "java.util.LinkedList">
+		  You must define instances of ConfigItem and not a list of ConfigItem(s), due to the way Spring
+		  manages injection in this case (https://jira.spring.io/browse/SPR-8519).
+		-->
 
-			<!-- Queries to map places -->
+		<!-- Queries to map places -->
+		<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
 			
-			<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
+			<property name = "name" value = "places" />
+
+			<property name = "nodeIrisSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_node_iris.sparql" />
+				</bean>
+			</property>
 			
-				<property name = "name" value = "places" />
+			<property name="labelsSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_node_labels.sparql" />
+				</bean>
+			</property>
 
-				<property name = "nodeIrisSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_node_iris.sparql" />
-					</bean>
-				</property>
-				
-				<property name="labelsSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_node_labels.sparql" />
-					</bean>
-				</property>
+			<property name="nodePropsSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_node_props.sparql" />
+				</bean>
+			</property>
 
-				<property name="nodePropsSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_node_props.sparql" />
-					</bean>
-				</property>
+			<property name="relationTypesSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_rel_types.sparql" />
+				</bean>
+			</property>
 
-				<property name="relationTypesSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_rel_types.sparql" />
-					</bean>
-				</property>
+			<property name="relationPropsSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_rel_props.sparql" />
+				</bean>
+			</property>
 
-				<property name="relationPropsSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_rel_props.sparql" />
-					</bean>
-				</property>
-
-			</bean>
+		</bean>
 
 
-			<!-- Queries to map people -->
+		<!-- Queries to map people -->
 
-			<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
+		<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
+		
+			<property name = "name" value = "people" />
+
+			<property name = "nodeIrisSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_people_iris.sparql" />
+				</bean>
+			</property>
 			
-				<property name = "name" value = "people" />
+			<property name="labelsSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_people_labels.sparql" />
+				</bean>
+			</property>
 
-				<property name = "nodeIrisSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_people_iris.sparql" />
-					</bean>
-				</property>
-				
-				<property name="labelsSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_people_labels.sparql" />
-					</bean>
-				</property>
+			<property name="nodePropsSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_people_props.sparql" />
+				</bean>
+			</property>
 
-				<property name="nodePropsSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_people_props.sparql" />
-					</bean>
-				</property>
+			<property name="relationTypesSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+					<constructor-arg value = "dbpedia_people_rel_types.sparql" />
+				</bean>
+			</property>
 
-				<property name="relationTypesSparql">
-					<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-						<constructor-arg value = "dbpedia_people_rel_types.sparql" />
-					</bean>
-				</property>
+			<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
+						
+		</bean>
 
-				<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
-							
-			</bean>
 
-		</util:list>
 
 
 		<!-- And some boilerplate -->
 		
-		<bean id = "neoDriver" class = "org.neo4j.driver.v1.GraphDatabase" factory-method="driver">
+		<!-- We need the loadingSession scope, since a new driver is created for each query set -->
+		<bean id = "neoDriver" 
+				  class = "org.neo4j.driver.v1.GraphDatabase" factory-method="driver"
+				  scope = "loadingSession"
+		>
 			
 			<constructor-arg value = "bolt://127.0.0.1:7687" />
 					

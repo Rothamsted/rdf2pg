@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-@Component
+@Component @Scope ( scopeName = "loadingSession" )
 public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution>
 {	
 	/**
