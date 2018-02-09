@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;

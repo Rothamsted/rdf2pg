@@ -3,14 +3,13 @@ package uk.ac.rothamsted.rdf.neo4j.load.spring;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader;
-import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem;
+import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
 
 /**
  * This is a simple {@link SimpleCyLoader} factory which of {@link #getObject()} invokes a 

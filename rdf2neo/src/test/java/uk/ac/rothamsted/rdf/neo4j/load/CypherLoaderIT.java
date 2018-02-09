@@ -13,10 +13,8 @@ import org.junit.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem;
