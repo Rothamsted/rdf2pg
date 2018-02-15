@@ -147,17 +147,5 @@
 		</plugins>
 
 	</build>
-	
-	
-	<repositories>
-
-		<repository>
-	    <id>EBIBioSamples-GH-repo</id>
-	    <url>https://raw.githubusercontent.com/EBIBioSamples/EBIBioSamples.github.io/maven-repo</url>
-	    <snapshots>
-	    </snapshots>
-    </repository>
-		
-  </repositories>
 
 </project>
