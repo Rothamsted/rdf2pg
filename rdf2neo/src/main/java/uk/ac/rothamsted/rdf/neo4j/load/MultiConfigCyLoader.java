@@ -5,8 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
@@ -29,10 +34,12 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
  *
  */
 @Component
-public class MultiConfigCyLoader implements CypherLoader
+public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 {
 	private List<ConfigItem> configItems = new LinkedList<> ();
 	private ObjectFactory<SimpleCyLoader> cypherLoaderFactory;
+	
+	private ApplicationContext springContext;
 	
 	/**
 	 * Represents the RDF/Cypher configuration for a single node/relation type.
@@ -126,6 +133,37 @@ public class MultiConfigCyLoader implements CypherLoader
 		}
 	}
 	
+
+	/** 
+	 * Gets an instance from the Spring application context. The returned instance is bound to the context parameter,
+	 * so that {@link MultiConfigCyLoader#close()} can close it.
+	 * 
+	 * See the XML examples to know how you should configure
+	 * beans for this.
+	 * 
+	 */
+	public static MultiConfigCyLoader getSpringInstance ( ApplicationContext beanCtx )
+	{
+		MultiConfigCyLoader mloader = beanCtx.getBean ( MultiConfigCyLoader.class );
+		mloader.springContext = beanCtx;
+		return mloader;
+	}
+
+	/**
+	 * Invokes {@link #getSpringInstance(ApplicationContext)} with the context obtained from the XML 
+	 * configuration file.
+	 * 
+	 * The instance returned this way will close the application context when the {@link MultiConfigCyLoader#close()}
+	 * method is invoked.
+	 *  
+	 */
+	public static MultiConfigCyLoader getSpringInstance ( String xmlConfigPath )
+	{
+		ApplicationContext ctx = new FileSystemXmlApplicationContext ( xmlConfigPath );
+		return getSpringInstance ( ctx );
+	}
+	
+	
 	/** 
 	 * Loops through {@link #getConfigItems() config items} and instantiates a {@link #getCypherLoaderFactory() new simple loader}
 	 * for eache item, to load nodes/relations mapped by the config item.
@@ -196,6 +234,22 @@ public class MultiConfigCyLoader implements CypherLoader
 	public void setCypherLoaderFactory ( ObjectFactory<SimpleCyLoader> cypherLoaderFactory )
 	{
 		this.cypherLoaderFactory = cypherLoaderFactory;
+	}
+
+
+	/**
+	 * This does something effectively if the current loader instance was obtained via one of the 
+	 * {@link #getSpringInstance(ApplicationContext)} methods. The corresponding Spring context is closed. If the 
+	 * loader was obtained some other way, this method has no effect and you can safely call it, just in case.
+	 * 
+	 */
+	@Override
+	public void close ()
+	{
+		if ( this.springContext == null || ! ( springContext instanceof ConfigurableApplicationContext ) ) return;
+		
+		ConfigurableApplicationContext cfgCtx = (ConfigurableApplicationContext) springContext;
+		cfgCtx.close ();
 	}
 
 }

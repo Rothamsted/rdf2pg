@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>uk.ac.rothamsted</groupId>
+    <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
     <artifactId>rdf2neo-pom</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
@@ -12,11 +12,7 @@
   
   <name>rdf2neo - Core lib</name>
   <url>http://maven.apache.org</url>
-  
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  
+    
 	<dependencies>
 
 		<dependency>
@@ -49,6 +45,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
 		</dependency>
 		            	
 		<dependency>
@@ -128,6 +125,19 @@
           </execution>
         </executions>	      
 	    </plugin>
+
+			<!-- These are needed in other modules -->				
+			<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-jar-plugin</artifactId>
+		    <executions>
+		    		<execution>
+		        <goals>
+		          <goal>test-jar</goal>
+		        </goals>
+		      </execution>
+		    </executions>
+		  </plugin>				
 				
 		</plugins>	
 		

@@ -65,6 +65,7 @@ public class CypherLoaderIT
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
+			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{ 			
 			// TODO: configurator, multiple config sets
@@ -89,7 +90,6 @@ public class CypherLoaderIT
 			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
 			cyRelProc.setConsumer ( cyRelHandler );
 
-			SimpleCyLoader cyloader = new SimpleCyLoader ();
 			cyloader.setCyNodeLoader ( cyNodeProc );
 			cyloader.setCyRelationLoader ( cyRelProc );
 			
@@ -178,9 +178,11 @@ public class CypherLoaderIT
 	@Test
 	public void testSpringMultiConfig ()
 	{
-		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config.xml" ); )
+		try ( 
+			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config.xml" );
+			MultiConfigCyLoader mloader = MultiConfigCyLoader.getSpringInstance ( beanCtx );				
+		)
 		{			
-			MultiConfigCyLoader mloader = beanCtx.getBean ( MultiConfigCyLoader.class );
 			mloader.load ( NeoDataManagerTest.TDB_PATH );
 			// TODO: test
 		}
