@@ -21,7 +21,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
  * <dl><dt>Date:</dt><dd>13 Jan 2018</dd></dl>
  *
  */
-public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<NeoDataManager, Set<T>>
+public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfDataManager, Set<T>>
 {
 	public CyLoadingProcessor ()
 	{

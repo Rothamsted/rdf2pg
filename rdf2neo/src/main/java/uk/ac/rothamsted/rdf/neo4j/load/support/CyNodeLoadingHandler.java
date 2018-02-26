@@ -50,7 +50,7 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
 		String defaultLabel = this.getDefaultLabel ();
-		NeoDataManager dataMgr = this.getDataManager ();
+		RdfDataManager dataMgr = this.getDataManager ();
 
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
@@ -102,7 +102,8 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		
 		log.debug ( "{} actual node(s) sent to Cypher", nodesCtr );
 	}
-		
+			
+	
   /**
    * This is a query that must returns the variable ?label and contains the variable ?iri, which is bound to a node's 
    * IRI, to fetch its labels. It must return distinct results (we obviously don't care if you don't use the DISTINCT
@@ -133,4 +134,5 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 	{
 		this.nodePropsSparql = nodePropsSparql;
 	}
+	
 }

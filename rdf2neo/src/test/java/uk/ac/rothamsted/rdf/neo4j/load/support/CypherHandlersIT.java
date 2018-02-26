@@ -48,12 +48,12 @@ public class CypherHandlersIT
 
 	@BeforeClass
 	public static void initData () throws IOException {
-		NeoDataManagerTest.initData ();
+		RdfDataManagerTest.initData ();
 	}
 	
 	@AfterClass
 	public static void closeData () throws IOException {
-		NeoDataManagerTest.closeDataMgr ();
+		RdfDataManagerTest.closeDataMgr ();
 	}
 
 	/**
@@ -67,14 +67,14 @@ public class CypherHandlersIT
 		try (	
 				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 				CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
-				NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
+				RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 			)
 		{
 			// We need the same nodes in all tests
 			handler.setDataManager ( dataMgr );
 			handler.setNeo4jDriver ( neoDriver );
-			handler.setLabelsSparql ( NeoDataManagerTest.SPARQL_NODE_LABELS );
-			handler.setNodePropsSparql ( NeoDataManagerTest.SPARQL_NODE_PROPS );
+			handler.setLabelsSparql ( RdfDataManagerTest.SPARQL_NODE_LABELS );
+			handler.setNodePropsSparql ( RdfDataManagerTest.SPARQL_NODE_PROPS );
 			
 			Set<Resource> rdfNodes = 
 				Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
@@ -132,18 +132,18 @@ public class CypherHandlersIT
 		try (	
 			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
-			NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
+			RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 		)
 		{
 			handler.setDataManager ( dataMgr );
 			handler.setNeo4jDriver ( neoDriver );
-			handler.setRelationTypesSparql ( NeoDataManagerTest.SPARQL_REL_TYPES );
-			handler.setRelationPropsSparql ( NeoDataManagerTest.SPARQL_REL_PROPS  );
+			handler.setRelationTypesSparql ( RdfDataManagerTest.SPARQL_REL_TYPES );
+			handler.setRelationPropsSparql ( RdfDataManagerTest.SPARQL_REL_PROPS  );
 
 			Set<QuerySolution> relSparqlRows = new HashSet<> ();
 			Dataset dataSet = dataMgr.getDataSet ();
 			Txn.executeRead ( dataSet,  () ->
-				SparqlUtils.select ( NeoDataManagerTest.SPARQL_REL_TYPES, dataMgr.getDataSet ().getDefaultModel () )
+				SparqlUtils.select ( RdfDataManagerTest.SPARQL_REL_TYPES, dataMgr.getDataSet ().getDefaultModel () )
 					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
 			);
 

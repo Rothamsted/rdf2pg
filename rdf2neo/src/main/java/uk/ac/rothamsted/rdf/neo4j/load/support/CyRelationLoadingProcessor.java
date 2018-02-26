@@ -28,7 +28,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
 	 */
 	@Override
-	public void process ( NeoDataManager dataMgr, Object...opts )
+	public void process ( RdfDataManager dataMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
 

@@ -3,13 +3,13 @@ package uk.ac.rothamsted.rdf.neo4j.idconvert;
 import java.util.function.Function;
 
 import uk.ac.ebi.utils.ids.IdUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 
 /** 
  * <p>An IRI converter turns a full long IRI/URI into a more readable ID/Label.</p>
  * 
- * <p>They are used by the Neo4J converter, e.g., {@link NeoDataManager#getCyPropertyIdConverter()}, 
- * {@link NeoDataManager#getCyRelationTypeIdConverter()} and technically they are nothing but string/string
+ * <p>They are used by the Neo4J converter, e.g., {@link RdfDataManager#getCyPropertyIdConverter()}, 
+ * {@link RdfDataManager#getCyRelationTypeIdConverter()} and technically they are nothing but string/string
  * functions (where the input is an IRI).</p> 
  *   
  * <p>This is the default IRI converter, which is a wrapper of {@link IdUtils#iri2id(String)}, i.e., it returns the 

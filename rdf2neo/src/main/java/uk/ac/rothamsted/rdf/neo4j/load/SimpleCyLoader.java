@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 
 /**
  * <h1>The simple Cypher/Neo4j loader</h1> 
@@ -36,7 +36,7 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	private CyNodeLoadingProcessor cyNodeLoader;
 	private CyRelationLoadingProcessor cyRelationLoader;
 		
-	private NeoDataManager dataManager = new NeoDataManager ();
+	private RdfDataManager dataManager = new RdfDataManager ();
 	
 	private String name;
 	
@@ -60,7 +60,7 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	{		
 		try
 		{
-			NeoDataManager dataMgr = this.getDataManager ();
+			RdfDataManager dataMgr = this.getDataManager ();
 			CyNodeLoadingProcessor cyNodeLoader = this.getCyNodeLoader ();
 			CyRelationLoadingProcessor cyRelLoader = this.getCyRelationLoader ();
 
@@ -110,13 +110,13 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	/**
 	 * The manager to access to the underlining RDF source.
 	 */
-	public NeoDataManager getDataManager ()
+	public RdfDataManager getDataManager ()
 	{
 		return dataManager;
 	}
 
 	@Autowired
-	public void setDataManager ( NeoDataManager dataManager )
+	public void setDataManager ( RdfDataManager dataManager )
 	{
 		this.dataManager = dataManager;
 	}

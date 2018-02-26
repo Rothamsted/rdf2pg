@@ -51,7 +51,7 @@ import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
  *
  */
 @Component
-public class NeoDataManager implements AutoCloseable
+public class RdfDataManager implements AutoCloseable
 {
 	private Function<String, String> cyNodeLabelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
@@ -70,7 +70,7 @@ public class NeoDataManager implements AutoCloseable
 	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 
-	public NeoDataManager ()
+	public RdfDataManager ()
 	{
 		Cache<String, Query> cache = CacheBuilder
 			.newBuilder ()
@@ -88,7 +88,7 @@ public class NeoDataManager implements AutoCloseable
 	/**
 	 * Calls {@link #open(String)}.
 	 */
-	public NeoDataManager ( String tdbPath ) {
+	public RdfDataManager ( String tdbPath ) {
 		this ();
 		open ( tdbPath );
 	}

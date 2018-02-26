@@ -23,8 +23,8 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.NeoDataManagerTest;
+import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigCyLoader}.
@@ -39,7 +39,7 @@ public class CypherLoaderIT
 	public static void initTDB ()
 	{
 		try (
-			NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
+			RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 	  )
 		{
 			Dataset ds = dataMgr.getDataSet ();
@@ -64,7 +64,7 @@ public class CypherLoaderIT
 	{
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			NeoDataManager dataMgr = new NeoDataManager ( NeoDataManagerTest.TDB_PATH );
+			RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{ 			
@@ -93,7 +93,7 @@ public class CypherLoaderIT
 			cyloader.setCyNodeLoader ( cyNodeProc );
 			cyloader.setCyRelationLoader ( cyRelProc );
 			
-			cyloader.load ( NeoDataManagerTest.TDB_PATH );
+			cyloader.load ( RdfDataManagerTest.TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -108,7 +108,7 @@ public class CypherLoaderIT
 		cymloader.setCypherLoaderFactory ( () -> 
 		{
 			// This will eventually be managed by Spring
-			NeoDataManager dataMgr = new NeoDataManager ();
+			RdfDataManager dataMgr = new RdfDataManager ();
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			
 			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
@@ -155,7 +155,7 @@ public class CypherLoaderIT
 		
 		cymloader.setConfigItems ( config );
 
-		cymloader.load ( NeoDataManagerTest.TDB_PATH );
+		cymloader.load ( RdfDataManagerTest.TDB_PATH );
 		
 		// TODO: test!
 	}	
@@ -169,7 +169,7 @@ public class CypherLoaderIT
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
 			CypherLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
-			cyloader.load ( NeoDataManagerTest.TDB_PATH );
+			cyloader.load ( RdfDataManagerTest.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -183,7 +183,7 @@ public class CypherLoaderIT
 			MultiConfigCyLoader mloader = MultiConfigCyLoader.getSpringInstance ( beanCtx );				
 		)
 		{			
-			mloader.load ( NeoDataManagerTest.TDB_PATH );
+			mloader.load ( RdfDataManagerTest.TDB_PATH );
 			// TODO: test
 		}
 	}	

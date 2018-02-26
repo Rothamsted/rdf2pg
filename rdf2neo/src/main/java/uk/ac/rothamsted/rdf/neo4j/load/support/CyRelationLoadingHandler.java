@@ -39,7 +39,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 		
 		Map<String, List<Map<String, Object>>> cyData = new HashMap<> ();
 
-		NeoDataManager dataMgr = this.getDataManager ();
+		RdfDataManager dataMgr = this.getDataManager ();
 
 		// Pre-process relation data in a form suitable for Cypher processing, i.e., group relation data on a per-relation type 
 		// basis and arrange each relation as a map of key/value properties.

@@ -28,7 +28,7 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 	private String nodeIrisSparql;
 	
 	@Override
-	public void process ( NeoDataManager dataMgr, Object...opts )
+	public void process ( RdfDataManager dataMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
@@ -52,7 +52,7 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 	}
 
 	/**
-	 * The query to be used with the {@link NeoDataManager} to fetch the IRIs of Cypher/Neo4J nodes that needs to be
+	 * The query to be used with the {@link RdfDataManager} to fetch the IRIs of Cypher/Neo4J nodes that needs to be
 	 * loaded. This usually goes together with {@link CyNodeLoadingHandler#getLabelsSparql()} and
 	 * {@link CyNodeLoadingHandler#getNodePropsSparql()}.
 	 * 

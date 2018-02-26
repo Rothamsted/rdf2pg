@@ -36,7 +36,7 @@ import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
  */
 public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoCloseable 
 {
-	private NeoDataManager dataManager;
+	private RdfDataManager dataManager;
 	private Driver neo4jDriver;
 
 	private String defaultLabel = "Resource";
@@ -53,7 +53,7 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		super ();
 	}
 	
-	public CypherLoadingHandler ( NeoDataManager dataMgr, Driver neo4jDriver )
+	public CypherLoadingHandler ( RdfDataManager dataMgr, Driver neo4jDriver )
 	{
 		super ();
 		this.dataManager = dataMgr;
@@ -132,13 +132,13 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		});
 	}
 
-	public NeoDataManager getDataManager ()
+	public RdfDataManager getDataManager ()
 	{
 		return dataManager;
 	}
 
 	@Autowired
-	public void setDataManager ( NeoDataManager dataMgr )
+	public void setDataManager ( RdfDataManager dataMgr )
 	{
 		this.dataManager = dataMgr;
 	}
@@ -178,7 +178,7 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 	@Override
 	public void close ()
 	{
-		NeoDataManager dmgr = this.getDataManager ();
+		RdfDataManager dmgr = this.getDataManager ();
 		if ( dmgr != null ) dmgr.close ();
 		
 		Driver neoDriver = this.getNeo4jDriver ();

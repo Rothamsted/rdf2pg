@@ -28,13 +28,13 @@ import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
 
 /**
- * A few tests for the {@link NeoDataManager}.
+ * A few tests for the {@link RdfDataManager}.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
  *
  */
-public class NeoDataManagerTest
+public class RdfDataManagerTest
 {
 	static 
 	{
@@ -61,7 +61,7 @@ public class NeoDataManagerTest
 	public final static String SPARQL_REL_PROPS;
 	
 	
-	private static NeoDataManager dataMgr = new NeoDataManager ();
+	private static RdfDataManager dataMgr = new RdfDataManager ();
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 		
 	public static final String TDB_PATH = "target/NeoDataManagerTest_tdb";
