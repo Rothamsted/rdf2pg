@@ -61,7 +61,7 @@ public class RdfDataManagerTest
 	public final static String SPARQL_REL_PROPS;
 	
 	
-	private static RdfDataManager dataMgr = new RdfDataManager ();
+	private static RdfDataManager rdfMgr = new RdfDataManager ();
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 		
 	public static final String TDB_PATH = "target/NeoDataManagerTest_tdb";
@@ -72,8 +72,8 @@ public class RdfDataManagerTest
 	@BeforeClass
 	public static void initData ()
 	{
-		dataMgr.open ( TDB_PATH );
-		Dataset ds = dataMgr.getDataSet ();
+		rdfMgr.open ( TDB_PATH );
+		Dataset ds = rdfMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		ds.begin ( ReadWrite.WRITE );
 		try 
@@ -94,7 +94,7 @@ public class RdfDataManagerTest
 	@AfterClass
 	public static void closeDataMgr ()
 	{
-		dataMgr.close ();
+		rdfMgr.close ();
 	}
 	
 	
@@ -103,10 +103,10 @@ public class RdfDataManagerTest
 	{
 		log.info ( "Verifying Nodes" );
 
-		Dataset ds = dataMgr.getDataSet ();
+		Dataset ds = rdfMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		
-		CyNode cyNode = dataMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
+		CyNode cyNode = rdfMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
 		assertNotNull ( "CyNode 1 not found!", cyNode );
 		log.info ( "Got node 1" );
 
@@ -127,11 +127,11 @@ public class RdfDataManagerTest
 		log.info ( "Verifying Relations" );
 
 		List<CyRelation> cyRelations = new ArrayList<> ();
-		dataMgr.processRelationIris ( SPARQL_REL_TYPES, 
+		rdfMgr.processRelationIris ( SPARQL_REL_TYPES, 
 			row -> 
 			{
-				CyRelation rel = dataMgr.getCyRelation ( row );
-				dataMgr.setCyRelationProps ( rel, SPARQL_REL_PROPS );
+				CyRelation rel = rdfMgr.getCyRelation ( row );
+				rdfMgr.setCyRelationProps ( rel, SPARQL_REL_PROPS );
 				cyRelations.add ( rel );
 		});
 		

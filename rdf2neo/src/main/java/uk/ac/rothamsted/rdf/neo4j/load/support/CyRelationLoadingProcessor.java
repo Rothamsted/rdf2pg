@@ -28,7 +28,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
 	 */
 	@Override
-	public void process ( RdfDataManager dataMgr, Object...opts )
+	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
 
@@ -37,7 +37,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 		
 		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getConsumer ();
 		
-		dataMgr.processRelationIris ( handler.getRelationTypesSparql (), res ->
+		rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), res ->
 		{
 			chunk [ 0 ].add ( res );
 			// This decides if the chunk is big enough and, if yes, submits a new task and returns a new empty chunk.

@@ -50,12 +50,12 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
 		String defaultLabel = this.getDefaultLabel ();
-		RdfDataManager dataMgr = this.getDataManager ();
+		RdfDataManager rdfMgr = this.getRdfDataManager ();
 
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
 		{
-			CyNode cyNode = dataMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+			CyNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 			

@@ -28,14 +28,14 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 	private String nodeIrisSparql;
 	
 	@Override
-	public void process ( RdfDataManager dataMgr, Object...opts )
+	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
 		@SuppressWarnings ( "unchecked" )
 		Set<Resource> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
 		
-		dataMgr.processNodeIris ( this.getNodeIrisSparql (), res ->
+		rdfMgr.processNodeIris ( this.getNodeIrisSparql (), res ->
 		{
 			chunk [ 0 ].add ( res );
 

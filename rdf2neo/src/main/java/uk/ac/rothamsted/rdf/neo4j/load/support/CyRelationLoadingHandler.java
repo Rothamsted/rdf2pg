@@ -39,15 +39,15 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 		
 		Map<String, List<Map<String, Object>>> cyData = new HashMap<> ();
 
-		RdfDataManager dataMgr = this.getDataManager ();
+		RdfDataManager rdfMgr = this.getRdfDataManager ();
 
 		// Pre-process relation data in a form suitable for Cypher processing, i.e., group relation data on a per-relation type 
 		// basis and arrange each relation as a map of key/value properties.
 		//
 		for ( QuerySolution row: relRecords )
 		{
-			CyRelation cyRelation = dataMgr.getCyRelation ( row );
-			dataMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
+			CyRelation cyRelation = rdfMgr.getCyRelation ( row );
+			rdfMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
 
 			String type = cyRelation.getType ();
 			List<Map<String, Object>> cyRels = cyData.get ( type );

@@ -36,7 +36,7 @@ import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
  */
 public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoCloseable 
 {
-	private RdfDataManager dataManager;
+	private RdfDataManager rdfDataManager;
 	private Driver neo4jDriver;
 
 	private String defaultLabel = "Resource";
@@ -53,10 +53,10 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		super ();
 	}
 	
-	public CypherLoadingHandler ( RdfDataManager dataMgr, Driver neo4jDriver )
+	public CypherLoadingHandler ( RdfDataManager rdfDataManager, Driver neo4jDriver )
 	{
 		super ();
-		this.dataManager = dataMgr;
+		this.rdfDataManager = rdfDataManager;
 		this.neo4jDriver = neo4jDriver;
 	}
 
@@ -132,15 +132,15 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		});
 	}
 
-	public RdfDataManager getDataManager ()
+	public RdfDataManager getRdfDataManager ()
 	{
-		return dataManager;
+		return rdfDataManager;
 	}
 
 	@Autowired
-	public void setDataManager ( RdfDataManager dataMgr )
+	public void setRdfDataManager ( RdfDataManager rdfDataManager )
 	{
-		this.dataManager = dataMgr;
+		this.rdfDataManager = rdfDataManager;
 	}
 
 	/**
@@ -178,8 +178,8 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 	@Override
 	public void close ()
 	{
-		RdfDataManager dmgr = this.getDataManager ();
-		if ( dmgr != null ) dmgr.close ();
+		RdfDataManager rdfMgr = this.getRdfDataManager ();
+		if ( rdfMgr != null ) rdfMgr.close ();
 		
 		Driver neoDriver = this.getNeo4jDriver ();
 		if ( neoDriver != null ) neoDriver.close ();

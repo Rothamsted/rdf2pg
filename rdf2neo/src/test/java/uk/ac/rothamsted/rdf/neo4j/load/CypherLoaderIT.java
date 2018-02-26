@@ -39,10 +39,10 @@ public class CypherLoaderIT
 	public static void initTDB ()
 	{
 		try (
-			RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 	  )
 		{
-			Dataset ds = dataMgr.getDataSet ();
+			Dataset ds = rdfMgr.getDataSet ();
 			for ( String ttlPath: new String [] { "dbpedia_places.ttl", "dbpedia_people.ttl" } )
 			Txn.executeWrite ( ds, () -> 
 				ds.getDefaultModel ().read ( 
@@ -64,7 +64,7 @@ public class CypherLoaderIT
 	{
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			RdfDataManager dataMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{ 			
@@ -75,12 +75,12 @@ public class CypherLoaderIT
 			
 			cyNodeHandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
 			cyNodeHandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
-			cyNodeHandler.setDataManager ( dataMgr );
+			cyNodeHandler.setRdfDataManager ( rdfMgr );
 			cyNodeHandler.setNeo4jDriver ( neoDriver );
 			
 			cyRelHandler.setRelationTypesSparql ( IOUtils.readResource ( "dbpedia_rel_types.sparql" ) );
 			cyRelHandler.setRelationPropsSparql ( IOUtils.readResource ( "dbpedia_rel_props.sparql" ) );
-			cyRelHandler.setDataManager ( dataMgr );
+			cyRelHandler.setRdfDataManager ( rdfMgr );
 			cyRelHandler.setNeo4jDriver ( neoDriver );
 
 			CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
@@ -108,16 +108,16 @@ public class CypherLoaderIT
 		cymloader.setCypherLoaderFactory ( () -> 
 		{
 			// This will eventually be managed by Spring
-			RdfDataManager dataMgr = new RdfDataManager ();
+			RdfDataManager rdfMgr = new RdfDataManager ();
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			
 			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
 			CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
 			
-			cyNodeHandler.setDataManager ( dataMgr );
+			cyNodeHandler.setRdfDataManager ( rdfMgr );
 			cyNodeHandler.setNeo4jDriver ( neoDriver );
 			
-			cyRelHandler.setDataManager ( dataMgr );
+			cyRelHandler.setRdfDataManager ( rdfMgr );
 			cyRelHandler.setNeo4jDriver ( neoDriver );
 
 			CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
@@ -129,7 +129,7 @@ public class CypherLoaderIT
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 			cyloader.setCyNodeLoader ( cyNodeProc );
 			cyloader.setCyRelationLoader ( cyRelProc );
-			cyloader.setDataManager ( dataMgr );
+			cyloader.setRdfDataManager ( rdfMgr );
 			
 			return cyloader;
 		});

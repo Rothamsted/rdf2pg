@@ -36,7 +36,7 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	private CyNodeLoadingProcessor cyNodeLoader;
 	private CyRelationLoadingProcessor cyRelationLoader;
 		
-	private RdfDataManager dataManager = new RdfDataManager ();
+	private RdfDataManager rdfDataManager = new RdfDataManager ();
 	
 	private String name;
 	
@@ -60,12 +60,12 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	{		
 		try
 		{
-			RdfDataManager dataMgr = this.getDataManager ();
+			RdfDataManager rdfMgr = this.getRdfDataManager ();
 			CyNodeLoadingProcessor cyNodeLoader = this.getCyNodeLoader ();
 			CyRelationLoadingProcessor cyRelLoader = this.getCyRelationLoader ();
 
-			dataManager.open ( tdbPath );
-			Dataset ds = dataMgr.getDataSet ();
+			rdfDataManager.open ( tdbPath );
+			Dataset ds = rdfMgr.getDataSet ();
 			
 			String[] nameStr = { StringUtils.trimToEmpty ( this.getName () ) };
 			if ( !nameStr [ 0 ].isEmpty () ) nameStr [ 0 ] ="[" + nameStr [ 0 ] + "] ";
@@ -76,11 +76,11 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 			
 			// Nodes
 			boolean doNodes = opts != null && opts.length > 0 ? (Boolean) opts [ 0 ] : true;
-			if ( doNodes ) cyNodeLoader.process ( dataMgr, opts );
+			if ( doNodes ) cyNodeLoader.process ( rdfMgr, opts );
 	
 			// Relations
 			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
-			if ( doRels ) cyRelLoader.process ( dataMgr, opts );
+			if ( doRels ) cyRelLoader.process ( rdfMgr, opts );
 			
 			log.info ( "{}RDF-Cypher conversion finished", nameStr [ 0 ] );
 		}
@@ -97,7 +97,7 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	{
 		try
 		{
-			if ( this.getDataManager () != null ) this.dataManager.close ();
+			if ( this.getRdfDataManager () != null ) this.rdfDataManager.close ();
 			if ( this.getCyNodeLoader () != null ) this.cyNodeLoader.close ();
 			if ( this.getCyRelationLoader () != null ) this.cyRelationLoader.close ();
 		}
@@ -110,15 +110,15 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	/**
 	 * The manager to access to the underlining RDF source.
 	 */
-	public RdfDataManager getDataManager ()
+	public RdfDataManager getRdfDataManager ()
 	{
-		return dataManager;
+		return rdfDataManager;
 	}
 
 	@Autowired
-	public void setDataManager ( RdfDataManager dataManager )
+	public void setRdfDataManager ( RdfDataManager rdfDataManager )
 	{
-		this.dataManager = dataManager;
+		this.rdfDataManager = rdfDataManager;
 	}
 
 	/**
