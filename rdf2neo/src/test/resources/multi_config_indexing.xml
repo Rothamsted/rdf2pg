@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
     <context:component-scan base-package = "uk.ac.rothamsted.rdf.neo4j" />
-
+	
 		<!-- 
 		  Each ConfigItem is a mapping query set
 		
@@ -48,6 +48,8 @@
 					<constructor-arg value = "dbpedia_rel_props.sparql" />
 				</bean>
 			</property>
+			
+			<!-- This query defines those node labels and proeperties that need to be indexed. -->
 			
 			<property name="indexesSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">

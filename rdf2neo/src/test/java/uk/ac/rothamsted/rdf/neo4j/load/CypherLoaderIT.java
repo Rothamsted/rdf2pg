@@ -31,6 +31,9 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigCyLoader}.
  *
+ * As developer user, you're probably interested in invoking the converter using Spring configuration,
+ * @see {@link #testSpringMultiConfig()} or {@link #testNeoIndexing()}. 
+ *   
  * @author brandizi
  * <dl><dt>Date:</dt><dd>14 Dec 2017</dd></dl>
  *
