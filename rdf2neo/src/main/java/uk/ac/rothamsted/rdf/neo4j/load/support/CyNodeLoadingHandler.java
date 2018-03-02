@@ -49,8 +49,9 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		//
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
-		String defaultLabel = this.getDefaultLabel ();
+		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
+		String defaultLabel = neoMgr.getDefaultLabel ();
 
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
@@ -65,7 +66,7 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 			List<Map<String, Object>> cyNodes = cyData.get ( labels );
 			if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
 
-			cyNodes.add ( this.getCypherProperties ( cyNode ) );
+			cyNodes.add ( neoMgr.getCypherProperties ( cyNode ) );
 		} 
 		
 		// OK, now we are ready to call Neo!
@@ -92,10 +93,10 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 			List<Map<String, Object>> props = cyDataE.getValue ();
 			
 			// So, this structure with a list having a map per each node is the parameter to be sent to Cypher (for unwinding) 
-			this.runCypher ( cyCreateStr, "nodes", props );
+			neoMgr.runCypher ( cyCreateStr, "nodes", props );
 			
 			// And now, index it
-			for ( String label: labels ) this.runCypher ( String.format ( "CREATE INDEX ON :`%s`(iri)", label ) );
+			for ( String label: labels ) neoMgr.runCypher ( String.format ( "CREATE INDEX ON :`%s`(iri)", label ) );
 			
 			nodesCtr += props.size ();
 		}

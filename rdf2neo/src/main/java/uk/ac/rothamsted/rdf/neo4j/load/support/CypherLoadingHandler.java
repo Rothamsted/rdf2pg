@@ -36,10 +36,9 @@ import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
  */
 public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoCloseable 
 {
+	private Neo4jDataManager neo4jDataManager;
 	private RdfDataManager rdfDataManager;
-	private Driver neo4jDriver;
 
-	private String defaultLabel = "Resource";
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	/** Used to make thread names */
@@ -53,11 +52,11 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		super ();
 	}
 	
-	public CypherLoadingHandler ( RdfDataManager rdfDataManager, Driver neo4jDriver )
+	public CypherLoadingHandler ( RdfDataManager rdfDataManager, Neo4jDataManager neo4jDataManager )
 	{
 		super ();
 		this.rdfDataManager = rdfDataManager;
-		this.neo4jDriver = neo4jDriver;
+		this.neo4jDataManager = neo4jDataManager;
 	}
 
 	/**
@@ -70,68 +69,6 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		);
 	}
 
-	/**
-	 * <p>Gets the properties in a {@link CypherEntity} as a key/value structure.</p>
-	 * 
-	 * <p>This does some processing:
-	 *   <ul>
-	 *     <li>safeguards against empty values</li>
-	 *     <li>turns multiple values into an array object, which is what the Neo4j driver expects for them</li>
-	 *     <li>Adds a the {@link CypherEntity#getIri() parameter IRI} as the 'iri' proerty to the result; this is because
-	 *     we want always to identify nodes/relations in Neo4j with their original IRI</li>
-	 *   </ul>
-	 * </p>
-	 * 
-	 */
-	protected Map<String, Object> getCypherProperties ( CypherEntity cyEnt )
-	{
-		Map<String, Object> cyProps = new HashMap<> ();
-		for ( Entry<String, Set<Object>> attre: cyEnt.getProperties ().entrySet () )
-		{
-			Set<Object> vals = attre.getValue ();
-			if ( vals.isEmpty () ) continue; // shouldn't happen, but just in case
-			
-			Object cyAttrVal = vals.size () > 1 ? vals.toArray ( new Object [ 0 ] ) : vals.iterator ().next ();
-			cyProps.put ( attre.getKey (), cyAttrVal );
-		}
-		
-		cyProps.put ( "iri", cyEnt.getIri () );
-		return cyProps;
-	}
-	
-	/**
-	 * <p>Runs a Cypher gommands against the current {@link #getNeo4jDriver()}.</p>
-	 * 
-	 * <p>The keyVals parameter is passed to {@link Values#parameters(Object...)}.</p>
-	 * 
-	 * <p>The command is wrapped into a single transaction, which is committed within the method.</p>
-	 * 
-	 * <p>Because parallelism sometimes raises exceptions about race conditions, we use {@link MultipleAttemptsExecutor}
-	 * to re-attempt the command execution a couple of times, after such exceptions.</p>
-	 */
-	protected void runCypher ( String cypher, Object... keyVals )
-	{
-		if ( log.isTraceEnabled () )
-			log.trace ( "Cypher: {} params: {}", cypher, ArrayUtils.toString ( keyVals ) );
-		
-		// Re-attempt a couple of times, in case of exceptions due to deadlocks over locking nodes.
-		MultipleAttemptsExecutor attempter = new MultipleAttemptsExecutor (
-			TransientException.class,
-			DatabaseException.class,
-			ServiceUnavailableException.class
-		);
-		attempter.setMaxAttempts ( 10 );
-		attempter.setMinPauseTime ( 30 * 1000 );
-		attempter.setMaxPauseTime ( 3 * 60 * 1000 );
-		
-		attempter.execute ( () -> 
-		{
-			try ( Session session = this.neo4jDriver.session () ) {
-				session.run ( cypher, parameters ( keyVals ) );
-			}
-		});
-	}
-
 	public RdfDataManager getRdfDataManager ()
 	{
 		return rdfDataManager;
@@ -142,37 +79,16 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 	{
 		this.rdfDataManager = rdfDataManager;
 	}
-
-	/**
-	 * The driver and target Neo4j destination used to send Cypher elements mapped from RDF.
-	 */
-	public Driver getNeo4jDriver ()
+	
+	public Neo4jDataManager getNeo4jDataManager ()
 	{
-		return neo4jDriver;
+		return neo4jDataManager;
 	}
 
 	@Autowired
-	public void setNeo4jDriver ( Driver neo4jDriver )
+	public void setNeo4jDataManager ( Neo4jDataManager neo4jDataManager )
 	{
-		this.neo4jDriver = neo4jDriver;
-	}
-
-	/**
-	 * <p>The node's default label. This has to be configured for both {@link CyNodeLoadingHandler} and
-	 * {@link CyRelationLoadingHandler} and it is a default Cypher label that is set for each node, in addition
-	 * to possible further labels, provided via {@link CyNodeLoadingHandler#getLabelsSparql()}.</p>
-	 * 
-	 * <p>A default label is a practical way to find nodes in components like {@link CyRelationLoadingHandler}.</p>
-	 */
-	public String getDefaultLabel ()
-	{
-		return defaultLabel;
-	}
-
-	@Autowired ( required = false )	@Qualifier ( "defaultNodeLabel" )
-	public void setDefaultLabel ( String defaultLabel )
-	{
-		this.defaultLabel = defaultLabel;
+		this.neo4jDataManager = neo4jDataManager;
 	}
 
 	@Override
@@ -181,8 +97,8 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		if ( rdfMgr != null ) rdfMgr.close ();
 		
-		Driver neoDriver = this.getNeo4jDriver ();
-		if ( neoDriver != null ) neoDriver.close ();
+		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
+		if ( neoMgr != null ) neoMgr.close ();
 				
 		log.debug ( "Cypher loading handler {} closed", this.getClass ().getSimpleName () );
 	}

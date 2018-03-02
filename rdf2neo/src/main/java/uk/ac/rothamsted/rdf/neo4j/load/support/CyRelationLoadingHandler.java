@@ -40,6 +40,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 		Map<String, List<Map<String, Object>>> cyData = new HashMap<> ();
 
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
+		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
 
 		// Pre-process relation data in a form suitable for Cypher processing, i.e., group relation data on a per-relation type 
 		// basis and arrange each relation as a map of key/value properties.
@@ -58,7 +59,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
 			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
 			// And then we have an inner map containing the relation properties/attributes
-			cyparams.put ( "properties", this.getCypherProperties ( cyRelation ) );
+			cyparams.put ( "properties", neoMgr.getCypherProperties ( cyRelation ) );
 			cyRels.add ( cyparams );				
 		}
 		
@@ -80,7 +81,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 			"SET r = rel.properties";
 			
 		long relsCtr = 0;
-		String defaultLabel = this.getDefaultLabel ();		
+		String defaultLabel = neoMgr.getDefaultLabel ();		
 		for ( Entry<String, List<Map<String, Object>>> cyDataE: cyData.entrySet () )
 		{
 			String type = cyDataE.getKey ();
@@ -88,7 +89,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 			String cyCreateStr = String.format ( cypherCreateRel, defaultLabel, type );
 			List<Map<String, Object>> props = cyDataE.getValue ();
 			
-			this.runCypher ( cyCreateStr, "relations", props );
+			neoMgr.runCypher ( cyCreateStr, "relations", props );
 			relsCtr += props.size (); 
 		}
 		

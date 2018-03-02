@@ -18,6 +18,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CypherIndexer;
 
 /**
  * <H1>The multi-configuration Cypher/Neo4J loader.</H1>
@@ -54,6 +55,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 		
 		private String nodeIrisSparql, labelsSparql, nodePropsSparql;
 		private String relationTypesSparql, relationPropsSparql;
+		private String indexesSparql;
 		
 		public ConfigItem () {
 		}
@@ -61,7 +63,8 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 		public ConfigItem ( 
 			String name, 
 			String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
-			String relationTypesSparql, String relationPropsSparql 
+			String relationTypesSparql, String relationPropsSparql,
+			String indexesSparql
 		)
 		{
 			this.name = name;
@@ -70,6 +73,16 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 			this.nodePropsSparql = nodePropsSparql;
 			this.relationTypesSparql = relationTypesSparql;
 			this.relationPropsSparql = relationPropsSparql;
+			this.indexesSparql = indexesSparql;
+		}
+		
+		public ConfigItem ( 
+			String name, 
+			String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
+			String relationTypesSparql, String relationPropsSparql
+		)
+		{
+			this ( name, nodeIrisSparql, labelsSparql, nodePropsSparql, relationTypesSparql, relationPropsSparql, null );
 		}
 		
 		/**
@@ -130,6 +143,19 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 		}
 		public void setRelationPropsSparql ( String relationPropsSparql ) {
 			this.relationPropsSparql = relationPropsSparql;
+		}
+
+		/**
+		 * @see CypherIndexer#getIndexesSparql(). 
+		 */
+		public String getIndexesSparql ()
+		{
+			return indexesSparql;
+		}
+
+		public void setIndexesSparql ( String indexesSparql )
+		{
+			this.indexesSparql = indexesSparql;
 		}
 	}
 	
@@ -196,6 +222,10 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 					cyRelhandler.setRelationTypesSparql ( cfg.getRelationTypesSparql () );
 					cyRelhandler.setRelationPropsSparql ( cfg.getRelationPropsSparql () );
 		
+					String indexesSparql = cfg.getIndexesSparql ();
+					if ( indexesSparql != null )
+						cypherLoader.getCypherIndexer ().setIndexesSparql ( indexesSparql );
+					
 					cypherLoader.load ( tdbPath, mode == 0, mode == 1 );
 				} // try				
 			} // for config items
@@ -213,7 +243,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	}
 
 	
-	@Autowired ( required = false ) // @Qualifier ( "loaderConfig" )
+	@Autowired ( required = false )
 	public void setConfigItems ( List<ConfigItem> configItems )
 	{
 		this.configItems = configItems;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.neo4j.load.support.CypherIndexer;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 
 /**
@@ -35,7 +36,8 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 {	
 	private CyNodeLoadingProcessor cyNodeLoader;
 	private CyRelationLoadingProcessor cyRelationLoader;
-		
+	private CypherIndexer cypherIndexer;
+	
 	private RdfDataManager rdfDataManager = new RdfDataManager ();
 	
 	private String name;
@@ -49,10 +51,14 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	 * 
 	 * <p>
 	 * opts [ 0 ] = true, means process Cypher nodes.<br/>
-	 * opts [ 1 ] = false, means process Cypher relations.<br/>
+	 * opts [ 1 ] = true, means process Cypher relations.<br/>
+	 * opts [ 2 ] = true, means process Cypher indices (if {@link #getCypherIndexer()} is defined).<br/>
 	 * </p>
 	 * 
-	 * <p>Nodes are always loaded before relations, this simplify relation DDL creation commands.
+	 * <p>I opts is null, all the three operations above are run in the same sequence.</p>
+	 *  
+	 * <p>Nodes are always loaded before relations, indices are created the end of all other operations 
+	 * this simplify relation DDL creation commands.</p>
 	 * 
 	 */
 	@Override
@@ -61,8 +67,6 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 		try
 		{
 			RdfDataManager rdfMgr = this.getRdfDataManager ();
-			CyNodeLoadingProcessor cyNodeLoader = this.getCyNodeLoader ();
-			CyRelationLoadingProcessor cyRelLoader = this.getCyRelationLoader ();
 
 			rdfDataManager.open ( tdbPath );
 			Dataset ds = rdfMgr.getDataSet ();
@@ -76,11 +80,20 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 			
 			// Nodes
 			boolean doNodes = opts != null && opts.length > 0 ? (Boolean) opts [ 0 ] : true;
-			if ( doNodes ) cyNodeLoader.process ( rdfMgr, opts );
+			if ( doNodes ) this.getCyNodeLoader ().process ( rdfMgr, opts );
 	
 			// Relations
 			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
-			if ( doRels ) cyRelLoader.process ( rdfMgr, opts );
+			if ( doRels ) this.getCyRelationLoader ().process ( rdfMgr, opts );
+
+			
+			// User-defined indices
+			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
+
+			if ( doIdx ) {
+				CypherIndexer indexer = this.getCypherIndexer ();
+				if ( indexer != null ) indexer.index ();
+			}
 			
 			log.info ( "{}RDF-Cypher conversion finished", nameStr [ 0 ] );
 		}
@@ -100,6 +113,7 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 			if ( this.getRdfDataManager () != null ) this.rdfDataManager.close ();
 			if ( this.getCyNodeLoader () != null ) this.cyNodeLoader.close ();
 			if ( this.getCyRelationLoader () != null ) this.cyRelationLoader.close ();
+			if ( this.getCypherIndexer () != null ) this.cypherIndexer.close ();
 		}
 		catch ( Exception ex ) {
 			throw new RuntimeException ( "Internal error while running the Cypher Loader: " + ex.getMessage (), ex );
@@ -149,7 +163,19 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	{
 		this.cyRelationLoader = cyRelationLoader;
 	}
+	
+	public CypherIndexer getCypherIndexer ()
+	{
+		return cypherIndexer;
+	}
 
+	@Autowired
+	public void setCypherIndexer ( CypherIndexer cypherIndexer )
+	{
+		this.cypherIndexer = cypherIndexer;
+	}
+
+	
 	/**
 	 * Represents the nodes/relations kind that are loaded by this loader. This is prefixed to logging messages
 	 * and is primarily useful when the simple loader is used by {@link MultiConfigCyLoader}. 

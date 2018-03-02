@@ -9,6 +9,7 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.system.Txn;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
@@ -23,6 +24,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
+import uk.ac.rothamsted.rdf.neo4j.load.support.Neo4jDataManager;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 
@@ -65,6 +67,7 @@ public class CypherLoaderIT
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
+			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{ 			
@@ -76,12 +79,12 @@ public class CypherLoaderIT
 			cyNodeHandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
 			cyNodeHandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
 			cyNodeHandler.setRdfDataManager ( rdfMgr );
-			cyNodeHandler.setNeo4jDriver ( neoDriver );
+			cyNodeHandler.setNeo4jDataManager ( neoMgr );
 			
 			cyRelHandler.setRelationTypesSparql ( IOUtils.readResource ( "dbpedia_rel_types.sparql" ) );
 			cyRelHandler.setRelationPropsSparql ( IOUtils.readResource ( "dbpedia_rel_props.sparql" ) );
 			cyRelHandler.setRdfDataManager ( rdfMgr );
-			cyRelHandler.setNeo4jDriver ( neoDriver );
+			cyRelHandler.setNeo4jDataManager ( neoMgr );
 
 			CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
 			cyNodeProc.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
@@ -103,60 +106,61 @@ public class CypherLoaderIT
 	@Test
 	public void testMultiConfigLoading () throws Exception
 	{
-		MultiConfigCyLoader cymloader = new MultiConfigCyLoader ();
-
-		cymloader.setCypherLoaderFactory ( () -> 
+		try ( MultiConfigCyLoader cymloader = new MultiConfigCyLoader (); )
 		{
-			// This will eventually be managed by Spring
-			RdfDataManager rdfMgr = new RdfDataManager ();
-			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			cymloader.setCypherLoaderFactory ( () -> 
+			{
+				// This will eventually be managed by Spring
+				RdfDataManager rdfMgr = new RdfDataManager ();
+				Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+				Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );			
+				
+				CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
+				CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
+				
+				cyNodeHandler.setRdfDataManager ( rdfMgr );
+				cyNodeHandler.setNeo4jDataManager ( neoMgr );
+				
+				cyRelHandler.setRdfDataManager ( rdfMgr );
+				cyRelHandler.setNeo4jDataManager ( neoMgr );
+	
+				CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
+				cyNodeProc.setConsumer ( cyNodeHandler );
+				
+				CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
+				cyRelProc.setConsumer ( cyRelHandler );
+	
+				SimpleCyLoader cyloader = new SimpleCyLoader ();
+				cyloader.setCyNodeLoader ( cyNodeProc );
+				cyloader.setCyRelationLoader ( cyRelProc );
+				cyloader.setRdfDataManager ( rdfMgr );
+				
+				return cyloader;
+			});
+	
 			
-			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
-			CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
+			List<ConfigItem> config = new LinkedList<> ();
+			config.add ( new ConfigItem ( 
+				"places", 
+				readResource ( "dbpedia_node_iris.sparql" ), 
+				readResource ( "dbpedia_node_labels.sparql" ), 
+				readResource ( "dbpedia_node_props.sparql" ), 
+				readResource ( "dbpedia_rel_types.sparql" ), 
+				readResource ( "dbpedia_rel_props.sparql" )			 
+			));
+			config.add ( new ConfigItem ( 
+				"people", 
+				readResource ( "dbpedia_people_iris.sparql" ), 
+				readResource ( "dbpedia_people_labels.sparql" ), 
+				readResource ( "dbpedia_people_props.sparql" ), 
+				readResource ( "dbpedia_people_rel_types.sparql" ), 
+				null			 
+			));
 			
-			cyNodeHandler.setRdfDataManager ( rdfMgr );
-			cyNodeHandler.setNeo4jDriver ( neoDriver );
-			
-			cyRelHandler.setRdfDataManager ( rdfMgr );
-			cyRelHandler.setNeo4jDriver ( neoDriver );
-
-			CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
-			cyNodeProc.setConsumer ( cyNodeHandler );
-			
-			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
-			cyRelProc.setConsumer ( cyRelHandler );
-
-			SimpleCyLoader cyloader = new SimpleCyLoader ();
-			cyloader.setCyNodeLoader ( cyNodeProc );
-			cyloader.setCyRelationLoader ( cyRelProc );
-			cyloader.setRdfDataManager ( rdfMgr );
-			
-			return cyloader;
-		});
-
-		
-		List<ConfigItem> config = new LinkedList<> ();
-		config.add ( new ConfigItem ( 
-			"places", 
-			readResource ( "dbpedia_node_iris.sparql" ), 
-			readResource ( "dbpedia_node_labels.sparql" ), 
-			readResource ( "dbpedia_node_props.sparql" ), 
-			readResource ( "dbpedia_rel_types.sparql" ), 
-			readResource ( "dbpedia_rel_props.sparql" )			 
-		));
-		config.add ( new ConfigItem ( 
-			"people", 
-			readResource ( "dbpedia_people_iris.sparql" ), 
-			readResource ( "dbpedia_people_labels.sparql" ), 
-			readResource ( "dbpedia_people_props.sparql" ), 
-			readResource ( "dbpedia_people_rel_types.sparql" ), 
-			null			 
-		));
-		
-		cymloader.setConfigItems ( config );
-
-		cymloader.load ( RdfDataManagerTest.TDB_PATH );
-		
+			cymloader.setConfigItems ( config );
+	
+			cymloader.load ( RdfDataManagerTest.TDB_PATH );
+		}
 		// TODO: test!
 	}	
 	
@@ -187,5 +191,18 @@ public class CypherLoaderIT
 			// TODO: test
 		}
 	}	
+
 	
+	@Test
+	public void testNeoIndexing ()
+	{
+		try ( 
+			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config_indexing.xml" );
+			MultiConfigCyLoader mloader = MultiConfigCyLoader.getSpringInstance ( beanCtx );				
+		)
+		{			
+			mloader.load ( RdfDataManagerTest.TDB_PATH );
+			// TODO: test
+		}
+	}		
 }

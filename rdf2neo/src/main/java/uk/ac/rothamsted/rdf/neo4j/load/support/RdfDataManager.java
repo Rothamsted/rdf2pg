@@ -243,29 +243,9 @@ public class RdfDataManager implements AutoCloseable
 	 */
 	public long processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
 	{
-		if ( nodeIrisSparql == null ) {
-			log.debug ( "null SPARQL for processNodeIris(), skipping" );
-			return 0;
-		}
-		
-		ensureOpen ();		
-		Dataset ds = this.dataSet;
-		Model model = ds.getDefaultModel ();
-
-		// We cannot cache this because it's stateful and hence it cannot be shared
-		Query nodeIrisQuery = queryCache.getUnchecked ( nodeIrisSparql );
-		
-		long[] ctr = { 0L };
-		Txn.executeRead ( ds, () -> 
-		{
-			QueryExecution qx = QueryExecutionFactory.create ( nodeIrisQuery, model );
-			qx.execSelect ().forEachRemaining ( row -> { 
-				action.accept ( row.getResource ( "iri" ) ); 
-				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{} Cypher nodes read from RDF", ctr [ 0 ] ); 
-			});
-		});
-		
-		return ctr [ 0 ];
+		return this.processSparql ( "processNodeIris()", nodeIrisSparql, row ->
+			action.accept ( row.getResource ( "iri" ) )
+		);
 	}
 	
 	
@@ -302,10 +282,21 @@ public class RdfDataManager implements AutoCloseable
 	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation types query}.
 	 * 
 	 */
-	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action )
+	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action ) {
+		return processSparql ( "processRelationIris()", relationIrisSparql, action );
+	}
+	
+	/**
+	 * Process a SPARQL query, by running it against our RDF source and passing each {@link QuerySolution} to
+	 * the action parameter. Works out operations like getting the proper handler from TDB query or 
+	 * caching the SPARQL queries.
+	 *  
+	 * @param logPrefix operation name, used for logging.
+	 */
+	public long processSparql ( String logPrefix, String sparql, Consumer<QuerySolution> action )
 	{
-		if ( relationIrisSparql == null ) {
-			log.debug ( "null SPARQL for processRelationIris(), skipping" );
+		if ( sparql == null ) {
+			log.debug ( "null SPARQL for {}, skipping", logPrefix );
 			return 0;
 		}
 		
@@ -313,21 +304,20 @@ public class RdfDataManager implements AutoCloseable
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
-		// We cannot cache this because it's stateful and hence it cannot be shared
-		Query relIrisQuery = queryCache.getUnchecked ( relationIrisSparql );
+		Query query = queryCache.getUnchecked ( sparql );
 		
 		long[] ctr = { 0L };
 		Txn.executeRead ( ds, () -> 
 		{
-			QueryExecution qx = QueryExecutionFactory.create ( relIrisQuery, model );
+			QueryExecution qx = QueryExecutionFactory.create ( query, model );
 			qx.execSelect ().forEachRemaining ( row -> { 
 				action.accept ( row ); 
-				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{} Cypher relations read from RDF", ctr [ 0 ] ); 
+				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{}: {} SPARQL tuples read from RDF", logPrefix, ctr [ 0 ] ); 
 			});
 		});
 		
 		return ctr [ 0 ];
-	}
+	}	
 	
 	
 	/** 

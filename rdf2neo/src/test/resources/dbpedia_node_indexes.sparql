@@ -1,0 +1,24 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX schema: <http://schema.org/>
+
+# This is an example of how to index nodes, specifying labels and property names
+# You can define one indexes query per data set. 
+# This kind of indexing happens after all nodes and relations have been created on the Cypher end. 
+# All node types are indexed on 'iri', independently on what you define here (and before relations creation).
+# 
+SELECT ?label ?propertyName
+{
+	VALUES ( ?label ?propertyName )
+	{
+	  # The label 'Place' is indexed over the property name 'populationTotal'
+	  # label and property name IRIs are translated by ID converters.
+	  #
+	  ( schema:Place dbo:populationTotal )	  
+	  ( schema:AdministrativeArea dbo:populationTotal )	  
+	  
+	  # '*' has the special meaning of index this property for all labels
+	  #
+	  ( '*' rdfs:label )
+	}
+}
