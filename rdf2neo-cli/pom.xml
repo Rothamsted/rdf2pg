@@ -112,6 +112,10 @@
 				</executions>
 			</plugin>
 
+			<!-- 
+			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
+			 	final distro zip.
+			 -->
 	  		<plugin>
 	  			<artifactId>maven-dependency-plugin</artifactId>
 	  			<executions>

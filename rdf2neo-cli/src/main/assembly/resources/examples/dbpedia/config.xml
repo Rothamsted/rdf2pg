@@ -28,7 +28,12 @@
 			<property name = "name" value = "places" />
 
 			<property name = "nodeIrisSparql">
+				<!-- Use this to read a SPARQ query from a file -->
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+        	 <!-- 
+        	   You need the index param, cause there are a couple of variants for this methods and Spring needs
+        	   some disambiguation
+        	  -->
 					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_iris.sparql' }" index = "0" />
 				</bean>
 			</property>
