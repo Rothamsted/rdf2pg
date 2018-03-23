@@ -4,9 +4,9 @@ import static org.neo4j.driver.v1.Values.parameters;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.neo4j.driver.v1.Driver;

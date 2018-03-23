@@ -9,7 +9,6 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.system.Txn;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;

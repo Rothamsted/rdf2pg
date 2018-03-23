@@ -88,7 +88,8 @@ public class Rdf2NeoCli
 		);
 		
 		opts.addOption ( Option.builder ( "c" ) 
-			.desc ( "Configuration file (see examples/sample_cfg.xml)" )
+			.desc ( "Configuration file (see examples/sample_cfg.xml). "
+					+   "WARNING! use 'file:///...' to specify absolute paths (Spring requirement)." )
 			.longOpt ( "config" )
 			.argName ( "bean configuration file.xml" )
 			.numberOfArgs ( 1 )

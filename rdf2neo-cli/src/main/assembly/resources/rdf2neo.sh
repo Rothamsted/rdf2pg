@@ -22,9 +22,9 @@ if  [ "$1" == '-h' ] || [ "$1" == '--help' ] || [ $# \< 3 ] || ! ( [ "$1" == '-c
 	
 	$(basename $0) -c|--config <bean config file> <RDF-FILE>...
 	
-	Loads the files intothe TDB triple store set by RDF2NEO_TDB, then invokes tdb2rdf.sh passing this TDB and the -c 
-	option.
-
+	Loads the files into the TDB triple store set by RDF2NEO_TDB (uses a default in /tmp if not set),
+	then invokes tdb2rdf.sh passing this TDB and the -c option.
+		
 	Requires JENA_HOME to be set.	
 	
 EOT

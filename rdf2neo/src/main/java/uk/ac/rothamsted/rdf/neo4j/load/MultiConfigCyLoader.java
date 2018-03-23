@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.BeansException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,6 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CypherIndexer;
 
 /**
  * <H1>The multi-configuration Cypher/Neo4J loader.</H1>
@@ -41,6 +40,9 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	private ObjectFactory<SimpleCyLoader> cypherLoaderFactory;
 	
 	private ApplicationContext springContext;
+	
+	private Logger log = LoggerFactory.getLogger ( this.getClass () );
+	private static Logger slog = LoggerFactory.getLogger ( MultiConfigCyLoader.class );
 	
 	/**
 	 * Represents the RDF/Cypher configuration for a single node/relation type.
@@ -170,6 +172,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	 */
 	public static MultiConfigCyLoader getSpringInstance ( ApplicationContext beanCtx )
 	{
+		slog.info ( "Getting Loader configuration from Spring Context" );
 		MultiConfigCyLoader mloader = beanCtx.getBean ( MultiConfigCyLoader.class );
 		mloader.springContext = beanCtx;
 		return mloader;
@@ -185,6 +188,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	 */
 	public static MultiConfigCyLoader getSpringInstance ( String xmlConfigPath )
 	{
+		slog.info ( "Getting Loader configuration from Spring XML file '{}'", xmlConfigPath );		
 		ApplicationContext ctx = new FileSystemXmlApplicationContext ( xmlConfigPath );
 		return getSpringInstance ( ctx );
 	}

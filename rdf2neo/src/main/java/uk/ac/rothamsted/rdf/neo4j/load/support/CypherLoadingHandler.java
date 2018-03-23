@@ -1,29 +1,14 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import static org.neo4j.driver.v1.Values.parameters;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.Values;
-import org.neo4j.driver.v1.exceptions.DatabaseException;
-import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
-import org.neo4j.driver.v1.exceptions.TransientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
 
 /**
  * <p>A Cypher loading handler, which of instances are used by {@link CyLoadingProcessor} instances.</p>

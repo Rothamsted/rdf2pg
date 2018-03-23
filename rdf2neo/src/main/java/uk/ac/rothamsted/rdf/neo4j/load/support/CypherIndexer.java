@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.utils.regex.RegEx;
-
 /**
  * TODO: comment me!
  *

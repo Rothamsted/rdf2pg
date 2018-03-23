@@ -1,4 +1,4 @@
-package uk.ac.ebi.example;
+package uk.ac.rothamsted.rdf.neo4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.rothamsted.rdf.neo4j.Rdf2NeoCli;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 
 /**
