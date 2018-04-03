@@ -1,4 +1,4 @@
-# The RDF->Neo4j Converter
+# The RDF-to-Neo4j Converter
 
 This is a Java-based project providing configurable components to convert RDF data into [Cypher](TODO) commands that can populate a [Neo4J](TODO) graph database.
 
@@ -7,7 +7,21 @@ You can configure the way RDF is mapped into Neo4J entities (nodes, node propert
 The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](rdf2neo-cli) module is a command line tool to manage Neo4J imports.
 
 
-[TOC]
+# Table of Contents
+
+* [The RDF-to-Neo4j Converter](#the-rdf-neo4j-converter)
+* [Introduction](#introduction)
+  * [Cypher and Neo4j](#cypher-and-neo4j)
+  * [Mapping RDF to Cypher/Neo4j entities: general concepts](#mapping-rdf-to-cypherneo4j-entities-general-concepts)
+  * [SPARQL-based mapping](#sparql-based-mapping)
+  * [Spring-based configuration](#spring-based-configuration)
+  * [rdf2neo4 architecture](#rdf2neo4-architecture)
+* [Mapping details](#mapping-details)
+  * [Node mappings](#node-mappings)
+  * [Relation mappings](#relation-mappings)
+  * [Spring Configuration](#spring-configuration)
+  * [Order of operations](#order-of-operations)
+  * [Other configuration elements](#other-configuration-elements)
 
 
 # Introduction
