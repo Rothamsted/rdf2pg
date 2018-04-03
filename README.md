@@ -7,6 +7,9 @@ You can configure the way RDF is mapped into Neo4J entities (nodes, node propert
 The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](rdf2neo-cli) module is a command line tool to manage Neo4J imports.
 
 
+[TOC]
+
+
 # Introduction
 
 ## Cypher and Neo4j
@@ -170,7 +173,7 @@ As you can see there are values that are created implicitly:
   - every node has always an iri property. We need this to correctly process the RDF-defined relations (see below) and we think it can be useful to track the URI of provenance for a node. This property is always indexed and has distinct values.
   
   - every node has a always a default label. The default is `Resource`, but it can be changed by configuring a 
-  String bean `defaultNodeLabel` as id. Again, we need this in order to find nodes by their iri (the Cypher construct: `MATCH ( n: { id: $const }:Resource )` is very fast, not so if whe have to match the label with `WHERE $myLabel IN LABELS (n)`).
+  String bean `defaultNodeLabel` as ID. Again, we need this in order to find nodes by their IRI (the Cypher construct: `MATCH ( n: { id: $const }:Resource )` is very fast, not so if whe have to match the label with `WHERE $myLabel IN LABELS (n)`).
   
 
 **Notes**
@@ -305,7 +308,7 @@ As mentioned earlier, all of the SPARQL mapping queries above can be configured 
 			</bean>
 		</property>
 
-     <!-- Now the relations and their types -->
+      <!-- Now the relations and their types -->
 		<property name="relationTypesSparql">
 			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_rel_types.sparql' }" index = "0" />
@@ -330,9 +333,6 @@ As mentioned earlier, all of the SPARQL mapping queries above can be configured 
 </beans>
 ```
 
-The Spring XML file contains other details, see the examples in the [core package](TODO) and in the [command line package](TODO) for details.
-
-
 ## Order of operations
 
 You might need to be aware of the order in which rdf2neo runs its operation:
@@ -352,10 +352,49 @@ So, even if nodes are mapped across multiple configurations, they are all create
 
 Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](TODO), a suitable default is defined for it).
 
+
 ##  Other configuration elements
+
+The Spring configuration is a complex system, which depends on the way [Spring itself works](TODO) and the [Java code available for running rdf2neo](TODO).  
+
+In addition to the details mentioned in this section, see the examples in the [core package](TODO) and in the [command line package](TODO) for details.
+
+
 ### Neo4j connection
+
+Every configuration is supposed to be used with a given Neo4j target instance, which should be configured in Spring. See the examples for details. Note also that you might achieve more modularity by using mechanisms like [Spring imports](TODO) or combination of Spring XML configuration and Java property files (see [here](TODO)).
+
+
 ###  Cypher Indexes
+
+By default, the only Cypher node property that rdf2neo [indexes](TODO) is `iri`. You should decide which other properties should be indexed in your application, in order to optimise performance. Cypher indexes can be configured inside the `ConfigItem`, the way shown [above](TODO).  
+
+
 ### default label
-### default ID converter
-###  See the beans!
+
+As [mentioned earlier](TODO), every Cypher node created by rdf2neo has at least a default label, to which further labels can be added. The default can be changed by means of the property `defaultNodeLabel`: 
+
+```xml
+<beans...>
+  ...
+	<bean id = "defaultNodeLabel" class = "java.lang.String">
+		<constructor-arg value = "ItemNode" />		
+	</bean>
+	...
+</beans>
+```
+
+### ID Converters
+
+As explained above, node labels, relation types and node/relation property names can be converted from URIs or literals. We have a simple [default converter](TODO) and we are working on more options. You can even defined your own Java-based converter and configure it via Spring, by using the beans named `nodeLabelIdConverter`, `relationIdConverter`, `propertyIdConverter`. For instance:
+
+```xml
+<beans...>
+   <!-- 
+     Must be a class implementing java.util.function.Function<String, String>, which takes a IRI and returns an identifier.
+     If your class needs config values, either in the constructor or via bean setters, you can use the usual Spring syntax to pass them.  
+   --> 
+	<bean id = "nodeLabelIdConverter" class = "my.package.MyCustomIdConverter" />
+</beans>
+```
 
