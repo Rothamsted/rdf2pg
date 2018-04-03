@@ -53,7 +53,7 @@ SPARQL queries, the target Neo4j database and components like the URI-to-identif
 *Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally other Spring configuration means, such as [Java annotations](TODO)*      
 
 
-## rdf2neo4 architecture
+##  rdf2neo4 architecture
 
 rdf2neo is more precisely a "TDB-to-neo" converter. That is, it takes RDF data from a [Jena](TODO) [TDB triple store](). Both the [programmatic interface](TODO) and the [command line tool](TOOL) starts from the path to the input TDB to use to populate a target Neo4j database.
 
@@ -68,7 +68,7 @@ In this section we are going to show abstracts from the [DBPedia example](rdf2ne
 
 rdf2neo allows you to define multiple config sets (named `ConfigItem` in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. In simple project you might have just one config set, we allows for many because this helps keeps data subsets separated.
 
-## Node mappings
+##  Node mappings
 
 RDF data can be mapped to Cypher nodes by means of the following query types. 
 
@@ -79,7 +79,7 @@ This is a SPARQL query that lists all the URIs about RDF resources that represen
 *Note*: For sake of precision, the configuration files uses the word 'IRI'. If you don't consider the [technical differences], it can be considered synonym of URI.  
 
 ```sql
-# The node list query must always project a ?iri variable
+#  The node list query must always project a ?iri variable
 # (further returned variables are safely ignored, performance is usually better if you don't mention them at all  
 SELECT DISTINCT ?iri
 WHERE
@@ -89,7 +89,7 @@ WHERE
   { ?iri a schema:Person }
   UNION { ?iri a schema:Employee }
   
-  # Another option is to consider anyone in the domain or range of a property, i.e., you know that anyone involved in a foaf:knows relation
+  #  Another option is to consider anyone in the domain or range of a property, i.e., you know that anyone involved in a foaf:knows relation
   # must be a person.
   UNION { ?someone foaf:knows|^foaf:knows ?iri }
 }
@@ -103,7 +103,7 @@ WHERE
 This query takes is invoked for each of the URIs found by the node URIs and is parameterised over a single node URIs. It should return all the labels that you want to assign to that node on the Cypher side. For instance,
 
 ```sql
-# The node list query must always project a ?label variable and must use the ?iri variable in the WHERE clause. ?iri will be bound to one of 
+#  The node list query must always project a ?label variable and must use the ?iri variable in the WHERE clause. ?iri will be bound to one of 
 # IRIs found in the node IRI query. The label query will be invoked once per node IRI, its purpose is to list all the Cypher labels that have to be 
 # assigned to the node.
 #
@@ -113,33 +113,33 @@ This query takes is invoked for each of the URIs found by the node URIs and is p
 SELECT DISTINCT ?label
 WHERE 
 {  
-  # As said above, ?iri is a constant during the actual execution of this query.
+  # As said above, ?iri is a constant during the actual execution of this query.
   # When DefaultIri2IdConverter is used, schema:Person will become the label 'Person'.
   { ?iri a ?label }
   
-  # We always want this label
-  UNION { BIND ( schema:Person AS ?label }
+  # We always want this label
+  UNION { BIND ( schema:Person AS ?label ) }
 }
 ```
 
-### Node properties
+###  Node properties
 
 This works with the same mechanism (one query per node URI, the `?iri` variable bound to a specific URI) and lists all the pairs of property name + value that you want to assign to the node: 
 
 ```sql
-# You need to return these two variables. ?iri is bound to a constant, as above.
+#  You need to return these two variables. ?iri is bound to a constant, as above.
 #
-# - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter. (no conversion if it's a literal)
-# - ?value is a literal and, for the moment, is converted to string, using its lexical value. We'll offer
-# more customisation soon (e.g., mapping XSD types to Cypher/Java types).
+#  - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter. (no conversion if it's a literal)
+#  - ?value is a literal and, for the moment, is converted to string, using its lexical value. We'll offer
+#  more customisation soon (e.g., mapping XSD types to Cypher/Java types).
 #
 SELECT DISTINCT ?name ?value
 {
   ?iri ?name ?value.
-  FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). # Let's consider only these values
+  FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). #  Let's consider only these values
 
   # We're interested in these properties only
-  # Again, these are passed to DefaultIri2IdConverter by default, and so things like rdfs:label, dbo:areaTotal become 'label', 'areaTotal'   
+  #  Again, these are passed to DefaultIri2IdConverter by default, and so things like rdfs:label, dbo:areaTotal become 'label', 'areaTotal'   
   VALUES ( ?name ) {
     ( rdfs:label )
     ( rdfs:comment )
@@ -149,7 +149,7 @@ SELECT DISTINCT ?name ?value
 }
 ```
 
-So, this RDF exists:
+So, if this RDF exists in the input:
  
 ```java
 @prefix ex: <http://www.example.com/resources/>
@@ -171,19 +171,191 @@ As you can see there are values that are created implicitly:
   
   - every node has a always a default label. The default is `Resource`, but it can be changed by configuring a 
   String bean `defaultNodeLabel` as id. Again, we need this in order to find nodes by their iri (the Cypher construct: `MATCH ( n: { id: $const }:Resource )` is very fast, not so if whe have to match the label with `WHERE $myLabel IN LABELS (n)`).
+  
+
+**Notes**
+
+  - If values are literals, you should expect reasonable conversions (e.g., RDF numbers => Cypher numbers). TODO: we plan to add a configuration option to define custom literal converters.  
     
-- Spring
 
-## Relation mappings
-- lists and labels
-- relations with properties
-- Identifiers
-- Spring
+##  Relation mappings
 
-## Other configuration elements
+Cypher relations between nodes are mapped from RDF in a similar way.
+
+###  List of relations and their types
+
+Similarly to nodes, rdf2neo needs first a list of relations to be created. These must refer to their linking nodes
+by means of the node URIs (mapped earlier via the `iri` property). This is an example for the DBPedia people:
+
+```sql
+#  You must always return a relation IRI, a relation type (IRI or string), the IRIs of the relation source and target.
+SELECT DISTINCT ?iri ?type ?fromIri ?toIri
+{
+  #  Plain relations, non-reified
+  ?fromIri ?type ?toIri.
+
+  # We're interested in these predicates only
+  VALUES ( ?type ) {
+    ( dct:subject )
+	 ( dbo:team )
+	 ( dbo:birthPlace )
+  }
+	
+	FILTER ( isIRI ( ?toIri ) ).	#  Just in case of problems
+	
+	#  Fictitious IRI for plain relations. We always need a relation iri on the Cypher end, 
+	#  so typically will do this for straight triples 
+	BIND ( 
+		IRI ( CONCAT ( 
+		  STR ( ex: ),
+	  	  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
+	  	))
+	  AS ?iri
+	)
+}
+```
+
+As you can see, we need certain properties always reported after the `SELECT` keyword. Among these, we always need the relation URI, which has to be computed for straight (non reified) triples.
+Similarly to nodes, relation URIs are needed by rdf2neo in order to check for their properties with the relation property query. Moreover, it is a good way to keep track of multiple statements about the same subject/predicate/property.
+
+
+### Relation properties
+
+As said above, this is similar to the nodes case. If there are relations with attached properties on the RDF side, these will be defined by means of some RDF graph structure, which puts together multiple triples per relation.
+
+For example, if such relations are reified via the `rdf:` vocabulary: 
+
+```sql
+SELECT DISTINCT ?iri ?type ?fromIri ?toIri
+WHERE {
+  ?iri a rdf:Statement;
+    rdf:subject ?fromIri;
+    rdf:predicate ?type;
+    rdf:object ?toIri.
+} 
+```
+
+Once rdf2neo receives reified relations, it uses a query like this to select their properties: 
+ 
+```sql
+# You must always return these and bind ?iri below
+SELECT DISTINCT ?name ?value
+WHERE {
+  ?iri ?name ?value.
+  
+  FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). # again, safeguarding code 
+
+  # Again, we're interested in this datatype properties only
+  VALUES ( ?name ) {
+    ( rdfs:label )
+    ( rdfs:comment )
+    ( dbo:areaTotal )
+    ( dbo:populationTotal )
+  }
+}
+```
+
+As above, `?name` is the property name that will be used for Cypher. If it's a URI, it will be converted by an URI-identifier converter. `?value` is converted to Cypher following the same rules described above.
+
+
+## Spring Configuration
+
+As mentioned earlier, all of the SPARQL mapping queries above can be configured to be used with a given dataset by means of a [Spring XML beans configuration file](TODO). Here it is an abstract: 
+
+```xml
+<beans...>
+	...
+	
+	<!-- 
+	  Each ConfigItem is a mapping query set.
+	  Every config item is supposed to be associated to a data subset, e.g., one for people, another for places, etc.   	  
+	-->
+	
+	<!-- Queries to map places -->
+	<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">		
+		<!--
+		  This is the name of this config item/subset of data. It is used only for communication purposes,
+		  such as log messages.
+		-->
+		<property name = "name" value = "places" />
+		
+		<!-- The query to list nodes. It must be the nodeIrisSparql of this ConfigItem (i.e., will be passed to ConfigItem.setNodeIrisSparql ( String ) -->
+		<property name = "nodeIrisSparql">
+			<!-- 
+			  Use this syntax to read a SPARQ query from a file, it invokes IOUtils.readFile( path ). You need to specify "index = '0'" below, to fix some
+			  ambiguity that confuses Spring.  
+			-->
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			  <!-- pwd is defined above -->
+				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_iris.sparql' }" index = "0" />
+			</bean>
+		</property>
+		
+		<!-- The query mapping node labels -->
+		<property name="labelsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_labels.sparql' }" index = "0" />
+			</bean>
+		</property>
+
+		<!-- The query mapping node properties -->
+		<property name="nodePropsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_props.sparql' }" index = "0" />
+			</bean>
+		</property>
+
+     <!-- Now the relations and their types -->
+		<property name="relationTypesSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_rel_types.sparql' }" index = "0" />
+			</bean>
+		</property>
+
+		<!-- And the relation properties -->
+		<property name="relationPropsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+				<constructor-arg value = "#{ pwd + 'mapping/dbpedia_rel_props.sparql' }" index = "0" />
+			</bean>
+		</property>
+
+		<!-- Query defining which node properties should be Cypher-indexed (see below) -->
+		<property name="indexesSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "dbpedia_node_indexes.sparql" />
+			</bean>
+		</property>
+	</bean>
+	...
+</beans>
+```
+
+The Spring XML file contains other details, see the examples in the [core package](TODO) and in the [command line package](TODO) for details.
+
+
+## Order of operations
+
+You might need to be aware of the order in which rdf2neo runs its operation:
+
+  1. Node loop. For each `ConfigItem`:
+    1. Run the node list query. Split the resulting URIs into subsets of a given size and for each subset run this in parallel:
+      1. Run the node labels query
+      1. Run the node property query
+      1. Prepare a Cypher statement that creates the node and queue it
+      1. Commit all Cypher CREATE statements against the configured Neo4j
+  1. Relation loop. For each `ConfigItem`:
+    1. Run the relation list/type query. Split the results as above and run threads with:
+      1. Run the relation property query. Prepare a Cypher statement that creates a new relation and refers to existing nodes via their iri property
+      1. Commit all the statements at the end
+      
+So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists (it does).
+
+Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](TODO), a suitable default is defined for it).
+
+##  Other configuration elements
 ### Neo4j connection
-### Cypher Indexes
+###  Cypher Indexes
 ### default label
 ### default ID converter
-### See the beans!
+###  See the beans!
 
