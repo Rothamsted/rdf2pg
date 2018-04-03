@@ -14,30 +14,28 @@ PREFIX dbp:	<http://dbpedia.org/property/>
 # 
 SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 {
-	{ 
-	  # Plain relations, non-reified
-	  #
-		?fromIri ?type ?toIri.
-		
-		VALUES ( ?type ) {
-		  ( dct:subject )
-		  # already covered by dbpedia_rel_types.sparql
-		  # ( dbo:team )
-		  # ( dbo:birthPlace )
-		}
-		
-		FILTER ( isIRI ( ?toIri ) ).	# Just in case of problems	
-		
-		# Fictitious IRI for plain relations
-		#
-		BIND ( 
-			IRI ( 
-		  		CONCAT ( 
-		  		  STR ( ex: ),
-		  		  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
-		  		) 
-		  	)
-		  AS ?iri
-		)
+  # Plain relations, non-reified
+  #
+	?fromIri ?type ?toIri.
+	
+	VALUES ( ?type ) {
+	  ( dct:subject )
+	  # already covered by dbpedia_rel_types.sparql
+	  # ( dbo:team )
+	  # ( dbo:birthPlace )
 	}
+	
+	FILTER ( isIRI ( ?toIri ) ).	# Just in case of problems	
+	
+	# Fictitious IRI for plain relations
+	#
+	BIND ( 
+		IRI ( 
+	  		CONCAT ( 
+	  		  STR ( ex: ),
+	  		  MD5 ( CONCAT ( STR ( ?type ), STR ( ?fromIri ), STR ( ?toIri ) ) )
+	  		) 
+	  	)
+	  AS ?iri
+	)
 }

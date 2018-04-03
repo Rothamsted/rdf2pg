@@ -21,7 +21,8 @@
 		</bean>
 		
 		<!-- 
-		  Each ConfigItem is a mapping query set
+		  Each ConfigItem is a mapping query set.
+		  Every config item is supposed to be associated to a data subset, e.g., one for people, another for places, etc.   	  
 		
 		  You must define instances of ConfigItem and not a list of ConfigItem(s), due to the way Spring
 		  manages injection in this case (https://jira.spring.io/browse/SPR-8519).
@@ -30,6 +31,10 @@
 		<!-- Queries to map places -->
 		<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
 			
+			<!--
+			  This is the name of this config item/subset of data. It is used only for communication purposes, 
+			  such as log messages.
+			-->			
 			<property name = "name" value = "places" />
 
 			<property name = "nodeIrisSparql">
