@@ -49,7 +49,7 @@
 				</bean>
 			</property>
 			
-			<!-- This query defines those node labels and proeperties that need to be indexed. -->
+			<!-- This query defines those node labels and properties that need to be indexed. -->
 			
 			<property name="indexesSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">

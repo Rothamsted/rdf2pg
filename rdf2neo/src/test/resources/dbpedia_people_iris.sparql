@@ -11,6 +11,12 @@ SELECT DISTINCT ?iri
   # This picks up nodes of interests based on their rdf:type, which should be pretty common.
   #
   { ?iri a schema:Person }
+  
+  # This instead selects nodes of interest based on the range of a property (i.e., we're interested in in resources
+  # used as target of the dbo:team property, which are assumed to be teams.
+  #  
   UNION { ?team dbo:team ?iri }
+  
+  # Another case based on rdf:type 
   UNION { ?iri a ex:Topic } 
 }

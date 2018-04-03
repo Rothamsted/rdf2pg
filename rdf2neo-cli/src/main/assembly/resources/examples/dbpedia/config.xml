@@ -5,7 +5,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
+		<!-- 
+		  Just leave this here. It means some components are got from the Java source files, by means of
+		  Spring annotations. Yo do need this base (which the declaration below extend/override). 
+		-->
     <context:component-scan base-package = "uk.ac.rothamsted.rdf.neo4j" />
+
 
 		<!-- This assumes that you started from rdf2neo.sh, which defines the environment variable below, or that you
 		     have defined it somewhere else. -->
