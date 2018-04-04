@@ -1,6 +1,6 @@
 # The RDF-to-Neo4j Converter
 
-This is a Java-based project providing configurable components to convert RDF data into [Cypher](TODO) commands that can populate a [Neo4J](TODO) graph database.
+This is a Java-based project providing configurable components to convert RDF data into [Cypher](https://neo4j.com/developer/cypher-query-language/) commands that can populate a [Neo4J](https://neo4j.com) graph database.
 
 You can configure the way RDF is mapped into Neo4J entities (nodes, node properties, relations and relation properties) by means of SPARQL queries. More details in the next sections.
 
@@ -9,91 +9,94 @@ The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](r
 
 # Table of Contents
 
-* [The RDF-to-Neo4j Converter](#the-rdf-neo4j-converter)
+* [The RDF\-to\-Neo4j Converter](#the-rdf-to-neo4j-converter)
+* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
   * [Cypher and Neo4j](#cypher-and-neo4j)
   * [Mapping RDF to Cypher/Neo4j entities: general concepts](#mapping-rdf-to-cypherneo4j-entities-general-concepts)
-  * [SPARQL-based mapping](#sparql-based-mapping)
-  * [Spring-based configuration](#spring-based-configuration)
+  * [SPARQL\-based mapping](#sparql-based-mapping)
+  * [Spring\-based configuration](#spring-based-configuration)
   * [rdf2neo4 architecture](#rdf2neo4-architecture)
 * [Mapping details](#mapping-details)
   * [Node mappings](#node-mappings)
   * [Relation mappings](#relation-mappings)
   * [Spring Configuration](#spring-configuration)
   * [Order of operations](#order-of-operations)
-  * [Other configuration elements](#other-configuration-elements)
+  * [Miscellanea](#miscellanea)
 
 
 # Introduction
 
 ## Cypher and Neo4j
 
-Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to access Neo4j. While we haven't extended our code to support [other graph databases](https://www.opencypher.org/projects) that support [OpenCypher](https://www.opencypher.org/), we would expect this to be easy to do. In the follow we mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j. 
+Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to access Neo4j. While we haven't extended our code to support [other graph databases](https://www.opencypher.org/projects) that support [OpenCypher](https://www.opencypher.org/), we would expect this to be easy to do. In the follow we mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
 
 
 ## Mapping RDF to Cypher/Neo4j entities: general concepts
 
 The RDF data model and the Cypher data model are rather similar, but there are significant differences:
 
-  * The native entities of Cypher are nodes, relations, node labels, relation types, and properties attached to nodes or relation 
-  * In RDF essentially everything is a triple/statement, the equivalents of the the above entities are all modelled after triples.
+  * The native entities of Cypher are nodes, relations, node labels, relation types, and properties attached to nodes or relation. 
+  * Essentially, in RDF everything is a triple/statement, the equivalents of the the above entities are all modelled after triples, even when the granularity on Cypher side is lower (e.g., node/relation properties).
   * Nodes are URI-provided resources that appear as subject or object of triples
-  * Statements based on [rdf:type](TODO) are the closest thing to the definition of node labels (in Cypher labels are strings, in RDF they are other resources/URIs)
-  * A triple (or statement) joining two resources/URIs is the closest thing to a Cypher relation. In that case, another resource/URI is used for the triple predicate, which similar to stating the relation type. Again, the latter is a string, while a predicate is essentially a URI.
-  * An RDF triple having a literal as object (datatype properties in OWL) is roughly equivalent to a node property in Cypher. Again, Cypher property names are strings, triple datatype properties are URIs. There are other significant differences. For instance, string literals in RDF can have a language tag attached, no equivalent exists in Cypher (can be modelled as a 2-sized array). As another example, a property in Cypher can have an array as value, but the array contents must be homogeneous (ie, all values must have the same raw type), while in RDF an array is nothing but a [special set of statements](TODO). Moreover, in RDF you can (obviously) have multiple statements associated to a subject and all based on the same datatype predicate (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be emulated in Cypher, by merging multiple values into an array.      
-  * Cypher relations can have property/value pairs attached. In RDF you can only emulate this with constructs like [reified statements](TODO), named graphs or singleton properties (TODO).
+  * Statements based on [rdf:type](https://www.w3.org/TR/rdf11-primer/#section-semantics) are the closest thing to the definition of node labels (in Cypher labels are strings, in RDF they are other resources/URIs)
+  * A triple (or statement) joining two resources/URIs is the closest thing to a Cypher relation. In that case, another resource/URI is used for the triple predicate, this is similar to stating the relation type. Again, the latter is a string, while a predicate is a URI.
+  * An RDF triple having a literal as object ([datatype properties](https://www.w3.org/TR/owl2-primer/#Datatypes) in [OWL](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/)) is roughly equivalent to a node property in Cypher. Again, Cypher property names are strings, triple datatype properties are URIs. There are other significant differences. For instance, string literals in RDF can have a language tag attached, no equivalent exists in Cypher (it can be modelled as a 2-sized array). As another example, a property in Cypher can have an array as value, but the array contents must be homogeneous (i.e., all values must have the same raw type), while in RDF an array is nothing but a [special set of statements](https://www.w3.org/TR/rdf-schema/#ch_othervocab). Moreover, in RDF you can (obviously) have multiple statements associtated to a subject that define multiple values for a property  (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be emulated in Cypher, typically by merging multiple values into an array (having set semantics).
+  * Cypher relations can have property/value pairs attached. In RDF you can only emulate this with constructs like [reified statements](https://www.w3.org/TR/rdf-schema/#ch_reificationvocab), [named graphs](https://www.w3.org/2011/prov/wiki/Using_named_graphs_to_model_Accounts) or [singleton properties](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4350149/).
   		
 So, two similar graph models and a number of differences. How to map one to the other?
  
-On a first look, one may think that there is a sort of 'natural mapping' between RDF and Cypher. Rougly: anything having an rdf:type will generate a Cypher node with that type used as label (maybe not a whole URI like `http://www.example.com/ontology#Person`, just the last part of it, `Person`), any triple will generate a Cypher relation, maybe any reified statement based on the RDF syntax will be converted into a property-attached relation.
+On a first look, one may think that there is a sort of 'natural mapping' between RDF and Cypher. Rougly: anything having an `rdf:type` will generate a Cypher node with that type used as label (maybe not a whole URI like `http://www.example.com/ontology#Person`, just the last part of it, `Person`), any triple will generate a Cypher relation, maybe any reified statement based on the RDF syntax will be converted into a property-attached relation.
 
-Indeed, [other projects](TODO) before our rdf2neo have adopted this approach. However, hard-wiring the mapping to a particular view of things can be too inflexible, no matter how natural that view is. For instance, in RDF we might have an ontology providing targets for `rdf:type` where all the classes have an `rdfs:label` associated (e.g., `ex:bob rdf:type ex:Person. ex:Person a owl:Class; rdfs:label 'Human Being'.` => `(bob:'Human Being')`. ), and this might be the thing we want to use as the Cypher node label. As another example, we might be using our own way to define reified relations on the RDF side (e.g., `ex:annotation1 a ex:Annotation; ex:source ex:doc1; ex:target ex:topic1; ex:score '0.9'^xsd:real`) and we may want to turn that schema of ours into Cypher relations (e.g., `(doc1:Document)-[:ANNOTATION{ score: 0.9}]->(topic1:Topic)`), while in the 'natural' mapping those sets of statements would be blindly mapped to Cypher nodes and binary property-less relations, (`(annotation1:Annotation{ score:0.9 })-[:SOURCE]->(doc1:Document), (annotation1)-[:TARGET]->(topic1:Topic)`).
+Indeed, [other projects](https://jbarrasa.com/2016/06/07/importing-rdf-data-into-neo4j) before our rdf2neo have adopted this approach. However, hard-wiring the mapping to a particular view of things can be too inflexible, no matter how natural that view is. For instance, in RDF we might have an ontology providing targets for `rdf:type` where all the classes have an `rdfs:label` associated (e.g., `ex:bob rdf:type ex:Person. ex:Person a owl:Class; rdfs:label 'Human Being'.`) and this might be the thing we want to use as the Cypher node label (`(bob:'Human Being')`). As another example, we might be using our own way to define reified relations on the RDF side (e.g., `ex:annotation1 a ex:Annotation; ex:source ex:doc1; ex:target ex:topic1; ex:score '0.9'^xsd:real`) and we may want to turn that schema of ours into Cypher relations (e.g., `(doc1:Document)-[:ANNOTATION{ score: 0.9}]->(topic1:Topic)`), while in the 'natural' mapping those sets of statements would be blindly mapped to Cypher nodes and binary property-less relations, (`(annotation1:Annotation{ score:0.9 })-[:SOURCE]->(doc1:Document), (annotation1)-[:TARGET]->(topic1:Topic)`).
 
 
 ## SPARQL-based mapping
 
-That's why we have decided another way to map RDF to Cypher: a set of SPARQL queries that returns a list of Cypher entities (nodes and their labels, node details like properties, relations, etc) from the initial RDF data.
+In order to provide the flexibility necessary in the use case above, we have decided another way to map RDF to Cypher: a set of SPARQL queries that return a list of Cypher entities (nodes and their labels, node details like properties, relations, etc) from the initial RDF data.
 
-This makes rdf2neo very flexible, allowing you to support use cases like the ones mentioned above. 
+In the follow we show how to define such queries.
 
-In follow show how to define such queries.
-
-In addition to SPARQL, we use a couple of components to define further configuration details, which cannot be managed via SPARQL-based mapping, or it's too difficult to do so. For example, we have a default URI to identifier converter, which converts URIs to short identifier strings, suitable to be used as node labels or relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
+In addition to SPARQL, we use a couple of components to define further configuration details, which cannot be managed via SPARQL-based mapping, or it is too difficult to do so. For example, we have a [default URI-to-identifier converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java), which converts URIs to short identifier strings, suitable to be used as node labels or relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
 
 TODO: we plan to ship our tools with SPARQL mappings for 'natural RDF mapping'.
 
 
 ## Spring-based configuration
 
-SPARQL queries, the target Neo4j database and components like the URI-to-identifier converters are all configurable components in neo4j. You can work out a particular configuration for a given RDF data set, where you put together all these components. A configuration is defined as a [Spring configuration file](TODO), which provides with a powerful language to assemble components together (it plug in the underlying Java entities, but you don't need to know Java to understand these files).
+SPARQL queries, the target Neo4j database and components like the URI-to-identifier converters are all configurable components in neo4j. You can work out a particular configuration for a given RDF data set, where you put together all these components. A configuration is defined as a [Spring configuration file](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html), which provides with a powerful language to assemble components together (it plugs in the underlying Java entities, but you don't need to know Java to understand these files).
 
-*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally other Spring configuration means, such as [Java annotations](TODO)*      
+*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally other Spring configuration means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
 
 
 ##  rdf2neo4 architecture
 
-rdf2neo is more precisely a "TDB-to-neo" converter. That is, it takes RDF data from a [Jena](TODO) [TDB triple store](). Both the [programmatic interface](TODO) and the [command line tool](TOOL) starts from the path to the input TDB to use to populate a target Neo4j database.
+rdf2neo is more precisely a "TDB-to-Neo4j" converter. That is, it takes RDF data from a [Jena](https://jena.apache.org/) [TDB triple store](https://jena.apache.org/documentation/tdb/index.html). Both the [programmatic interface](rdf2neo) and the [command line tool](rdf2neo-cli) start from the path to the input TDB to use to populate a target Neo4j database.
 
-We cannot load data directly from RDF files because we need to view all the dataset that you want to convert. For instance, before we can issue a Cypher command to create a node, we need to be able to fetch all of its details about its labels and properties. If these details were spread across different RDF files, we would need to first load all the files and then query them with SPARQL (the way shown below). Which is precisely what we do by using a TDB. The alternative would be an in-memory triple store (i.e., what Jena calls a memory [Model](TODO), but this might not be good if you have large datasets.
+We cannot load data directly from RDF files because we need to view all the data set that you want to convert. For instance, before we can issue a Cypher command to create a node, we need to fetch all of its details about its labels and properties. If these details were spread across different RDF files, we would need to first load all the files and then query them with SPARQL (the way shown below). Which is precisely what we do by using a TDB. The alternative would be an in-memory triple store (i.e., what Jena calls a memory [Model](https://jena.apache.org/tutorials/rdf_api.html), but this might not be good if you have large data sets.
+
+if you want a wrapper that abstracts away from these details, you can find [a script in the command line package](rdf2neo-cli/src/main/assembly/resources/rdf2neo.sh).   
 
 We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
 
 
 # Mapping details
 
-In this section we are going to show abstracts from the [DBPedia example](rdf2neo/src/test/resources), which maps some example RDF downloaded from [DBPedia](TODO) into Neo4j.
+In this section we are going to show abstracts from the [DBPedia example](rdf2neo/src/test/resources), which maps some example RDF downloaded from [DBPedia](http://wiki.dbpedia.org/about) into Neo4j.
 
-rdf2neo allows you to define multiple config sets (named `ConfigItem` in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. In simple project you might have just one config set, we allows for many because this helps keeps data subsets separated.
+rdf2neo allows you to define multiple configuration sets (named `[ConfigItem](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java#L54)` in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance, in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. While in simple projects you might have just one configuration set, we allow for many because this helps with keeping data subsets separated.
+
 
 ##  Node mappings
 
 RDF data can be mapped to Cypher nodes by means of the following query types. 
 
+
 ### Node URIs
 
-This is a SPARQL query that lists all the URIs about RDF resources that represent a node. An example:
+*Note: For sake of precision, the configuration files uses the word 'IRI'. If you don't consider the [technical differences](https://devblast.com/b/url-uri-iri-urn), it can be considered synonym of URI.*  
 
-*Note*: For sake of precision, the configuration files uses the word 'IRI'. If you don't consider the [technical differences], it can be considered synonym of URI.  
+This is a SPARQL query that lists all the URIs about RDF resources that represent a node. An example:
 
 ```sql
 #  The node list query must always project a ?iri variable
@@ -106,26 +109,30 @@ WHERE
   { ?iri a schema:Person }
   UNION { ?iri a schema:Employee }
   
-  #  Another option is to consider anyone in the domain or range of a property, i.e., you know that anyone involved in a foaf:knows relation
-  # must be a person.
+  # Another option is to consider anyone in the domain or range of a property, i.e., you know 
+  # that anyone involved in a foaf:knows relation must be a person.
   UNION { ?someone foaf:knows|^foaf:knows ?iri }
 }
 ```
 
-**It's very important that the query above returns distinct results.**
+Typically this query will be listing instances of target classes, although you might also catch resources of interest by targeting subjects or objects of given relations.
+
+
+**Note: it is very important that the query above returns distinct results.**
 
 
 ### Node labels
 
-This query takes is invoked for each of the URIs found by the node URIs and is parameterised over a single node URIs. It should return all the labels that you want to assign to that node on the Cypher side. For instance,
+This query is invoked for each of the URIs found by the node URIs and is parameterised over a single node URIs. It should return all the labels that you want to assign to that node on the Cypher side. For instance,
 
 ```sql
-#  The node list query must always project a ?label variable and must use the ?iri variable in the WHERE clause. ?iri will be bound to one of 
-# IRIs found in the node IRI query. The label query will be invoked once per node IRI, its purpose is to list all the Cypher labels that have to be 
-# assigned to the node.
+#  The node list query must always project a ?label variable and must use the ?iri variable in the WHERE clause. 
+# ?iri will be bound to one of IRIs found in the node IRI query. The label query will be invoked once per node IRI,
+# its purpose is to list all the Cypher labels that have to be assigned to the node.
 #
-# A label can be either a IRI or a literal, or a string. If it's a URI, it will be translated into a Cypher identifier by means of the configured
-# IRI-to-ID converter. At the moment we're using the default DefaultIri2IdConverter (see the Java sources), which takes the last part of an IRI.
+# A label can be either a IRI or a literal, or a string. If it's a URI, it will be translated into a Cypher 
+# identifier by means of the configured IRI-to-ID converter. At the moment we're using the default DefaultIri2IdConverter
+# (see the Java sources), which takes the last part of an IRI.
 # 
 SELECT DISTINCT ?label
 WHERE 
@@ -139,6 +146,7 @@ WHERE
 }
 ```
 
+
 ###  Node properties
 
 This works with the same mechanism (one query per node URI, the `?iri` variable bound to a specific URI) and lists all the pairs of property name + value that you want to assign to the node: 
@@ -146,9 +154,10 @@ This works with the same mechanism (one query per node URI, the `?iri` variable 
 ```sql
 #  You need to return these two variables. ?iri is bound to a constant, as above.
 #
-#  - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter. (no conversion if it's a literal)
-#  - ?value is a literal and, for the moment, is converted to string, using its lexical value. We'll offer
-#  more customisation soon (e.g., mapping XSD types to Cypher/Java types).
+#  - ?name is typically a IRI and is converted into a shorter ID by means of a configured IRI->ID converter
+# (no conversion if it's a literal).
+#  - ?value is a literal and, for the moment, is converted to simple value types (e.g., string, number), using
+# its lexical value. We'll offer more customisation soon (e.g., mapping XSD types to Cypher/Java types).
 #
 SELECT DISTINCT ?name ?value
 {
@@ -156,7 +165,8 @@ SELECT DISTINCT ?name ?value
   FILTER ( isNumeric (?value) || LANG ( ?value ) = 'en' ). #  Let's consider only these values
 
   # We're interested in these properties only
-  #  Again, these are passed to DefaultIri2IdConverter by default, and so things like rdfs:label, dbo:areaTotal become 'label', 'areaTotal'   
+  #  Again, these are passed to DefaultIri2IdConverter by default, and so things like 
+  # rdfs:label, dbo:areaTotal become 'label', 'areaTotal'   
   VALUES ( ?name ) {
     ( rdfs:label )
     ( rdfs:comment )
@@ -169,6 +179,7 @@ SELECT DISTINCT ?name ?value
 So, if this RDF exists in the input:
  
 ```java
+...
 @prefix ex: <http://www.example.com/resources/>
 
 ex:john a schema:Person, schema:Employee;
@@ -182,12 +193,11 @@ The queries above will give the following Cypher node:
   { iri:"http://www.example.com/resources/john", givenName: 'John', familyName: 'Smith' }: [ `Person`, `Employee`, `Resource` ]
 ```
 
-As you can see there are values that are created implicitly: 
+As you can see, there are values that are created implicitly: 
 
-  - every node has always an iri property. We need this to correctly process the RDF-defined relations (see below) and we think it can be useful to track the URI of provenance for a node. This property is always indexed and has distinct values.
+  - every node has always an `iri` property. We need this to correctly process the RDF-defined relations (see below) and we think it can be useful to track the provenance URI for a node. This property is always indexed and has distinct values.
   
-  - every node has a always a default label. The default is `Resource`, but it can be changed by configuring a 
-  String bean `defaultNodeLabel` as ID. Again, we need this in order to find nodes by their IRI (the Cypher construct: `MATCH ( n: { id: $const }:Resource )` is very fast, not so if whe have to match the label with `WHERE $myLabel IN LABELS (n)`).
+  - every node has a always a default label. The predefined value fo this is `Resource`, but it can be changed by configuring a String bean `defaultNodeLabel` as ID. Again, we need this in order to find nodes by their IRI (the Cypher construct: `MATCH ( n: { id: $const }:Resource )` is very fast, not so when you try to match the label with `WHERE $myLabel IN LABELS (n)`).
   
 
 **Notes**
@@ -202,7 +212,7 @@ Cypher relations between nodes are mapped from RDF in a similar way.
 ###  List of relations and their types
 
 Similarly to nodes, rdf2neo needs first a list of relations to be created. These must refer to their linking nodes
-by means of the node URIs (mapped earlier via the `iri` property). This is an example for the DBPedia people:
+by means of the node URIs (mapped earlier via the `iri` property). This is an example for the DBPedia people resources:
 
 ```sql
 #  You must always return a relation IRI, a relation type (IRI or string), the IRIs of the relation source and target.
@@ -232,8 +242,9 @@ SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 }
 ```
 
-As you can see, we need certain properties always reported after the `SELECT` keyword. Among these, we always need the relation URI, which has to be computed for straight (non reified) triples.
-Similarly to nodes, relation URIs are needed by rdf2neo in order to check for their properties with the relation property query. Moreover, it is a good way to keep track of multiple statements about the same subject/predicate/property.
+As you can see, we need certain properties always reported after the `SELECT` keyword. Among these, we always need the relation URI, which has to be computed for straight (non reified) triples too.
+
+Similarly to nodes, relation URIs (i.e., `?iri`) are needed by rdf2neo in order to check for their properties with the relation property query. Moreover, it is a good way to keep track of multiple statements about the same subject/predicate/property.
 
 
 ### Relation properties
@@ -272,12 +283,12 @@ WHERE {
 }
 ```
 
-As above, `?name` is the property name that will be used for Cypher. If it's a URI, it will be converted by an URI-identifier converter. `?value` is converted to Cypher following the same rules described above.
+As above, `?name` is the property name that will be used for Cypher. If it is a URI, it will be converted by an URI-identifier converter. `?value` is converted to Cypher following the same rules described above.
 
 
 ## Spring Configuration
 
-As mentioned earlier, all of the SPARQL mapping queries above can be configured to be used with a given dataset by means of a [Spring XML beans configuration file](TODO). Here it is an abstract: 
+As mentioned earlier, all of the SPARQL mapping queries above can be configured to be used with a given dataset by means of a [Spring XML beans configuration file](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html). Here it is an abstract: 
 
 ```xml
 <beans...>
@@ -296,11 +307,14 @@ As mentioned earlier, all of the SPARQL mapping queries above can be configured 
 		-->
 		<property name = "name" value = "places" />
 		
-		<!-- The query to list nodes. It must be the nodeIrisSparql of this ConfigItem (i.e., will be passed to ConfigItem.setNodeIrisSparql ( String ) -->
+		<!-- 
+		  The query to list nodes. It must be the nodeIrisSparql of this ConfigItem 
+		  (i.e., will be passed to ConfigItem.setNodeIrisSparql ( String ) ). 
+		-->
 		<property name = "nodeIrisSparql">
 			<!-- 
-			  Use this syntax to read a SPARQ query from a file, it invokes IOUtils.readFile( path ). You need to specify "index = '0'" below, to fix some
-			  ambiguity that confuses Spring.  
+			  Use this syntax to read a SPARQ query from a file, it invokes IOUtils.readFile( path ).
+			  You need to specify "index = '0'" below, to fix some ambiguity that confuses Spring.  
 			-->
 			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
 			  <!-- pwd is defined above -->
@@ -347,46 +361,56 @@ As mentioned earlier, all of the SPARQL mapping queries above can be configured 
 </beans>
 ```
 
+
 ## Order of operations
 
-You might need to be aware of the order in which rdf2neo runs its operation:
+You might need to be aware of the order in which rdf2neo runs its operations. When you invoke either the [command line](rdf2neo-cli) or its [programmatic equivalent](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java) a procedure is run that can be summarised as:
 
   1. Node loop. For each `ConfigItem`:
-    1. Run the node list query. Split the resulting URIs into subsets of a given size and for each subset run this in parallel:
+    1. Run the node list query. Split the resulting URIs into subsets of a given size and for each subset run this as a thread:
       1. Run the node labels query
-      1. Run the node property query
+      1. Run the node properties query
       1. Prepare a Cypher statement that creates the node and queue it
-      1. Commit all Cypher CREATE statements against the configured Neo4j
+      1. Commit all Cypher `CREATE` statements against the configured Neo4j
   1. Relation loop. For each `ConfigItem`:
-    1. Run the relation list/type query. Split the results as above and run threads with:
-      1. Run the relation property query. Prepare a Cypher statement that creates a new relation and refers to existing nodes via their iri property
-      1. Commit all the statements at the end
+    1. Run the relation list/type query. Split the results as above and run threads that:
+      1. Run the relation properties query. Prepare a Cypher statement that creates a new relation and refers to existing nodes via their `iri` property
+      1. Commit all relation-creation the statements at the end
       
-So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists (it does).
+So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists during the first stage (it doesn't) or during the relation creation (it does).
 
-Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](TODO), a suitable default is defined for it).
+Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of `[CyLoadingProcessor](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java)`, a suitable default is defined for it).
 
 
-##  Other configuration elements
+##  Miscellanea
 
-The Spring configuration is a complex system, which depends on the way [Spring itself works](TODO) and the [Java code available for running rdf2neo](TODO).  
+The Spring configuration is a complex system, which depends on the way [Spring itself works](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html) and the [Java code available for running rdf2neo](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load).  
 
-In addition to the details mentioned in this section, see the examples in the [core package](TODO) and in the [command line package](TODO) for details.
+In addition to the details mentioned in this section, see the examples in the [core package](rdf2neo/rdf2neo/src/test/resources) and in the [command line package](rdf2neo-cli/src/main/assembly/resources) for details.
 
 
 ### Neo4j connection
 
-Every configuration is supposed to be used with a given Neo4j target instance, which should be configured in Spring. See the examples for details. Note also that you might achieve more modularity by using mechanisms like [Spring imports](TODO) or combination of Spring XML configuration and Java property files (see [here](TODO)).
+Every configuration is supposed to be used with a given Neo4j target instance, which should be configured in Spring. See the examples for details. Note also that you might achieve more modularity by using mechanisms like [Spring imports](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-factory-xml-import) or combination of Spring XML configuration and Java property files (see [here](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java-combining)).
+
+
+### Neo4j pre-conditions
+
+We expect an empty database when rdf2neo is run, or at least a database where the nodes and relations you are going to import from RDF are not already there (e.g., no node with same URIs, or no node with the same labels).
+
+You can do cleanup or pre/post processing operations against Neo4j by invoking the [Neo4j Cypher Shell](https://neo4j.com/docs/operations-manual/current/tools/cypher-shell/) in scripts of yours (which will invoke rdf2neo too). 
 
 
 ###  Cypher Indexes
 
-By default, the only Cypher node property that rdf2neo [indexes](TODO) is `iri`. You should decide which other properties should be indexed in your application, in order to optimise performance. Cypher indexes can be configured inside the `ConfigItem`, the way shown [above](TODO).  
+By default, the only Cypher node property that rdf2neo [indexes](https://neo4j.com/docs/developer-manual/current/cypher/schema/index) is `iri`. You should decide which other properties should be indexed in your application, in order to optimise performance. Cypher indexes can be configured inside the `ConfigItem`, the way shown above. 
+[Here](rdf2neo/src/test/resources/dbpedia_node_indexes.sparql) you can find an example of the SPARQL query to be used to define the indexes.   
 
+*Limitations: we don't support the configuration of multi-property indexes. If you need that, you can send Cypher commands to Neo4j using the [Neo4j Cypher Shell](https://neo4j.com/docs/operations-manual/current/tools/cypher-shell/)*
 
 ### default label
 
-As [mentioned earlier](TODO), every Cypher node created by rdf2neo has at least a default label, to which further labels can be added. The default can be changed by means of the property `defaultNodeLabel`: 
+As mentioned earlier, every Cypher node created by rdf2neo has at least a default label, to which further labels can be added. The default can be changed by means of the property `defaultNodeLabel`: 
 
 ```xml
 <beans...>
@@ -400,7 +424,7 @@ As [mentioned earlier](TODO), every Cypher node created by rdf2neo has at least 
 
 ### ID Converters
 
-As explained above, node labels, relation types and node/relation property names can be converted from URIs or literals. We have a simple [default converter](TODO) and we are working on more options. You can even defined your own Java-based converter and configure it via Spring, by using the beans named `nodeLabelIdConverter`, `relationIdConverter`, `propertyIdConverter`. For instance:
+As explained above, node labels, relation types and node/relation property names can be converted from URIs or literals. We have a simple [default converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java) and we are working on more options. You can even define your own Java-based converter and configure it via Spring, by using the beans named `nodeLabelIdConverter`, `relationIdConverter`, `propertyIdConverter`. For instance:
 
 ```xml
 <beans...>

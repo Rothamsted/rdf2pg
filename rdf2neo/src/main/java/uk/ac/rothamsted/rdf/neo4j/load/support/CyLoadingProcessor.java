@@ -3,6 +3,9 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
 
@@ -34,5 +37,13 @@ public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfD
 	protected long getDestinationSize ( Set<T> dest )
 	{
 		return dest.size ();
+	}
+
+	@Autowired ( required = false ) @Qualifier ( "destinationMaxSize" )
+	@Override // Just to use annotations
+	public CyLoadingProcessor<T> setDestinationMaxSize ( long destinationMaxSize )
+	{
+		super.setDestinationMaxSize ( destinationMaxSize );
+		return this;
 	}
 }
