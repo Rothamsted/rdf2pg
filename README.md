@@ -1,6 +1,6 @@
 # The RDF-to-Neo4j Converter
 
-This is a Java-based project providing configurable components to convert RDF data into [Cypher](https://neo4j.com/developer/cypher-query-language/) commands that can populate a [Neo4J](https://neo4j.com) graph database.
+This is a Java-based project providing configurable components to convert RDF data into [Cypher](https://neo4j.com/developer/cypher-query-language/) commands that can populate a [Neo4j](https://neo4j.com) graph database.
 
 You can configure the way RDF is mapped into Neo4J entities (nodes, node properties, relations and relation properties) by means of SPARQL queries. More details in the next sections.
 

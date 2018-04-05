@@ -51,6 +51,7 @@
 			<filtered>true</filtered>
 		</fileSet>
 		
+				
 		<!-- These are craned by the resource plug-in in the cmdline module, then re-extracted by the dependency plug-in and
 		finally repackaged here into the new zip. At the moment we don't know an easier way to do this -->
 
@@ -61,7 +62,14 @@
 			<outputDirectory>examples</outputDirectory>
 			<filtered>true</filtered>
 		</fileSet>
-				
+
   </fileSets>
+
+	<!-- Some more stuff from the Maven project -->		
+	<files>
+		<file>
+			<source>README.md</source>
+		</file>
+	</files>
 
 </assembly>
