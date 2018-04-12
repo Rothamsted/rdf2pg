@@ -29,7 +29,7 @@ The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](r
 
 ## Cypher and Neo4j
 
-Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to access Neo4j. While we haven't extended our code to support [other graph databases](https://www.opencypher.org/projects) that support [OpenCypher](https://www.opencypher.org/), we would expect this to be easy to do. In the follow we mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
+Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to access Neo4j. While we haven't extended our code to support [other graph databases](https://www.opencypher.org/projects) that support [OpenCypher](https://www.opencypher.org/), we would expect this to be easy to do. In the following, we mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
 
 
 ## Mapping RDF to Cypher/Neo4j entities: general concepts
@@ -37,11 +37,11 @@ Our converter works entirely via Cypher instructions, i.e., we don't use graph-l
 The RDF data model and the Cypher data model are rather similar, but there are significant differences:
 
   * The native entities of Cypher are nodes, relations, node labels, relation types, and properties attached to nodes or relation. 
-  * Essentially, in RDF everything is a triple/statement, the equivalents of the the above entities are all modelled after triples, even when the granularity on Cypher side is lower (e.g., node/relation properties).
+  * Essentially, in RDF everything is a triple/statement, the equivalents of the above entities are all modelled after triples, even when the granularity on Cypher side is lower (e.g., node/relation properties).
   * Nodes are URI-provided resources that appear as subject or object of triples
   * Statements based on [rdf:type](https://www.w3.org/TR/rdf11-primer/#section-semantics) are the closest thing to the definition of node labels (in Cypher labels are strings, in RDF they are other resources/URIs)
   * A triple (or statement) joining two resources/URIs is the closest thing to a Cypher relation. In that case, another resource/URI is used for the triple predicate, this is similar to stating the relation type. Again, the latter is a string, while a predicate is a URI.
-  * An RDF triple having a literal as object ([datatype properties](https://www.w3.org/TR/owl2-primer/#Datatypes) in [OWL](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/)) is roughly equivalent to a node property in Cypher. Again, Cypher property names are strings, triple datatype properties are URIs. There are other significant differences. For instance, string literals in RDF can have a language tag attached, no equivalent exists in Cypher (it can be modelled as a 2-sized array). As another example, a property in Cypher can have an array as value, but the array contents must be homogeneous (i.e., all values must have the same raw type), while in RDF an array is nothing but a [special set of statements](https://www.w3.org/TR/rdf-schema/#ch_othervocab). Moreover, in RDF you can (obviously) have multiple statements associtated to a subject that define multiple values for a property  (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be emulated in Cypher, typically by merging multiple values into an array (having set semantics).
+  * An RDF triple having a literal as object ([datatype properties](https://www.w3.org/TR/owl2-primer/#Datatypes) in [OWL](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/)) is roughly equivalent to a node property in Cypher. Again, Cypher property names are strings, triple datatype properties are URIs. There are other significant differences, for instance, string literals in RDF can have a language tag attached, no equivalent exists in Cypher (it can be modelled as a 2-sized array). As another example, a property in Cypher can have an array as value, but the array contents must be homogeneous (i.e., all values must have the same raw type), while in RDF an array is nothing but a [special set of statements](https://www.w3.org/TR/rdf-schema/#ch_othervocab). Moreover, in RDF you can (obviously) have multiple statements associtated to a subject that define multiple values for a property  (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be emulated in Cypher, typically by merging multiple values into an array (having set semantics).
   * Cypher relations can have property/value pairs attached. In RDF you can only emulate this with constructs like [reified statements](https://www.w3.org/TR/rdf-schema/#ch_reificationvocab), [named graphs](https://www.w3.org/2011/prov/wiki/Using_named_graphs_to_model_Accounts) or [singleton properties](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4350149/).
   		
 So, two similar graph models and a number of differences. How to map one to the other?
@@ -55,9 +55,9 @@ Indeed, [other projects](https://jbarrasa.com/2016/06/07/importing-rdf-data-into
 
 In order to provide the flexibility necessary in the use case above, we have decided another way to map RDF to Cypher: a set of SPARQL queries that return a list of Cypher entities (nodes and their labels, node details like properties, relations, etc) from the initial RDF data.
 
-In the follow we show how to define such queries.
+In the following, we show how to define such queries.
 
-In addition to SPARQL, we use a couple of components to define further configuration details, which cannot be managed via SPARQL-based mapping, or it is too difficult to do so. For example, we have a [default URI-to-identifier converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java), which converts URIs to short identifier strings, suitable to be used as node labels or relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
+In addition to SPARQL, we use a couple of components to define further configuration details, which cannot be managed via SPARQL-based mapping, or are too difficult to do so. For example, we have a [default URI-to-identifier converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java), which converts URIs to short identifier strings, suitable to be used as node labels or relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
 
 TODO: we plan to ship our tools with SPARQL mappings for 'natural RDF mapping'.
 
@@ -66,7 +66,7 @@ TODO: we plan to ship our tools with SPARQL mappings for 'natural RDF mapping'.
 
 SPARQL queries, the target Neo4j database and components like the URI-to-identifier converters are all configurable components in neo4j. You can work out a particular configuration for a given RDF data set, where you put together all these components. A configuration is defined as a [Spring configuration file](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html), which provides with a powerful language to assemble components together (it plugs in the underlying Java entities, but you don't need to know Java to understand these files).
 
-*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally other Spring configuration means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
+*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally use other Spring configuration means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
 
 
 ##  rdf2neo4 architecture
@@ -75,7 +75,7 @@ rdf2neo is more precisely a "TDB-to-Neo4j" converter. That is, it takes RDF data
 
 We cannot load data directly from RDF files because we need to view all the data set that you want to convert. For instance, before we can issue a Cypher command to create a node, we need to fetch all of its details about its labels and properties. If these details were spread across different RDF files, we would need to first load all the files and then query them with SPARQL (the way shown below). Which is precisely what we do by using a TDB. The alternative would be an in-memory triple store (i.e., what Jena calls a memory [Model](https://jena.apache.org/tutorials/rdf_api.html), but this might not be good if you have large data sets.
 
-if you want a wrapper that abstracts away from these details, you can find [a script in the command line package](rdf2neo-cli/src/main/assembly/resources/rdf2neo.sh).   
+A wrapper that abstracts away from these details, can be found [a script in the command line package](rdf2neo-cli/src/main/assembly/resources/rdf2neo.sh).   
 
 We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
 
