@@ -16,6 +16,12 @@
 	<dependencies>
 
 		<dependency>
+		  <groupId>uk.ac.rothamsted.neo4j</groupId>
+			<artifactId>neo4j-utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.machinezoo.noexception</groupId>
 			<artifactId>noexception</artifactId>
 		</dependency>
@@ -37,23 +43,18 @@
 			<groupId>info.marcobrandizi</groupId>
 			<artifactId>rdfutils-jena</artifactId>
 		</dependency>
+		
 		<dependency>
-			<groupId>org.neo4j.driver</groupId>
-			<artifactId>neo4j-java-driver</artifactId>
-		</dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>		
 		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		            	
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>4.3.6.RELEASE</version>
-		</dependency>
-		            			      
+		            			            			      
 	</dependencies>
  
 	<build>

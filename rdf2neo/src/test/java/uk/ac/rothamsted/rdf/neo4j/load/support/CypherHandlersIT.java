@@ -6,8 +6,11 @@ import static org.junit.Assert.assertTrue;
 import static org.neo4j.driver.v1.Values.parameters;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,12 +31,14 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
+import uk.ac.rothamsted.neo4j.utils.test.CypherTester;
 
 /**
  * Runs {@link CypherLoadingHandler}-related tests.
@@ -151,42 +156,72 @@ public class CypherHandlersIT
 
 			handler.accept ( relSparqlRows );
 
+			// Verify
 			
-			Session session = neoDriver.session ( AccessMode.READ );
-
-			StatementResult cursor = session.run ( "MATCH ()-[r]->() RETURN COUNT ( r ) AS ct" );
-			Assert.assertEquals ( "Wrong count for relations", 3, cursor.next ().get ( "ct" ).asLong () );
-
-			cursor = session.run ( 
-				"MATCH p = (:TestNode{ iri:$iri1 })-[:relatedTo]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) AS ct", 
-				parameters ( "iri1", iri ( "ex:1" ), "iri2", iri ( "ex:2" ) ) 
-			);
-			Assert.assertEquals ( "Wrong count for {1 relatedTo 2}!", 1, cursor.next ().get ( "ct" ).asLong () );
-
-			cursor = session.run ( 
-				"MATCH p = (:SuperTestNode{ iri:$iri1 })-[:derivedFrom]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) AS ct", 
-				parameters ( "iri1", iri ( "ex:3" ), "iri2", iri ( "ex:1" ) ) 
-			);
-			Assert.assertEquals ( "Wrong count for {3 derivedFrom 1}!", 1, cursor.next ().get ( "ct" ).asLong () );
+			CypherTester tester = new CypherTester ( neoMgr );
 			
-			cursor = session.run ( 
-				"MATCH (:TestNode{ iri:$iri1 })-[r:relatedTo]->(:AdditionalLabel{ iri:$iri2 }) RETURN r.note AS note", 
-				parameters ( "iri1", iri ( "ex:2" ), "iri2", iri ( "ex:3" ) ) 
+			Assert.assertTrue (
+				"Wrong count for relations",
+				tester.ask ( "MATCH ()-[r]->() RETURN COUNT ( r ) = 3" )
 			);
-			assertTrue ( "{2 relatedTo 3} not found!", cursor.hasNext () );
-			Set<String> values = cursor
-				.next ()
-				.get ( "note" )
-				.asList ()
-				.stream ()
-				.map ( v -> (String) v )
-				.collect ( Collectors.toSet () );
-			Set<String> refValues = new HashSet<> ( Arrays.asList ( new String[] { "Reified Relation", "Another Note" } ) ) ;
-			assertTrue ( 
-				"reified relation, wrong property value for 'note'!", 
-				Sets.difference ( values, refValues ).isEmpty () 
+
+			Assert.assertTrue (
+				"Wrong count for {1 relatedTo 2}!",
+				tester.ask ( 
+					"MATCH p = (:TestNode{ iri:$iri1 })-[:relatedTo]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
+					"iri1", iri ( "ex:1" ), "iri2", iri ( "ex:2" )
+				)
 			);
-		}
-	}	
+			
+			Assert.assertTrue (
+				"Wrong count for {3 derivedFrom 1}!",
+				tester.ask ( 
+					"MATCH p = (:SuperTestNode{ iri:$iri1 })-[:derivedFrom]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
+					"iri1", iri ( "ex:3" ), "iri2", iri ( "ex:1" )
+				)
+			);
+
+			Assert.assertTrue (
+				"Wrong count for {3 derivedFrom 1}!",
+				tester.ask ( 
+					"MATCH p = (:SuperTestNode{ iri:$iri1 })-[:derivedFrom]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
+					"iri1", iri ( "ex:3" ), "iri2", iri ( "ex:1" )
+				)
+			);
+
+			Assert.assertTrue (
+				"Wrong count for {3 derivedFrom 1}!",
+				tester.ask ( 
+					"MATCH p = (:SuperTestNode{ iri:$iri1 })-[:derivedFrom]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
+					"iri1", iri ( "ex:3" ), "iri2", iri ( "ex:1" )
+				)
+			);
+			
+			
+			Assert.assertTrue (
+				"reified relation, wrong property value for 'note'!",
+				tester.compare (
+					// Test against the Cypher result
+					notesv -> {
+						List<Object> notes = notesv.asList ();
+						if ( notes == null || notes.isEmpty () ) return false;
+
+						// notes collection is sorted, then compared to the sorted values in the reference
+						return notes
+							.stream ()
+							.sorted ()
+							.collect ( Collectors.toList () )
+							.equals ( 
+								Arrays.asList ( new String[] { "Another Note", "Reified Relation" } )
+							);
+					},
+					// the relation containing .note
+					"MATCH (:TestNode{ iri:$iri1 })-[r:relatedTo]->(:AdditionalLabel{ iri:$iri2 })\n"
+					+ "RETURN r.note\n",
+					"iri1", iri ( "ex:2" ), "iri2", iri ( "ex:3" )
+				)
+			);
+		} // try
+	}	// testRelations
 
 }

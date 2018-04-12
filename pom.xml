@@ -14,6 +14,7 @@
   <modules>
 		<module>rdf2neo</module>
 		<module>rdf2neo-cli</module>
+		<module>neo4j-utils</module>
   </modules>
   
   <properties>
@@ -59,7 +60,8 @@
 				<groupId>org.neo4j.driver</groupId>
 				<artifactId>neo4j-java-driver</artifactId>
 				<version>1.4.5</version>
-			</dependency>            			      
+			</dependency> 
+			           			      
   			<dependency>
 				<groupId>info.marcobrandizi</groupId>
 				<artifactId>rdfutils-jena</artifactId>
@@ -77,35 +79,47 @@
 				<artifactId>logback-classic</artifactId>
 	      <version>1.2.3</version>
 			</dependency>
-
-		<!-- 
-			Intercepts log4j and sends it to SL4J
-			This bridge is needed because we already use components based on Log4j, the ones following might be needed
-			in your application, so they're commented here. 
-		-->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		
-		<!-- Same for Jakarta Commons Logging -->
-		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		
-		<!-- Same for Java Logging -->
-		<!-- IMPORTANT: If you're really using this, you will probably want to fix performance too:
-		  http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html
-		  http://logback.qos.ch/manual/configuration.html#LevelChangePropagator
-		 -->
-		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>jul-to-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>			
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>4.3.6.RELEASE</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.6</version>
+			</dependency>
+			
+			<!-- 
+				Intercepts log4j and sends it to SL4J
+				This bridge is needed because we already use components based on Log4j, the ones following might be needed
+				in your application, so they're commented here. 
+			-->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			
+			<!-- Same for Jakarta Commons Logging -->
+			<dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			
+			<!-- Same for Java Logging -->
+			<!-- IMPORTANT: If you're really using this, you will probably want to fix performance too:
+			  http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html
+			  http://logback.qos.ch/manual/configuration.html#LevelChangePropagator
+			 -->
+			<dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>jul-to-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>			
 
   		</dependencies>
   		

@@ -72,9 +72,9 @@ public class CypherLoaderIT
 			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
-		{ 			
-			// TODO: configurator, multiple config sets
-
+		{
+			// You don't want to do this, see #testSpring()
+			
 			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
 			CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
 			
@@ -112,7 +112,8 @@ public class CypherLoaderIT
 		{
 			cymloader.setCypherLoaderFactory ( () -> 
 			{
-				// This will eventually be managed by Spring
+				// You don't want to do this, see #testSpring()
+				
 				RdfDataManager rdfMgr = new RdfDataManager ();
 				Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 				Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );			
