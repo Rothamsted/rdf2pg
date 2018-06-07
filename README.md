@@ -187,10 +187,14 @@ ex:john a schema:Person, schema:Employee;
   foaf:familyName "Smith".
 ```
 
-The queries above will give the following Cypher node:
+The queries above will yield the following Cypher node:
 
-```sql
-  { iri:"http://www.example.com/resources/john", givenName: 'John', familyName: 'Smith' }: [ `Person`, `Employee`, `Resource` ]
+```json
+  { 
+    iri:"http://www.example.com/resources/john",
+    givenName: 'John',
+    familyName: 'Smith'
+  }: [ `Person`, `Employee`, `Resource` ]
 ```
 
 As you can see, there are values that are created implicitly: 
@@ -379,7 +383,7 @@ You might need to be aware of the order in which rdf2neo runs its operations. Wh
       
 So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists during the first stage (it doesn't) or during the relation creation (it does).
 
-Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of `[CyLoadingProcessor](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java)`, a suitable default is defined for it).
+Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java), a suitable default is defined for it).
 
 
 ##  Miscellanea
