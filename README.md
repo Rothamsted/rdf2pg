@@ -84,7 +84,7 @@ We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
 
 In this section we are going to show abstracts from the [DBPedia example](rdf2neo/src/test/resources), which maps some example RDF downloaded from [DBPedia](http://wiki.dbpedia.org/about) into Neo4j.
 
-rdf2neo allows you to define multiple configuration sets (named `[ConfigItem](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java#L54)` in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance, in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. While in simple projects you might have just one configuration set, we allow for many because this helps with keeping data subsets separated.
+rdf2neo allows you to define multiple configuration sets (named [`ConfigItem`](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java#L54) in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance, in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. While in simple projects you might have just one configuration set, we allow for many because this helps with keeping data subsets separated.
 
 
 ##  Node mappings
