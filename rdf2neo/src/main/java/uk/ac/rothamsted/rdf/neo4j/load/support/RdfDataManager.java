@@ -397,10 +397,10 @@ public class RdfDataManager implements AutoCloseable
 			return fun.get ();
 		}
 		catch ( IOException ex ) {
-			throw new UncheckedIOException ( "I/O error while indexing imported data: " + ex.getMessage (), ex );
+			throw new UncheckedIOException ( "I/O error while working with source RDF data: " + ex.getMessage (), ex );
 		}
 		catch ( Exception ex ) {
-			throw new RuntimeException ( "Error while indexing imported data: " + ex.getMessage (), ex );
+			throw new RuntimeException ( "Error while working with source RDF data: " + ex.getMessage (), ex );
 		}
 	}
 
