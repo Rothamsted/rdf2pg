@@ -11,11 +11,9 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.QuerySolutionMap;
 import org.apache.jena.query.ReadWrite;
-import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -28,10 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.machinezoo.noexception.throwing.ThrowingRunnable;
 import com.machinezoo.noexception.throwing.ThrowingSupplier;
 
@@ -59,36 +53,18 @@ public class RdfDataManager implements AutoCloseable
 	
 	private String tdbPath = null;
 	private Dataset dataSet = null;
-	
-	/**
-	 * A SPARQL query cache. This stores queries that have already been parsed from their string representation. 
-	 * It is used in the data manager methods, to save some time about query parsing.  
-	 * 
-	 * TODO: move the query caching to {@link SparqlUtils}.
-	 */
-	private LoadingCache<String, Query> queryCache; 
-	
+		
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	public RdfDataManager ()
 	{
-		Cache<String, Query> cache = CacheBuilder
-			.newBuilder ()
-			.maximumSize ( 1000 )
-			.build ( new CacheLoader<String, Query> () 
-			{
-				@Override
-				public Query load ( String sparql ) throws Exception {
-					return QueryFactory.create ( sparql, Syntax.syntaxARQ );
-				}
-			});
-		queryCache = (LoadingCache<String, Query>) cache;		
 	}
 
 	/**
 	 * Calls {@link #open(String)}.
 	 */
-	public RdfDataManager ( String tdbPath ) {
+	public RdfDataManager ( String tdbPath ) 
+	{
 		this ();
 		open ( tdbPath );
 	}
@@ -142,7 +118,7 @@ public class RdfDataManager implements AutoCloseable
 		if ( labelsSparql != null )
 		{
 			// If it's omitted, it will get the default label.
-			Query qry = this.queryCache.getUnchecked ( labelsSparql );
+			Query qry = SparqlUtils.getChachedQuery ( labelsSparql );
 			Function<String, String> labelIdConverter = this.getCyNodeLabelIdConverter ();
 			
 			boolean wasInTnx = dataSet.isInTransaction ();
@@ -212,7 +188,7 @@ public class RdfDataManager implements AutoCloseable
 		// It may be omitted, if you don't have any property except the IRI.
 		if ( propsSparql == null ) return;
 		
-		Query qry = this.queryCache.getUnchecked ( propsSparql );
+		Query qry = SparqlUtils.getChachedQuery ( propsSparql );
 		Function<String, String> propIdConverter = this.getCyPropertyIdConverter ();
 		
 		boolean wasInTnx = dataSet.isInTransaction ();
@@ -304,7 +280,7 @@ public class RdfDataManager implements AutoCloseable
 		Dataset ds = this.dataSet;
 		Model model = ds.getDefaultModel ();
 
-		Query query = queryCache.getUnchecked ( sparql );
+		Query query = SparqlUtils.getChachedQuery ( sparql );
 		
 		long[] ctr = { 0L };
 		Txn.executeRead ( ds, () -> 
