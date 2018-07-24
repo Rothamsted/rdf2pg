@@ -84,7 +84,7 @@ We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
 
 In this section we are going to show abstracts from the [DBPedia example](rdf2neo/src/test/resources), which maps some example RDF downloaded from [DBPedia](http://wiki.dbpedia.org/about) into Neo4j.
 
-rdf2neo allows you to define multiple configuration sets (named `[ConfigItem](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java#L54)` in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance, in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. While in simple projects you might have just one configuration set, we allow for many because this helps with keeping data subsets separated.
+rdf2neo allows you to define multiple configuration sets (named [`ConfigItem`](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/MultiConfigCyLoader.java#L54) in the Spring configurations). Each has a list of SPARQL mapping queries and possibly other configuration elements about a logical subset of your RDF data. For instance, in the DBPedia example we have a `ConfigItem` for mapping data about places and another to map data about people. While in simple projects you might have just one configuration set, we allow for many because this helps with keeping data subsets separated.
 
 
 ##  Node mappings
@@ -187,10 +187,14 @@ ex:john a schema:Person, schema:Employee;
   foaf:familyName "Smith".
 ```
 
-The queries above will give the following Cypher node:
+The queries above will yield the following Cypher node:
 
-```sql
-  { iri:"http://www.example.com/resources/john", givenName: 'John', familyName: 'Smith' }: [ `Person`, `Employee`, `Resource` ]
+```json
+  { 
+    iri:"http://www.example.com/resources/john",
+    givenName: 'John',
+    familyName: 'Smith'
+  }: [ `Person`, `Employee`, `Resource` ]
 ```
 
 As you can see, there are values that are created implicitly: 
@@ -379,7 +383,7 @@ You might need to be aware of the order in which rdf2neo runs its operations. Wh
       
 So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists during the first stage (it doesn't) or during the relation creation (it does).
 
-Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of `[CyLoadingProcessor](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java)`, a suitable default is defined for it).
+Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java), a suitable default is defined for it).
 
 
 ##  Miscellanea
