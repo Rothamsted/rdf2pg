@@ -22,11 +22,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.machinezoo.noexception</groupId>
-			<artifactId>noexception</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>uk.ac.ebi</groupId>
 			<artifactId>jutils-io</artifactId>
 		</dependency>

@@ -2,6 +2,7 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
  *
  */
 public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfDataManager, Set<T>>
+	implements AutoCloseable
 {
 	public CyLoadingProcessor ()
 	{
@@ -46,4 +48,16 @@ public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfD
 		super.setDestinationMaxSize ( destinationMaxSize );
 		return this;
 	}
+	
+	/**
+	* If the {@link #getConsumer() consumer} is {@link AutoCloseable}, invokes its {@link AutoCloseable#close()}
+	* method.
+	* 
+	*/
+	@Override
+	public void close () throws Exception
+	{
+		Consumer<?> consumer = this.getConsumer ();
+		if ( consumer != null && consumer instanceof AutoCloseable ) ((AutoCloseable) consumer).close ();
+	}	
 }

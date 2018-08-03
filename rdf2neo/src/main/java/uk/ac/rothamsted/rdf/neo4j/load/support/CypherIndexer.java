@@ -41,7 +41,7 @@ public class CypherIndexer implements AutoCloseable
 		
 		final List<String> allLabels = new LinkedList<> ();
 		
-		rdfMgr.processSparql ( "CypherIndexer", idxSparql, row -> 
+		rdfMgr.processSelect ( "CypherIndexer", idxSparql, row -> 
 		{  
 			String label = rdfMgr.getCypherId ( row.get ( "label" ), labelIdConverter );
 			if ( label == null ) throw new IllegalArgumentException ( "Null label in the indices query" );

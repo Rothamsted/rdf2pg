@@ -2,12 +2,9 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -18,18 +15,12 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.system.Txn;
-import org.apache.jena.tdb.TDBFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.machinezoo.noexception.throwing.ThrowingRunnable;
-import com.machinezoo.noexception.throwing.ThrowingSupplier;
-
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
+import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
 import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
 
 /**
@@ -45,58 +36,19 @@ import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
  *
  */
 @Component
-public class RdfDataManager implements AutoCloseable
+public class RdfDataManager extends TDBEndPointHelper implements AutoCloseable
 {
 	private Function<String, String> cyNodeLabelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
 	private Function<String, String> cyRelationIdConverter = new DefaultIri2IdConverter ();
 	
-	private String tdbPath = null;
-	private Dataset dataSet = null;
-		
-	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
-
-	public RdfDataManager ()
-	{
+	public RdfDataManager () {
 	}
 
-	/**
-	 * Calls {@link #open(String)}.
-	 */
-	public RdfDataManager ( String tdbPath ) 
-	{
-		this ();
-		open ( tdbPath );
+	public RdfDataManager ( String tdbPath ) {
+		super ( tdbPath );
 	}
 
-	/**
-	 * <p>Opens a TDB on the file systema and initialises the {@link #getDataSet() data set} that is managed by this
-	 * class.</p>
-	 * 
-	 * <p>Many of the operations below require that this method is first invoked. {@link #close()} is its counterpart.</p> 
-	 */
-	public void open ( String tdbPath ) 
-	{
-		wrapTask ( () -> 
-		{
-			log.debug ( "Setting TDB to '{}'", tdbPath );
-			
-			this.tdbPath = tdbPath;
-			this.dataSet = TDBFactory.createDataset ( tdbPath );
-		});
-	}
-	
-	/**
-	 * Ensures that {@link #open(String)} was called and raises an exception if not. Used in several methods below that 
-	 * require this condition.
-	 */
-	protected void ensureOpen ()
-	{
-		if ( this.dataSet == null ) throw new IllegalStateException ( 
-			"The data manager must be open() before working with it" 
-		);
-	}
-	
 	/**
 	 * Uses the underlining TDB and mapping queries to create a new {@link CyNode} instance.
 	 * 
@@ -118,7 +70,7 @@ public class RdfDataManager implements AutoCloseable
 		if ( labelsSparql != null )
 		{
 			// If it's omitted, it will get the default label.
-			Query qry = SparqlUtils.getChachedQuery ( labelsSparql );
+			Query qry = SparqlUtils.getCachedQuery ( labelsSparql );
 			Function<String, String> labelIdConverter = this.getCyNodeLabelIdConverter ();
 			
 			boolean wasInTnx = dataSet.isInTransaction ();
@@ -188,7 +140,7 @@ public class RdfDataManager implements AutoCloseable
 		// It may be omitted, if you don't have any property except the IRI.
 		if ( propsSparql == null ) return;
 		
-		Query qry = SparqlUtils.getChachedQuery ( propsSparql );
+		Query qry = SparqlUtils.getCachedQuery ( propsSparql );
 		Function<String, String> propIdConverter = this.getCyPropertyIdConverter ();
 		
 		boolean wasInTnx = dataSet.isInTransaction ();
@@ -219,7 +171,7 @@ public class RdfDataManager implements AutoCloseable
 	 */
 	public long processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
 	{
-		return this.processSparql ( "processNodeIris()", nodeIrisSparql, row ->
+		return this.processSelect ( "processNodeIris()", nodeIrisSparql, row ->
 			action.accept ( row.getResource ( "iri" ) )
 		);
 	}
@@ -259,42 +211,8 @@ public class RdfDataManager implements AutoCloseable
 	 * 
 	 */
 	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action ) {
-		return processSparql ( "processRelationIris()", relationIrisSparql, action );
+		return processSelect ( "processRelationIris()", relationIrisSparql, action );
 	}
-	
-	/**
-	 * Process a SPARQL query, by running it against our RDF source and passing each {@link QuerySolution} to
-	 * the action parameter. Works out operations like getting the proper handler from TDB query or 
-	 * caching the SPARQL queries.
-	 *  
-	 * @param logPrefix operation name, used for logging.
-	 */
-	public long processSparql ( String logPrefix, String sparql, Consumer<QuerySolution> action )
-	{
-		if ( sparql == null ) {
-			log.debug ( "null SPARQL for {}, skipping", logPrefix );
-			return 0;
-		}
-		
-		ensureOpen ();		
-		Dataset ds = this.dataSet;
-		Model model = ds.getDefaultModel ();
-
-		Query query = SparqlUtils.getChachedQuery ( sparql );
-		
-		long[] ctr = { 0L };
-		Txn.executeRead ( ds, () -> 
-		{
-			QueryExecution qx = QueryExecutionFactory.create ( query, model );
-			qx.execSelect ().forEachRemaining ( row -> { 
-				action.accept ( row ); 
-				if ( ++ctr [ 0 ] % 100000 == 0 ) log.info ( "{}: {} SPARQL tuples read from RDF", logPrefix, ctr [ 0 ] ); 
-			});
-		});
-		
-		return ctr [ 0 ];
-	}	
-	
 	
 	/** 
 	 * Methods like {@link #getCyNode(Resource, String, String)} use this {@link DefaultIri2IdConverter ID} converter to 
@@ -346,52 +264,18 @@ public class RdfDataManager implements AutoCloseable
 		this.propertyIdConverter = propertyIdConverter;
 	}
 
-	
 	/**
-	 * This returns the Jena {@link Dataset} corresponding to the TDB triple store at {@link #getTdbPath()} that was 
-	 * opened by {@link #open(String)}. 
-	 * 
+	 * If sparql is null, just doesn't do anything. This is useful in the rdf2neo context, since there are configured
+	 * queries that are optional. 
 	 */
-	public Dataset getDataSet ()
-	{
-		return dataSet;
-	}
-
-	
-	protected static void wrapTask ( ThrowingRunnable task )
-	{
-		wrapFun ( () -> { task.run (); return null; } ); 
-	}
-
-	/**
-	 * A facility that wraps some code throwing a checked exception with a try/catch and an possibly re-throws an 
-	 * unchecked exception.  
-	 */
-	protected static <V> V wrapFun ( ThrowingSupplier<V> fun )
-	{
-		try {
-			return fun.get ();
-		}
-		catch ( IOException ex ) {
-			throw new UncheckedIOException ( "I/O error while working with source RDF data: " + ex.getMessage (), ex );
-		}
-		catch ( Exception ex ) {
-			throw new RuntimeException ( "Error while working with source RDF data: " + ex.getMessage (), ex );
-		}
-	}
-
-	public String getTdbPath ()
-	{
-		return tdbPath;
-	}
-
-
 	@Override
-	public void close ()
+	public long processSelect ( String logPrefix, String sparql, Consumer<QuerySolution> action )
 	{
-		if ( this.dataSet == null ) return;
-		this.dataSet.close ();
-		this.dataSet = null;
+		if ( sparql == null ) {
+			log.debug ( "null SPARQL for {}, skipping", logPrefix );
+			return 0;
+		}
+		
+		return super.processSelect ( logPrefix, sparql, action );
 	}
-			
 }
