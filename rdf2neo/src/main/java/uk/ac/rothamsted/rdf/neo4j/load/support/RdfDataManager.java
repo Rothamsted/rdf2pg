@@ -36,7 +36,7 @@ import uk.ac.rothamsted.rdf.neo4j.idconvert.DefaultIri2IdConverter;
  *
  */
 @Component
-public class RdfDataManager extends TDBEndPointHelper implements AutoCloseable
+public class RdfDataManager extends TDBEndPointHelper
 {
 	private Function<String, String> cyNodeLabelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
