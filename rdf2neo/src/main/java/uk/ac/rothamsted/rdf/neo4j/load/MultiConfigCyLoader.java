@@ -204,7 +204,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 		// First the nodes ( mode = 0 ) and then the relations ( mode = 1 )
 		// That ensures that cross-references made by different queries are taken 
 		// 
-		for ( int mode = 0; mode <= 1; mode++ )
+		for ( int mode = 0; mode <= 2; mode++ )
 		{
 			for ( ConfigItem cfg: this.getConfigItems () )
 			{		
@@ -230,7 +230,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 					if ( indexesSparql != null )
 						cypherLoader.getCypherIndexer ().setIndexesSparql ( indexesSparql );
 					
-					cypherLoader.load ( tdbPath, mode == 0, mode == 1 );
+					cypherLoader.load ( tdbPath, mode == 0, mode == 1, mode == 2 );
 				} // try				
 			} // for config items
 		} // for mode

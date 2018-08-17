@@ -33,6 +33,8 @@ public class CypherIndexer implements AutoCloseable
 		String idxSparql = getIndexesSparql ();
 		if ( idxSparql == null ) return;
 		
+		log.info ( "Starting Cypher Indexing" );
+		
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
 		
@@ -76,6 +78,8 @@ public class CypherIndexer implements AutoCloseable
 				neo4jDataManager.runCypher ( String.format ( "CREATE INDEX ON :`%s`( `%s` )", actualLabel, propName ));
 			}
 		});
+
+		log.info ( "Cypher Indexing Ended" );		
 	}
 	
 	public Neo4jDataManager getNeo4jDataManager ()

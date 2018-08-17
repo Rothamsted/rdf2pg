@@ -45,7 +45,7 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		
 		// Let's collect node attributes on a per-label basis
 		// This is necessary to build a CREATE Cypher command that takes multiple nodes as parameter, since the 
-		// the node labels cannot be parameterised
+		// node labels cannot be parameterised
 		//
 		Map<SortedSet<String>, List<Map<String, Object>>> cyData = new HashMap<> ();
 				
