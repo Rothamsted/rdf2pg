@@ -21,7 +21,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<neo4j.server.version>3.3.1</neo4j.server.version>
+		<neo4j.server.version>3.4.6</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
   </properties>
   
@@ -126,6 +126,7 @@
   </dependencyManagement>
 
 
+
 	<pluginRepositories>
 	
 		<pluginRepository>
@@ -176,4 +177,53 @@
 	  </snapshotRepository>
 	</distributionManagement>	
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- 
+					A small plug-in that starts Neo4j, we maintain our own version of this at 
+					https://github.com/Rothamsted/neo4j-server-maven-plugin
+				 -->
+				<plugin>
+					<groupId>com.github.harti2006</groupId>
+					<artifactId>neo4j-server-maven-plugin</artifactId>
+					<version>1.1</version>
+					<configuration>
+						<!-- port>7474</port --> 
+						<version>${neo4j.server.version}</version>
+						<deleteDb>true</deleteDb>
+					</configuration>
+					<executions>
+						<execution>
+							<id>start-neo4j-server</id>
+							<goals><goal>start</goal></goals>
+						</execution>
+						<execution>
+							<id>stop-neo4j-server</id>
+							<goals><goal>stop</goal></goals>
+						</execution>
+					</executions>
+				</plugin>
+				
+				<!-- Use this to start integration tests (*IT.java) -->
+		    <plugin>
+		      <artifactId>maven-failsafe-plugin</artifactId>
+		      <version>2.20.1</version>
+		      <configuration>
+		      	<trimStackTrace>false</trimStackTrace>
+		      </configuration>
+					<executions>
+	          <execution>
+	          	<id>failsafe-test</id>
+	            <goals><goal>integration-test</goal></goals>
+	          </execution>
+	          <execution>
+		      		<id>failsafe-verify</id>
+		      		<goals><goal>verify</goal></goals>
+	          </execution>
+	        </executions>	      
+		    </plugin>				
+			</plugins>
+		</pluginManagement>		
+	</build>
 </project>

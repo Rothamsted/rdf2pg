@@ -116,94 +116,54 @@
 			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
 			 	final distro zip.
 			 -->
-	  		<plugin>
-	  			<artifactId>maven-dependency-plugin</artifactId>
-	  			<executions>
-	  				<execution>
-	  					<phase>prepare-package</phase>
-	  					<goals>
-	  						<goal>unpack</goal>
-	  					</goals>
-	  					<configuration>
-		          	<artifactItems>
+  		<plugin>
+  			<artifactId>maven-dependency-plugin</artifactId>
+  			<executions>
+  				<execution>
+  					<phase>prepare-package</phase>
+  					<goals>
+  						<goal>unpack</goal>
+  					</goals>
+  					<configuration>
+	          	<artifactItems>
+	            	<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>rdf2neo</artifactId>
+									<version>${project.version}</version>
+	               	<type>test-jar</type>
+	               	<includes>dbpedia_*.sparql</includes>
+	               	<outputDirectory>target/examples/dbpedia/mapping</outputDirectory>
+	             	</artifactItem>
 		            	<artifactItem>
-										<groupId>${project.groupId}</groupId>
-										<artifactId>rdf2neo</artifactId>
-										<version>${project.version}</version>
-		               	<type>test-jar</type>
-		               	<includes>dbpedia_*.sparql</includes>
-		               	<outputDirectory>target/examples/dbpedia/mapping</outputDirectory>
-		             	</artifactItem>
-			            	<artifactItem>
-										<groupId>${project.groupId}</groupId>
-										<artifactId>rdf2neo</artifactId>
-										<version>${project.version}</version>
-		               	<type>test-jar</type>
-		               	<includes>dbpedia_*.ttl</includes>
-		               	<outputDirectory>target/examples/dbpedia</outputDirectory>
-		             	</artifactItem>
-		          	</artifactItems>  						
-	  					</configuration>
-	  				</execution>
-	  			</executions>
-	  		</plugin>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>rdf2neo</artifactId>
+									<version>${project.version}</version>
+	               	<type>test-jar</type>
+	               	<includes>dbpedia_*.ttl</includes>
+	               	<outputDirectory>target/examples/dbpedia</outputDirectory>
+	             	</artifactItem>
+	          	</artifactItems>  						
+  					</configuration>
+  				</execution>
+  			</executions>
+  		</plugin>
 
-
-			<!-- 
-				A small plug-in that starts Neo4j, we maintain our own version of this at 
-				https://github.com/Rothamsted/neo4j-server-maven-plugin
-			 -->
+			<!-- Detailed configurations are on the top POM -->
 			<plugin>
 				<groupId>com.github.harti2006</groupId>
 				<artifactId>neo4j-server-maven-plugin</artifactId>
-				<version>0.2-SNAPSHOT</version>
-				<configuration>
-					<!-- port>7474</port --> 
-					<version>${neo4j.server.version}</version>
-					<deleteDb>true</deleteDb>
-				</configuration>
-				<executions>
-					<execution>
-						<id>start-neo4j-server</id>
-						<goals>
-							<goal>start</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>stop-neo4j-server</id>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 				
-	    <plugin>
-	      <artifactId>maven-failsafe-plugin</artifactId>
-	      <version>2.20.1</version>
-	      <configuration>
-	      		<trimStackTrace>false</trimStackTrace>
-	      		<environmentVariables>
-	      			<!-- this is to re-use the config shipped to the final binary with integration tests. -->
-	      			<RDF2NEO_HOME>target</RDF2NEO_HOME>
-	      		</environmentVariables>
-	      </configuration>
-				<executions>
-          <execution>
-          		<id>failsafe-test</id>
-            <goals>
-	            	<goal>integration-test</goal>
-            </goals>
-          </execution>
-          <execution>
-          		<id>failsafe-verify</id>
-          		<goals>
-          			<goal>verify</goal>
-          		</goals>
-          </execution>
-        </executions>	      
-	    </plugin>
-	    
+		    <plugin>
+		      <artifactId>maven-failsafe-plugin</artifactId>
+		      <configuration>
+		      		<environmentVariables>
+		      			<!-- this is to re-use the config shipped to the final binary with integration tests. -->
+		      			<RDF2NEO_HOME>target</RDF2NEO_HOME>
+		      		</environmentVariables>
+		      </configuration>
+		    </plugin>	    
+		    
 		</plugins>
 
 	</build>
