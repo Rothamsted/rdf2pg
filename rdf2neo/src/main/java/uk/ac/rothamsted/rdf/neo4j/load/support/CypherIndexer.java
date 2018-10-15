@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
+
 /**
  * TODO: comment me!
  *
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CypherIndexer implements AutoCloseable
+public class CypherIndexer
 {
 	private Neo4jDataManager neo4jDataManager;
 	private RdfDataManager rdfDataManager;
@@ -93,6 +95,10 @@ public class CypherIndexer implements AutoCloseable
 		this.neo4jDataManager = neo4jDataManager;
 	}
 	
+	/**
+	 * Used internally, to interact with an RDF backend. We don't care about 
+	 * {@link TDBEndPointHelper#close() closing} it, so the caller has to do it.
+	 */
 	public RdfDataManager getRdfDataManager ()
 	{
 		return rdfDataManager;
@@ -114,16 +120,5 @@ public class CypherIndexer implements AutoCloseable
 	public void setIndexesSparql ( String indexesSparql )
 	{
 		this.indexesSparql = indexesSparql;
-	}
-
-	
-	@Override
-	public void close ()
-	{
-		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
-		if ( neoMgr != null ) neoMgr.close ();
-
-		RdfDataManager rdfMgr = this.getRdfDataManager ();
-		if ( rdfMgr != null ) rdfMgr.close ();		
 	}
 }

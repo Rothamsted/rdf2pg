@@ -39,6 +39,9 @@ public class CypherTester
 	
 	private Logger log = LoggerFactory.getLogger ( this.getClass() );
 
+	/**
+	 * We don't care about closing the driver, this is up to the caller.
+	 */
 	public CypherTester ( Driver neo4jDriver )
 	{
 		this ( new Neo4jDataManager ( neo4jDriver ) );
@@ -192,7 +195,7 @@ public class CypherTester
 
 	/** 
 	 * We work with a {@link Neo4jDataManager} to leverage its utility function. You can setup 
-	 * a tester with either this or a {@link #getNeo4jDataManager() Neo4j driver}. 
+	 * a tester with either this or a {@link Driver Neo4j driver}.
 	 * 
 	 */
 	public Neo4jDataManager getNeo4jDataManager ()

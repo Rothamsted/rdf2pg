@@ -69,11 +69,12 @@ public class CypherLoaderIT
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
-			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{
 			// You don't want to do this, see #testSpring()
+
+			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			
 			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
 			CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();

@@ -82,5 +82,4 @@ public class Neo4jDataManager extends uk.ac.rothamsted.neo4j.utils.Neo4jDataMana
 	public void setNeo4jDriver ( Driver neo4jDriver ) {
 		super.setNeo4jDriver ( neo4jDriver );
 	}
-
 }

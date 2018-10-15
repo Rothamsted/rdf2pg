@@ -71,11 +71,12 @@ public class CypherHandlersIT
 
 		try (	
 				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-				CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
 				RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
-				Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			)
 		{
+			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
+			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
+			
 			// We need the same nodes in all tests
 			handler.setRdfDataManager ( rdfMgr );
 			handler.setNeo4jDataManager ( neoMgr );
@@ -137,11 +138,12 @@ public class CypherHandlersIT
 	{
 		try (	
 			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
 			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
-			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 		)
 		{
+			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
+			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
+
 			handler.setRdfDataManager ( rdfMgr );
 			handler.setNeo4jDataManager ( neoMgr );
 			handler.setRelationTypesSparql ( RdfDataManagerTest.SPARQL_REL_TYPES );

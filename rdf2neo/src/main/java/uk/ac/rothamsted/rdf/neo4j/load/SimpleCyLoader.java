@@ -103,7 +103,8 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 	}
 	
 	/**
-	 * Closes dependency objects.
+	 * Closes dependency objects. It DOES NOT deal with Neo4j driver closing, since this could be reused 
+	 * across multiple instantiations of this class.
 	 */
 	@Override
 	public void close ()
@@ -113,7 +114,6 @@ public class SimpleCyLoader implements CypherLoader, AutoCloseable
 			if ( this.getRdfDataManager () != null ) this.rdfDataManager.close ();
 			if ( this.getCyNodeLoader () != null ) this.cyNodeLoader.close ();
 			if ( this.getCyRelationLoader () != null ) this.cyRelationLoader.close ();
-			if ( this.getCypherIndexer () != null ) this.cypherIndexer.close ();
 		}
 		catch ( Exception ex ) {
 			throw new RuntimeException ( "Internal error while running the Cypher Loader: " + ex.getMessage (), ex );

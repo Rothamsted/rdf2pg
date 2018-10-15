@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
  */
-public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoCloseable 
+public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>> 
 {
 	private Neo4jDataManager neo4jDataManager;
 	private RdfDataManager rdfDataManager;
@@ -45,7 +45,8 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 	}
 
 	/**
-	 * Changes the thread name with a timestamp marker
+	 * Changes the thread name with a timestamp marker. This can be used internally, to ease logging and alike
+	 * reporting. 
 	 */
 	protected void renameThread ( String prefix )
 	{
@@ -54,6 +55,10 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		);
 	}
 
+	/**
+	 * This is used to manage operations with the RDF data source. We don't care about closing this, the invoker
+	 * has to do it. 
+	 */
 	public RdfDataManager getRdfDataManager ()
 	{
 		return rdfDataManager;
@@ -65,6 +70,10 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 		this.rdfDataManager = rdfDataManager;
 	}
 	
+	/**
+	 * This is used to manage operations with the Neo4j target. We don't care about closing this, the invoker
+	 * has to do it. 
+	 */	
 	public Neo4jDataManager getNeo4jDataManager ()
 	{
 		return neo4jDataManager;
@@ -75,17 +84,4 @@ public abstract class CypherLoadingHandler<T> implements Consumer<Set<T>>, AutoC
 	{
 		this.neo4jDataManager = neo4jDataManager;
 	}
-
-	@Override
-	public void close ()
-	{
-		RdfDataManager rdfMgr = this.getRdfDataManager ();
-		if ( rdfMgr != null ) rdfMgr.close ();
-		
-		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
-		if ( neoMgr != null ) neoMgr.close ();
-				
-		log.debug ( "Cypher loading handler {} closed", this.getClass ().getSimpleName () );
-	}
-
 }

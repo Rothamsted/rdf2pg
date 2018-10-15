@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 import uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem;
 
 /**
- * This is a custom Spring bean {@link Scope}. that models the notion of a loading session. 
+ * This is a custom Spring bean {@link Scope} that models the notion of a loading session. 
  * We start a new session upon every new {@link ConfigItem} and every new query type (nodes or relations), 
  * so that we can commit intermediate changes.
  *
- * There are several objects around that must have this scope, see Spring annotations and XML examples.
+ * There are several components around, which must have this scope, see Spring annotations and XML examples.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>1 Feb 2018</dd></dl>
