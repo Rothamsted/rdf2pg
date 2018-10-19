@@ -16,7 +16,7 @@
 	<dependencies>
 
 		<dependency>
-		  <groupId>uk.ac.rothamsted.neo4j</groupId>
+		  <groupId>${project.groupId}</groupId>
 			<artifactId>neo4j-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
