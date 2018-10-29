@@ -9,20 +9,30 @@ The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](r
 
 # Table of Contents
 
-* [The RDF\-to\-Neo4j Converter](#the-rdf-to-neo4j-converter)
-* [Table of Contents](#table-of-contents)
-* [Introduction](#introduction)
-  * [Cypher and Neo4j](#cypher-and-neo4j)
-  * [Mapping RDF to Cypher/Neo4j entities: general concepts](#mapping-rdf-to-cypherneo4j-entities-general-concepts)
-  * [SPARQL\-based mapping](#sparql-based-mapping)
-  * [Spring\-based configuration](#spring-based-configuration)
-  * [rdf2neo4 architecture](#rdf2neo4-architecture)
-* [Mapping details](#mapping-details)
-  * [Node mappings](#node-mappings)
-  * [Relation mappings](#relation-mappings)
-  * [Spring Configuration](#spring-configuration)
-  * [Order of operations](#order-of-operations)
-  * [Miscellanea](#miscellanea)
+- [The RDF-to-Neo4j Converter](#the-rdf-to-neo4j-converter)
+- [Table of Contents](#table-of-contents)
+- [Introduction](#introduction)
+  - [Cypher and Neo4j](#cypher-and-neo4j)
+  - [Mapping RDF to Cypher/Neo4j entities: general concepts](#mapping-rdf-to-cypherneo4j-entities-general-concepts)
+  - [SPARQL-based mapping](#sparql-based-mapping)
+  - [Spring-based configuration](#spring-based-configuration)
+  - [rdf2neo4 architecture](#rdf2neo4-architecture)
+- [Mapping details](#mapping-details)
+  - [Node mappings](#node-mappings)
+    - [Node URIs](#node-uris)
+    - [Node labels](#node-labels)
+    - [Node properties](#node-properties)
+  - [Relation mappings](#relation-mappings)
+    - [List of relations and their types](#list-of-relations-and-their-types)
+    - [Relation properties](#relation-properties)
+  - [Spring Configuration](#spring-configuration)
+  - [Order of operations](#order-of-operations)
+  - [Miscellanea](#miscellanea)
+    - [Neo4j connection](#neo4j-connection)
+    - [Neo4j pre-conditions](#neo4j-pre-conditions)
+    - [Cypher Indexes](#cypher-indexes)
+    - [default label](#default-label)
+    - [ID Converters](#id-converters)
 
 
 # Introduction
@@ -68,16 +78,34 @@ SPARQL queries, the target Neo4j database and components like the URI-to-identif
 
 *Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally use other Spring configuration means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
 
-
 ##  rdf2neo4 architecture
 
-rdf2neo is more precisely a "TDB-to-Neo4j" converter. That is, it takes RDF data from a [Jena](https://jena.apache.org/) [TDB triple store](https://jena.apache.org/documentation/tdb/index.html). Both the [programmatic interface](rdf2neo) and the [command line tool](rdf2neo-cli) start from the path to the input TDB to use to populate a target Neo4j database.
-
-We cannot load data directly from RDF files because we need to view all the data set that you want to convert. For instance, before we can issue a Cypher command to create a node, we need to fetch all of its details about its labels and properties. If these details were spread across different RDF files, we would need to first load all the files and then query them with SPARQL (the way shown below). Which is precisely what we do by using a TDB. The alternative would be an in-memory triple store (i.e., what Jena calls a memory [Model](https://jena.apache.org/tutorials/rdf_api.html), but this might not be good if you have large data sets.
-
-A wrapper that abstracts away from these details, can be found [a script in the command line package](rdf2neo-cli/src/main/assembly/resources/rdf2neo.sh).   
-
-We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
+  rdf2neo is more precisely a "TDB-to-Neo4j" converter. That is, it takes RDF data from a
+  [Jena](https://jena.apache.org/) [TDB triple
+  store](https://jena.apache.org/documentation/tdb/index.html). Both the [programmatic
+  interface](rdf2neo) and the [command line tool](rdf2neo-cli) start from the path to the input TDB
+  to use to populate a target Neo4j database.
+ 
+  The internal architecture is summarised in the figure below, showing the components involved in
+  selecting node's URIs from a mapping configuration (see next sections) and using them to fetch
+  node's labels and properties, by means of further URI-parameterised queries. The architecture is
+  similar for mapping and processing Neo4j relations.
+ 
+  ![Summary rdf2neo internal architecture](rdf2neo/doc/images/rdf2neo_arch.png)
+ 
+  We cannot load data directly from RDF files because we need to view all the data set that you want
+  to convert. For instance, before we can issue a Cypher command to create a node, we need to fetch
+  all of its details about its labels and properties. If these details were spread across different
+  RDF files, we would need to first load all the files and then query them with SPARQL (the way
+  shown below). Which is precisely what we do by using a TDB. The alternative would be an in-memory
+  triple store (i.e., what Jena calls a memory
+  [Model](https://jena.apache.org/tutorials/rdf_api.html), but this might not be good if you have
+  large data sets.
+ 
+  A wrapper that abstracts away from these details, can be found [a script in the command line
+  package](rdf2neo-cli/src/main/assembly/resources/rdf2neo.sh).
+ 
+  We plan to make it possible to query an HTTP-based SPARQL endpoint in future.
 
 
 # Mapping details
