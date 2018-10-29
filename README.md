@@ -91,7 +91,7 @@ SPARQL queries, the target Neo4j database and components like the URI-to-identif
   node's labels and properties, by means of further URI-parameterised queries. The architecture is
   similar for mapping and processing Neo4j relations.
  
-  ![Summary rdf2neo internal architecture](rdf2neo/doc/images/rdf2neo_arch.png)
+  ![Summary rdf2neo internal architecture](doc/images/rdf2neo_arch.png)
  
   We cannot load data directly from RDF files because we need to view all the data set that you want
   to convert. For instance, before we can issue a Cypher command to create a node, we need to fetch
@@ -401,13 +401,13 @@ You might need to be aware of the order in which rdf2neo runs its operations. Wh
   1. Node loop. For each `ConfigItem`:
     1. Run the node list query. Split the resulting URIs into subsets of a given size and for each subset run this as a thread:
       1. Run the node labels query
-      1. Run the node properties query
-      1. Prepare a Cypher statement that creates the node and queue it
-      1. Commit all Cypher `CREATE` statements against the configured Neo4j
-  1. Relation loop. For each `ConfigItem`:
+      2. Run the node properties query
+      3. Prepare a Cypher statement that creates the node and queue it
+      4. Commit all Cypher `CREATE` statements against the configured Neo4j
+  2. Relation loop. For each `ConfigItem`:
     1. Run the relation list/type query. Split the results as above and run threads that:
       1. Run the relation properties query. Prepare a Cypher statement that creates a new relation and refers to existing nodes via their `iri` property
-      1. Commit all relation-creation the statements at the end
+      2. Commit all relation-creation the statements at the end
       
 So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists during the first stage (it doesn't) or during the relation creation (it does).
 
