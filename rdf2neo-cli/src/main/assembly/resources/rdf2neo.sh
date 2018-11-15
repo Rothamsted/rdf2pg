@@ -1,20 +1,7 @@
 #!/bin/bash
-
 export WORK_DIR="$(pwd)"
-if [ "$RDF2NEO_HOME" == "" ]; then
-	cd "$(dirname $0)"
-	export RDF2NEO_HOME="$(pwd)"
-	cd "$WORK_DIR"
-fi
 
-if [ "$RDF2NEO_TDB" == "" ]; then
-	export RDF2NEO_TDB=/tmp/rdf2neo_tdb
-	echo "Generating new TDB at $RDF2NEO_TDB"
-  rm -Rf "$RDF2NEO_TDB"
-  mkdir "$RDF2NEO_TDB"
-fi
-
-if  [ "$1" == '-h' ] || [ "$1" == '--help' ] || [ $# \< 3 ] || ! ( [ "$1" == '-c' ] || [ "$1" == '--config' ] ); then
+if  [ "$1" == '-h' ] || [ "$1" == '--help' ] || [ $# -lt 3 ] || ! ( [ "$1" == '-c' ] || [ "$1" == '--config' ] ); then
 				cat <<EOT
 	
 	
@@ -29,6 +16,19 @@ if  [ "$1" == '-h' ] || [ "$1" == '--help' ] || [ $# \< 3 ] || ! ( [ "$1" == '-c
 	
 EOT
   exit 1
+fi
+
+if [ "$RDF2NEO_HOME" == "" ]; then
+	cd "$(dirname $0)"
+	export RDF2NEO_HOME="$(pwd)"
+	cd "$WORK_DIR"
+fi
+
+if [ "$RDF2NEO_TDB" == "" ]; then
+	export RDF2NEO_TDB=/tmp/rdf2neo_tdb
+	echo "Generating new TDB at '$RDF2NEO_TDB'"
+  rm -Rf "$RDF2NEO_TDB"
+  mkdir "$RDF2NEO_TDB"
 fi
 
 if [ "$JENA_HOME" == '' ]; then
