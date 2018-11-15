@@ -8,7 +8,7 @@
   
   <version>0.0.1-SNAPSHOT</version>
   
-  <name>rdf2neo - top POM</name>
+  <name>rdf2neo-pom - top POM</name>
   <url/>
       
   <modules>
