@@ -44,13 +44,11 @@ public class Rdf2NeoCli
 				cli = clparser.parse ( getOptions(), args );
 			}
 			catch ( ParseException ex ) {
-				cli = null;
+				// Just keep cli null and let the trigger below to pop up.
 			}
 			
 			if ( cli != null ) args = cli.getArgs ();
-			
-			if ( cli == null || cli.hasOption ( "help" ) || args.length == 0 ) 
-			{
+			if ( cli == null || cli.hasOption ( "help" ) || args.length == 0 ) {
 				printUsage ();
 				return;
 			}
@@ -58,20 +56,17 @@ public class Rdf2NeoCli
 			String path = args [ 0 ];
 			String cfgPath = cli.getOptionValue ( "config" );
 			
-			try ( MultiConfigCyLoader loader = MultiConfigCyLoader.getSpringInstance ( cfgPath ) )
-			{
+			try ( MultiConfigCyLoader loader = MultiConfigCyLoader.getSpringInstance ( cfgPath ) ) {
 				loader.load ( path );
 			}
 			
 			log.info ( "The end" );
 		}
-		catch ( Throwable ex ) 
-		{
+		catch ( Throwable ex ) {
 			log.error ( "Execution failed with the error: " + ex.getMessage (), ex  );
 			exitCode = 1; // TODO: proper exit codes
 		}
-		finally 
-		{
+		finally {
 			if ( !"true".equals ( System.getProperty ( NO_EXIT_PROP ) ) )
 				System.exit ( exitCode );
 		}
@@ -127,5 +122,4 @@ public class Rdf2NeoCli
 	public static int getExitCode () {
 		return exitCode;
 	}
-
 }
