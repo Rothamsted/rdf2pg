@@ -226,4 +226,25 @@
 			</plugins>
 		</pluginManagement>		
 	</build>
+	
+	<profiles>
+		<!-- TODO: testing the new repo, needs to be moved into the defaults -->
+		<profile>
+			<id>knetminer-repo</id>
+			<activation><activeByDefault>false</activeByDefault></activation>
+			
+			<distributionManagement>
+			  <repository>
+					<id>knetminer-releases</id>
+					<name>Internal Releases</name>
+					<url>http://babvs58.rothamsted.ac.uk:8081/nexus/repository/releases/</url>
+			  </repository>
+			  <snapshotRepository>
+					<id>knetminer-snapshots</id>
+					<name>Internal Snapshots</name>
+					<url>http://babvs58.rothamsted.ac.uk:8081/nexus/repository/snapshots/</url>
+			  </snapshotRepository>
+			</distributionManagement>				
+		</profile>
+	</profiles>
 </project>
