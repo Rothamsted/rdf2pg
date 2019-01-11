@@ -6,6 +6,8 @@ You can configure the way RDF is mapped into Neo4J entities (nodes, node propert
 
 The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](rdf2neo-cli) module is a command line tool to manage Neo4J imports.
 
+We recently presented rdf2neo at the [SWAT4LS workshop](http://www.swat4ls.org/). See the [presentation](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi) or the [paper](https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323) in the proceedings. 
+
 
 # Table of Contents
 
