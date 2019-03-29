@@ -59,7 +59,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	public CyNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
-		Model model = this.dataSet.getDefaultModel ();
+		// Model model = this.dataSet.getDefaultModel ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
 		params.add ( "iri", nodeRes );
@@ -76,7 +76,8 @@ public class RdfDataManager extends TDBEndPointHelper
 			boolean wasInTnx = dataSet.isInTransaction ();
 			if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
 			try {
-				QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+				// QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+				QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params );
 				qx.execSelect ().forEachRemaining ( row ->
 					cyNode.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
 				);
@@ -98,7 +99,9 @@ public class RdfDataManager extends TDBEndPointHelper
 	public CyNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
-		Resource nodeRes = this.dataSet.getDefaultModel ().getResource ( nodeIri );
+		// Resource nodeRes = this.dataSet.getDefaultModel().getResource ( nodeIri );
+		Resource nodeRes = this.getDataSet().getUnionModel().getResource ( nodeIri );
+		
 		return getCyNode ( nodeRes, labelsSparql, propsSparql ); 
 	}
 
@@ -132,10 +135,11 @@ public class RdfDataManager extends TDBEndPointHelper
 	protected void addCypherProps ( CypherEntity cyEnt, String propsSparql )
 	{
 		ensureOpen ();		
-		Model model = this.dataSet.getDefaultModel ();
+		// Model model = this.dataSet.getDefaultModel ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
-		params.add ( "iri", model.getResource ( cyEnt.getIri () ) );
+		// params.add ( "iri", model.getResource ( cyEnt.getIri () ) );
+		params.add ( "iri", this.getDataSet().getUnionModel().getResource ( cyEnt.getIri () ) );
 
 		// It may be omitted, if you don't have any property except the IRI.
 		if ( propsSparql == null ) return;
@@ -147,7 +151,9 @@ public class RdfDataManager extends TDBEndPointHelper
 		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
 		try
 		{
-			QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+			// QueryExecution qx = QueryExecutionFactory.create ( qry, model, params );
+			QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params );
+			
 			qx.execSelect ().forEachRemaining ( row ->
 			{
 				String propName = this.getCypherId ( row.get ( "name" ), propIdConverter );
@@ -188,7 +194,6 @@ public class RdfDataManager extends TDBEndPointHelper
 		CyRelation cyRelation = new CyRelation ( relRes.getURI () );
 		
 		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getCyRelationTypeIdConverter () ) );
-
 		cyRelation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
 		cyRelation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
 				
@@ -245,8 +250,6 @@ public class RdfDataManager extends TDBEndPointHelper
 	{
 		this.cyRelationIdConverter = relationIdConverter;
 	}
-
-
 
 	/**
 	 * Similarly to {@link #getCyNodeLabelIdConverter()}, this is used to get a Cypher node/relation property name
