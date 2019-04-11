@@ -110,8 +110,6 @@
 		</bean>
 
 
-
-
 		<!-- And some boilerplate -->
 		
 		<!-- We need the loadingSession scope, since a new driver is created for each query set -->
