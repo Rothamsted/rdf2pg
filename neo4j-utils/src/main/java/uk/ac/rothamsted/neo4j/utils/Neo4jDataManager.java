@@ -47,20 +47,26 @@ public class Neo4jDataManager
 	 * to re-attempt the command execution a couple of times, after such exceptions.</p>
 	 * 
 	 */
+	@SuppressWarnings ( "unchecked" )
 	public <V> V runSession ( Function<Session, V> action )
 	{
 		MultipleAttemptsExecutor attempter = new MultipleAttemptsExecutor (
-				TransientException.class,
-				DatabaseException.class,
-				ServiceUnavailableException.class
-			);
-			attempter.setMaxAttempts ( this.getMaxRetries () );
-			attempter.setMinPauseTime ( 30 * 1000 );
-			attempter.setMaxPauseTime ( 3 * 60 * 1000 );
-			
+			TransientException.class,
+			DatabaseException.class,
+			ServiceUnavailableException.class
+		);
+		attempter.setMaxAttempts ( this.getMaxRetries () );
+		attempter.setMinPauseTime ( 30 * 1000 );
+		attempter.setMaxPauseTime ( 3 * 60 * 1000 );
+		
+		Object[] result = new Object [ 1 ];
+		attempter.execute ( () -> 
+		{
 			try ( Session session = this.neo4jDriver.session () ) {
-				return action.apply ( session );
+				result [ 0 ] = action.apply ( session );
 			}
+		});
+		return (V) result [ 0 ];
 	}
 
 	/**
