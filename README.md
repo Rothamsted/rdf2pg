@@ -473,4 +473,4 @@ As explained above, node labels, relation types and node/relation property names
 
 ### Duplicated URIs
 
-URIs selected by the node selection queries and the relation selection queries must be unique, even across different configuration item. In defining your SPARQL queries, you must take care that this happen. The task can possibly be simplified by first transforming your RDF into some intermediate form. This is discusses in detail in issue #3.
+URIs selected by the node selection queries and the relation selection queries must be unique, even across different configuration item. In defining your SPARQL queries, you must take care that this happen. The task can possibly be simplified by first transforming your RDF into some intermediate form. This is discusses in detail in [issue #3](/Rothamsted/rdf2neo/issues/3).
