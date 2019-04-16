@@ -411,9 +411,24 @@ You might need to be aware of the order in which rdf2neo runs its operations. Wh
       1. Run the relation properties query. Prepare a Cypher statement that creates a new relation and refers to existing nodes via their `iri` property
       2. Commit all relation-creation the statements at the end
       
-So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (it doesn't), or if a node already exists during the first stage (it doesn't) or during the relation creation (it does).
+So, even if nodes are mapped across multiple configurations, they are all created in Cypher before any relation is considered. This allows us to issue relation creation statements that don't need to check if a relation already exists (we assume it doesn't), or if a node already exists during the first stage (we assume it doesn't) or during the relation creation (we assume each URI in the relation endpoints was selected once only across all configuration items and corresponding nodes were created once only per URI).
 
 Moreover, chunks of nodes and properties are mapped and submitted to Cypher in parallel, to speed up things. This is influenced by the `Long` property named `destinationMaxSize` (which is passed to instances of [`CyLoadingProcessor`](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/load/support/CyLoadingProcessor.java), a suitable default is defined for it).
+
+
+**WARNING: we do not check for URIs duplication**
+
+In the explanation above, we say "we assume" that URIs selected by the node selection 
+queries and the relation selection queries are unique, even across different configuration 
+item. This is your responsibility: in defining your SPARQL queries, you must take care that 
+this happen. The task can possibly be simplified by first transforming your RDF into some 
+intermediate form. This is discusses in detail in [issue #3](https://github.com/Rothamsted/rdf2neo/issues/3).
+
+Another approach to deal with this problem in a simple (though not so efficient) way is to 
+first allow for duplicated nodes and then remove duplicates using Cypher. URI-based 
+duplicates can be removed, since nodes/relations created from the same URIs are identical, 
+since all their properties/labels/types are created with the same SPARQL query, instantiated 
+with the same URI.  
 
 
 ##  Miscellanea
@@ -469,8 +484,3 @@ As explained above, node labels, relation types and node/relation property names
 	<bean id = "nodeLabelIdConverter" class = "my.package.MyCustomIdConverter" />
 </beans>
 ```
-
-
-### Duplicated URIs
-
-URIs selected by the node selection queries and the relation selection queries must be unique, even across different configuration item. In defining your SPARQL queries, you must take care that this happen. The task can possibly be simplified by first transforming your RDF into some intermediate form. This is discusses in detail in [issue #3](https://github.com/Rothamsted/rdf2neo/issues/3).
