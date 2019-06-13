@@ -264,8 +264,9 @@ SELECT DISTINCT ?iri ?type ?fromIri ?toIri
 	
 	FILTER ( isIRI ( ?toIri ) ).	#  Just in case of problems
 	
-	#  Fictitious IRI for plain relations. We always need a relation iri on the Cypher end, 
-	#  so typically will do this for straight triples 
+	# Fictitious IRI for plain relations. We always need a relation iri on the Cypher end, 
+	# so typically will do this for straight triples.
+	# 
 	BIND ( 
 		IRI ( CONCAT ( 
 		  STR ( ex: ),
