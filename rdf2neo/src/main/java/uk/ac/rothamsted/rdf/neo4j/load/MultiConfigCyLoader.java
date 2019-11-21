@@ -215,8 +215,8 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 					CyNodeLoadingProcessor cyNodeLoader = cypherLoader.getCyNodeLoader ();
 					CyRelationLoadingProcessor cyRelLoader = cypherLoader.getCyRelationLoader ();
 					
-					CyNodeLoadingHandler cyNodehandler = (CyNodeLoadingHandler) cyNodeLoader.getConsumer ();
-					CyRelationLoadingHandler cyRelhandler = (CyRelationLoadingHandler) cyRelLoader.getConsumer ();
+					CyNodeLoadingHandler cyNodehandler = (CyNodeLoadingHandler) cyNodeLoader.getBatchJob ();
+					CyRelationLoadingHandler cyRelhandler = (CyRelationLoadingHandler) cyRelLoader.getBatchJob ();
 					
 					cyNodeLoader.setNodeIrisSparql ( cfg.getNodeIrisSparql () );
 		

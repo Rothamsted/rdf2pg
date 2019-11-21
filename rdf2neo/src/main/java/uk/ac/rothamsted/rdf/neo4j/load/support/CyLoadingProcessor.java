@@ -31,33 +31,33 @@ public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfD
 	public CyLoadingProcessor ()
 	{
 		super ();
-		this.setDestinationMaxSize ( 25000 );
-		this.setDestinationSupplier ( () -> new HashSet<> () );
+		this.setBatchMaxSize ( 25000 );
+		this.setBatchFactory ( () -> new HashSet<> () );
 	}
 
 	@Override
-	protected long getDestinationSize ( Set<T> dest )
+	protected long getCurrentBatchSize ( Set<T> batch )
 	{
-		return dest.size ();
+		return batch.size ();
 	}
 
-	@Autowired ( required = false ) @Qualifier ( "destinationMaxSize" )
+	@Autowired ( required = false ) @Qualifier ( "batchMaxSize" )
 	@Override // Just to use annotations
-	public CyLoadingProcessor<T> setDestinationMaxSize ( long destinationMaxSize )
+	public CyLoadingProcessor<T> setBatchMaxSize ( long batchMaxSize )
 	{
-		super.setDestinationMaxSize ( destinationMaxSize );
+		super.setBatchMaxSize ( batchMaxSize );
 		return this;
 	}
 	
 	/**
-	* If the {@link #getConsumer() consumer} is {@link AutoCloseable}, invokes its {@link AutoCloseable#close()}
+	* If the {@link #getBatchJob() consumer} is {@link AutoCloseable}, invokes its {@link AutoCloseable#close()}
 	* method.
 	* 
 	*/
 	@Override
 	public void close () throws Exception
 	{
-		Consumer<?> consumer = this.getConsumer ();
+		Consumer<?> consumer = this.getBatchJob ();
 		if ( consumer != null && consumer instanceof AutoCloseable ) ((AutoCloseable) consumer).close ();
 	}	
 }

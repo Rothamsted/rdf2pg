@@ -33,19 +33,19 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 		log.info ( "Starting Cypher Nodes Loading" );
 		
 		@SuppressWarnings ( "unchecked" )
-		Set<Resource> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
+		Set<Resource> batch[] = new Set[] { this.getBatchFactory ().get () };
 		
 		rdfMgr.processNodeIris ( this.getNodeIrisSparql (), res ->
 		{
-			chunk [ 0 ].add ( res );
+			batch [ 0 ].add ( res );
 
 			// This checks if we have enough items in the chunk and, if yes, it submit a new Loading job and returns a new
 			// empty chunk to refill.
-			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
+			batch [ 0 ] = handleNewBatch ( batch [ 0 ] );
 		});
 		
 		// The last chunk needs to be always submitted
-		handleNewTask ( chunk [ 0 ], true );
+		handleNewBatch ( batch [ 0 ], true );
 		
 		this.waitExecutor ( "Waiting for Cyhper Node Loading tasks to finish" );
 		log.info ( "Cypher Nodes Loading ended" );
@@ -71,11 +71,11 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 	}
 
 	/**
-	 * Does nothing but invoking {@link #setConsumer(Consumer)}. It's here just to accommodate Spring annotations. 
+	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
 	public CyNodeLoadingProcessor setConsumer ( CyNodeLoadingHandler handler ) {
-		super.setConsumer ( handler );
+		super.setBatchJob ( handler );
 		return this;
 	}
 }

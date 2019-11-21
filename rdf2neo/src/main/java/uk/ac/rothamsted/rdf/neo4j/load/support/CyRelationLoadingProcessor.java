@@ -33,30 +33,30 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 		log.info ( "Starting Cypher Relations Loading" );
 
 		@SuppressWarnings ( "unchecked" )
-		Set<QuerySolution> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
+		Set<QuerySolution> batch[] = new Set[] { this.getBatchFactory ().get () };
 		
-		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getConsumer ();
+		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getBatchJob ();
 		
 		rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), res ->
 		{
-			chunk [ 0 ].add ( res );
+			batch [ 0 ].add ( res );
 			// This decides if the chunk is big enough and, if yes, submits a new task and returns a new empty chunk.
-			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
+			batch [ 0 ] = handleNewBatch ( batch [ 0 ] );
 		});
 
 		// Last chunk has always to be submitted.
-		handleNewTask ( chunk [ 0 ], true );
+		handleNewBatch ( batch [ 0 ], true );
 
 		this.waitExecutor ( "Waiting for Cyhper Relation Loading tasks to finish" );
 		log.info ( "Cypher Relations Loading ended" );
 	}
 
 	/**
-	 * Does nothing but invoking {@link #setConsumer(Consumer)}. It's here just to accommodate Spring annotations. 
+	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
 	public CyRelationLoadingProcessor setConsumer ( CyRelationLoadingHandler handler ) {
-		super.setConsumer ( handler );
+		super.setBatchJob ( handler );
 		return this;
 	}	
 }
