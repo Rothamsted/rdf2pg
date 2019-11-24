@@ -3,12 +3,9 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 import static info.marcobrandizi.rdfutils.namespaces.NamespaceUtils.iri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.neo4j.driver.v1.Values.parameters;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +28,8 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.rothamsted.neo4j.utils.test.CypherTester;

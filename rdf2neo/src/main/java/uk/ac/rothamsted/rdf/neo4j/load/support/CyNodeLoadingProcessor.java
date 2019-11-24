@@ -1,6 +1,5 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.jena.rdf.model.Resource;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.utils.threading.BatchProcessor;
+import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
 
 /**
  * <H1>The Node Loading processor</H1>
@@ -23,32 +22,21 @@ import uk.ac.ebi.utils.threading.BatchProcessor;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
+public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeLoadingHandler>
 {
 	private String nodeIrisSparql;
 	
-	@Override
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
-		@SuppressWarnings ( "unchecked" )
-		Set<Resource> batch[] = new Set[] { this.getBatchFactory ().get () };
+		// processNodeIris() passes the IRIs to the BatchProcessor, which pushes them into 
+		// batches and submits the batches to the parallel executor
+		Consumer<Consumer<Resource>> nodeIriProcessor = 
+			resProc -> rdfMgr.processNodeIris ( this.getNodeIrisSparql (), resProc );
 		
-		rdfMgr.processNodeIris ( this.getNodeIrisSparql (), res ->
-		{
-			batch [ 0 ].add ( res );
-
-			// This checks if we have enough items in the chunk and, if yes, it submit a new Loading job and returns a new
-			// empty chunk to refill.
-			batch [ 0 ] = handleNewBatch ( batch [ 0 ] );
-		});
-		
-		// The last chunk needs to be always submitted
-		handleNewBatch ( batch [ 0 ], true );
-		
-		this.waitExecutor ( "Waiting for Cyhper Node Loading tasks to finish" );
-		log.info ( "Cypher Nodes Loading ended" );
+		super.process ( nodeIriProcessor, opts );
+		log.info ( "Cypher Node Loading ended" );
 	}
 
 	/**

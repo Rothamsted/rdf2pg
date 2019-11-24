@@ -2,8 +2,8 @@ package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.neo4j.driver.v1.Driver;
 import org.springframework.beans.factory.annotation.Autowired;

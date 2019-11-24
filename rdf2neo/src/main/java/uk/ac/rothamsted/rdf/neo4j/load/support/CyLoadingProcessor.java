@@ -1,13 +1,12 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import uk.ac.ebi.utils.threading.SizeBasedBatchProcessor;
+import uk.ac.ebi.utils.threading.batchproc.collectors.SetBatchCollector;
+import uk.ac.ebi.utils.threading.batchproc.processors.SetBasedBatchProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
 
 /**
@@ -17,7 +16,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
  *
  * <p>@see CyNodeLoadingProcessor and {@link CyRelationLoadingProcessor}.</p>
  * 
- * <p>This class extends {@link SizeBasedBatchProcessor} with the generic type {@code Set<T>}, since each loader
+ * <p>This class extends {@link SizedBatchProcessor} with the generic type {@code Set<T>}, since each loader
  * processes a collection of entity pointers (node IRIs/relation base structures), which are obtained from RDF, 
  * via SPARQL mappings (see {@link SimpleCyLoader}).</p>
  *
@@ -25,28 +24,21 @@ import uk.ac.rothamsted.rdf.neo4j.load.SimpleCyLoader;
  * <dl><dt>Date:</dt><dd>13 Jan 2018</dd></dl>
  *
  */
-public abstract class CyLoadingProcessor<T> extends SizeBasedBatchProcessor<RdfDataManager, Set<T>>
+public abstract class CyLoadingProcessor<T, BJ extends CypherLoadingHandler<T>> 
+	extends SetBasedBatchProcessor<T, BJ>
 	implements AutoCloseable
 {
 	public CyLoadingProcessor ()
 	{
 		super ();
-		this.setBatchMaxSize ( 25000 );
-		this.setBatchFactory ( () -> new HashSet<> () );
+		this.setBatchCollector ( new SetBatchCollector<> ( 2500 ) );
 	}
 
-	@Override
-	protected long getCurrentBatchSize ( Set<T> batch )
-	{
-		return batch.size ();
-	}
 
 	@Autowired ( required = false ) @Qualifier ( "batchMaxSize" )
-	@Override // Just to use annotations
-	public CyLoadingProcessor<T> setBatchMaxSize ( long batchMaxSize )
-	{
-		super.setBatchMaxSize ( batchMaxSize );
-		return this;
+	// I'm here just to use Spring annotations 
+	public void setBatchMaxSize ( int maxBatchSize ) {
+		this.getBatchCollector ().setMaxBatchSize ( maxBatchSize );
 	}
 	
 	/**

@@ -1,6 +1,5 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.jena.query.QuerySolution;
@@ -21,33 +20,24 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution>
+public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution, CyRelationLoadingHandler>
 {	
 	/**
 	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
 	 */
-	@Override
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
-
-		@SuppressWarnings ( "unchecked" )
-		Set<QuerySolution> batch[] = new Set[] { this.getBatchFactory ().get () };
 		
-		CyRelationLoadingHandler handler = (CyRelationLoadingHandler) this.getBatchJob ();
+		CyRelationLoadingHandler handler = this.getBatchJob ();
+
+		// processRelationIris() passes the IRIs to the BatchProcessor, which pushes them into 
+		// batches and submits the batches to the parallel executor
+		Consumer<Consumer<QuerySolution>> relIriProcessor = 
+			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), solProc );
 		
-		rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), res ->
-		{
-			batch [ 0 ].add ( res );
-			// This decides if the chunk is big enough and, if yes, submits a new task and returns a new empty chunk.
-			batch [ 0 ] = handleNewBatch ( batch [ 0 ] );
-		});
-
-		// Last chunk has always to be submitted.
-		handleNewBatch ( batch [ 0 ], true );
-
-		this.waitExecutor ( "Waiting for Cyhper Relation Loading tasks to finish" );
+		super.process ( relIriProcessor, opts );
 		log.info ( "Cypher Relations Loading ended" );
 	}
 
