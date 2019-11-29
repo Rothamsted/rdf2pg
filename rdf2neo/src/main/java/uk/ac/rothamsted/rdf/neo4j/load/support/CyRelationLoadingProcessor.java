@@ -37,7 +37,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 		Consumer<Consumer<QuerySolution>> relIriProcessor = 
 			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), solProc );
 		
-		super.process ( relIriProcessor, opts );
+		super.process ( relIriProcessor );
 		log.info ( "Cypher Relations Loading ended" );
 	}
 

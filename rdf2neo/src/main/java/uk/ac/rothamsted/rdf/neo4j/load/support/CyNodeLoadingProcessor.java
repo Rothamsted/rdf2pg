@@ -35,7 +35,7 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeL
 		Consumer<Consumer<Resource>> nodeIriProcessor = 
 			resProc -> rdfMgr.processNodeIris ( this.getNodeIrisSparql (), resProc );
 		
-		super.process ( nodeIriProcessor, opts );
+		super.process ( nodeIriProcessor );
 		log.info ( "Cypher Node Loading ended" );
 	}
 
