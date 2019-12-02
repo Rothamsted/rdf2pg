@@ -23,6 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
+		<jutils.version>8.0.1-SNAPSHOT</jutils.version>
   </properties>
   
   <dependencyManagement>
@@ -37,12 +38,12 @@
 			<dependency>
 				<groupId>uk.ac.ebi</groupId>
 				<artifactId>jutils</artifactId>
-				<version>8.0.1-SNAPSHOT</version>
+				<version>${jutils.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>uk.ac.ebi</groupId>
 				<artifactId>jutils-io</artifactId>
-				<version>7.0.1-SNAPSHOT</version>
+				<version>${jutils.version}</version>
 			</dependency>
 
 			<dependency>
