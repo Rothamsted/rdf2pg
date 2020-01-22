@@ -32,8 +32,8 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 		
 		CyRelationLoadingHandler handler = this.getBatchJob ();
 
-		// processRelationIris() passes the IRIs to the BatchProcessor, which pushes them into 
-		// batches and submits the batches to the parallel executor
+		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
+		// pushes the IRI into a batch and submits a full batch to the parallel executor.
 		Consumer<Consumer<QuerySolution>> relIriProcessor = 
 			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), solProc );
 		

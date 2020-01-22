@@ -30,8 +30,8 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeL
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
-		// processNodeIris() passes the IRIs to the BatchProcessor, which pushes them into 
-		// batches and submits the batches to the parallel executor
+		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
+		// pushes the IRI into a batch and submits a full batch to the parallel executor.
 		Consumer<Consumer<Resource>> nodeIriProcessor = 
 			resProc -> rdfMgr.processNodeIris ( this.getNodeIrisSparql (), resProc );
 		
