@@ -244,9 +244,27 @@
 					<id>knetminer-snapshots</id>
 					<name>Internal Snapshots</name>
 					<url>http://knetminer.org/artifactory/repository/maven-snapshots</url>
-					<!-- url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-snapshots/</url -->
 			  </snapshotRepository>
 			</distributionManagement>				
 		</profile>
+
+		<profile>
+			<id>intranet-repo</id>
+			<activation><activeByDefault>false</activeByDefault></activation>
+			
+			<distributionManagement>
+			  <repository>
+					<id>knetminer-releases</id>
+					<name>Internal Releases</name>
+					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-releases</url>
+			  </repository>
+			  <snapshotRepository>
+					<id>knetminer-snapshots</id>
+					<name>Internal Snapshots</name>
+					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-snapshots</url>
+			  </snapshotRepository>
+			</distributionManagement>				
+		</profile>
+
 	</profiles>
 </project>
