@@ -6,7 +6,7 @@
   <artifactId>rdf2neo-pom</artifactId>
   <packaging>pom</packaging>
   
-  <version>1.0.1-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   
   <name>rdf2neo-pom - top POM</name>
   <url/>
@@ -18,12 +18,12 @@
   </modules>
   
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<jutils.version>9.0</jutils.version>
+		<jutils.version>10.0-SNAPSHOT</jutils.version>
   </properties>
   
   <dependencyManagement>
@@ -63,11 +63,11 @@
 				<version>1.7.5</version>
 			</dependency> 
 			           			      
-  			<dependency>
+  		<dependency>
 				<groupId>info.marcobrandizi</groupId>
 				<artifactId>rdfutils-jena</artifactId>
-				<version>2.1</version>
-  			</dependency>  			
+				<version>3.0-SNAPSHOT</version>
+  		</dependency>  			
 
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -84,7 +84,14 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.6.RELEASE</version>
+				<version>5.2.3.RELEASE</version>
+			</dependency>
+
+			<!-- Removed from JDK11 -->			
+			<dependency>
+		    <groupId>javax.annotation</groupId>
+		    <artifactId>javax.annotation-api</artifactId>
+		    <version>1.3.2</version>
 			</dependency>
 			
 			<dependency>
@@ -181,6 +188,22 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+			
+			  <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>3.0.0-M4</version>
+			    <configuration>
+			      <properties>
+			        <property>
+			        	<!-- Prints out spaces and test name before/after every test method and automatically -->
+			          <name>listener</name>
+			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
+			        </property>
+			       </properties>
+			    </configuration>
+			  </plugin>
+			
 				<!-- 
 					A small plug-in that starts Neo4j, we maintain our own version of this at 
 					https://github.com/Rothamsted/neo4j-server-maven-plugin
@@ -188,7 +211,7 @@
 				<plugin>
 					<groupId>com.github.harti2006</groupId>
 					<artifactId>neo4j-server-maven-plugin</artifactId>
-					<version>1.1</version>
+					<version>1.1-SNAPSHOT</version>
 					<configuration>
 						<!-- port>7474</port --> 
 						<version>${neo4j.server.version}</version>
@@ -209,7 +232,7 @@
 				<!-- Use this to start integration tests (*IT.java) -->
 		    <plugin>
 		      <artifactId>maven-failsafe-plugin</artifactId>
-		      <version>2.20.1</version>
+		      <version>3.0.0-M4</version>
 		      <configuration>
 		      	<trimStackTrace>false</trimStackTrace>
 		      </configuration>
