@@ -27,14 +27,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queryparser</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>info.marcobrandizi</groupId>
 			<artifactId>rdfutils-jena</artifactId>
 		</dependency>
@@ -57,17 +49,7 @@
 		<plugins>
 		
 		  <plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
 		    <artifactId>maven-surefire-plugin</artifactId>
-		    <configuration>
-		      <properties>
-		        <property>
-		        	<!-- Prints out spaces and test name before/after every test method and automatically -->
-		          <name>listener</name>
-		          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
-		        </property>
-		       </properties>
-		    </configuration>
 		  </plugin>
 		
 			<!-- Detailed configurations are on the top POM -->

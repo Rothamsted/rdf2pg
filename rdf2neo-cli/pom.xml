@@ -72,14 +72,6 @@
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
-						</property>
-					</properties>
-				</configuration>
 			</plugin>
 
 

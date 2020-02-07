@@ -45,17 +45,6 @@
 				<artifactId>jutils-io</artifactId>
 				<version>${jutils.version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.apache.lucene</groupId>
-				<artifactId>lucene-core</artifactId>
-				<version>6.6.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.lucene</groupId>
-				<artifactId>lucene-queryparser</artifactId>
-				<version>6.6.0</version>
-			</dependency>
 		  		
 			<dependency>
 				<groupId>org.neo4j.driver</groupId>
@@ -84,7 +73,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.6.RELEASE</version>
+				<version>5.2.3.RELEASE</version>
 			</dependency>
 			
 			<dependency>
@@ -181,6 +170,22 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+			
+			  <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>3.0.0-M4</version>
+			    <configuration>
+			      <properties>
+			        <property>
+			        	<!-- Prints out spaces and test name before/after every test method and automatically -->
+			          <name>listener</name>
+			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
+			        </property>
+			       </properties>
+			    </configuration>
+			  </plugin>
+			
 				<!-- 
 					A small plug-in that starts Neo4j, we maintain our own version of this at 
 					https://github.com/Rothamsted/neo4j-server-maven-plugin
@@ -209,7 +214,7 @@
 				<!-- Use this to start integration tests (*IT.java) -->
 		    <plugin>
 		      <artifactId>maven-failsafe-plugin</artifactId>
-		      <version>2.20.1</version>
+		      <version>3.0.0-M4</version>
 		      <configuration>
 		      	<trimStackTrace>false</trimStackTrace>
 		      </configuration>
