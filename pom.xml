@@ -193,7 +193,7 @@
 				<plugin>
 					<groupId>com.github.harti2006</groupId>
 					<artifactId>neo4j-server-maven-plugin</artifactId>
-					<version>1.1</version>
+					<version>1.2</version>
 					<configuration>
 						<!-- port>7474</port --> 
 						<version>${neo4j.server.version}</version>
