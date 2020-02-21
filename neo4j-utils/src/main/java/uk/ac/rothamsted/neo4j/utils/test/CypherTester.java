@@ -175,10 +175,10 @@ public class CypherTester
 		)
 		.stream ()
 		.sorted ()
+		.filter ( f -> f != null ) // forces peek()
 		.peek ( f -> {
 			log.info ( "Running '{}'", f.getName () );
-			if ( !this.askFromFile ( f.toString (), keyVals ) )
-				failAction.accept ( f );
+			if ( !this.askFromFile ( f.toString (), keyVals ) ) failAction.accept ( f );
 		})
 		.count ();
 		
