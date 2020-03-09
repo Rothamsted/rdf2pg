@@ -23,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<jutils.version>9.0</jutils.version>
+		<jutils.version>9.0.1-SNAPSHOT</jutils.version>
   </properties>
   
   <dependencyManagement>
@@ -156,21 +156,20 @@
 	
 	<distributionManagement>
 	  <repository>
-			<id>ondex-releases</id>
-			<name>Internal Releases</name>
-			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
+			<id>knetminer-releases</id>
+			<name>Rothamsted Maven Repo for Releases</name>
+			<url>http://knetminer.org/artifactory/repository/maven-releases</url>
 	  </repository>
 	  <snapshotRepository>
-			<id>ondex-snapshots</id>
-			<name>Internal Snapshots</name>
-			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
-	  </snapshotRepository>
+			<id>knetminer-snapshots</id>
+			<name>Rothamsted Maven Repo for Snapshots</name>
+			<url>http://knetminer.org/artifactory/repository/maven-snapshots</url>
+	  </snapshotRepository>	
 	</distributionManagement>	
 
 	<build>
 		<pluginManagement>
 			<plugins>
-			
 			  <plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-surefire-plugin</artifactId>
@@ -233,39 +232,36 @@
 		</pluginManagement>		
 	</build>
 	
+	
 	<profiles>
-		<!-- TODO: testing the new repo, needs to be moved into the defaults -->
+
 		<profile>
-			<id>knetminer-repo</id>
-			<activation><activeByDefault>false</activeByDefault></activation>
-			
+			<!-- TODO: remove when migration is completed -->
+			<id>old-nexus-repo</id>
 			<distributionManagement>
 			  <repository>
-					<id>knetminer-releases</id>
-					<name>Internal Releases</name>
-					<url>http://knetminer.org/artifactory/repository/maven-releases</url>
+					<id>ondex-releases</id>
+					<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
 			  </repository>
 			  <snapshotRepository>
-					<id>knetminer-snapshots</id>
-					<name>Internal Snapshots</name>
-					<url>http://knetminer.org/artifactory/repository/maven-snapshots</url>
+					<id>ondex-snapshots</id>
+					<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
 			  </snapshotRepository>
-			</distributionManagement>				
+			</distributionManagement>			
 		</profile>
 
 		<profile>
+			<!-- TODO: Remove after migration has completed -->
 			<id>intranet-repo</id>
 			<activation><activeByDefault>false</activeByDefault></activation>
 			
 			<distributionManagement>
 			  <repository>
 					<id>knetminer-releases</id>
-					<name>Internal Releases</name>
 					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-releases</url>
 			  </repository>
 			  <snapshotRepository>
 					<id>knetminer-snapshots</id>
-					<name>Internal Snapshots</name>
 					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-snapshots</url>
 			  </snapshotRepository>
 			</distributionManagement>				
