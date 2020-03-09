@@ -1,8 +1,8 @@
 language: java
-
-jdk:
-  - openjdk8
+jdk: openjdk8
   
+install: echo "Skipping default installation step"
+
 script:
   - mvn deploy --settings settings.xml
 
