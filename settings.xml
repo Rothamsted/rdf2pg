@@ -3,13 +3,13 @@
   <servers>
     
     <server>
-			<id>ondex-snapshots</id>
+			<id>knetminer-snapshots</id>
       <username>${env.REPO_USER}</username>
       <password>${env.REPO_PWD}</password>
 	  </server>
 
     <server>
-			<id>ondex-releases</id>
+			<id>knetminer-releases</id>
       <username>${env.REPO_USER}</username>
       <password>${env.REPO_PWD}</password>
 	  </server>
