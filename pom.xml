@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+
+	<!-- 
+		Common Knetminer parent, defining stuff like our Nexus
+	-->  
+	<parent>
+	  <groupId>uk.ac.rothamsted.knetminer</groupId>
+	  <artifactId>knetminer-common</artifactId>
+	  <version>1.0-SNAPSHOT</version>
+	</parent>  
+  
   
   <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
   <artifactId>rdf2neo-pom</artifactId>
@@ -115,58 +126,7 @@
   		
   </dependencyManagement>
 
-
-
-	<pluginRepositories>
 	
-		<pluginRepository>
-			<id>ondex-releases</id>
-			<name>Internal Releases</name>
-			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
-		</pluginRepository>
-		
-		<pluginRepository>
-			<id>ondex-snapshots</id>
-			<name>Internal Snapshots</name>
-			<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
-			<snapshots><enabled>true</enabled></snapshots>
-		</pluginRepository>
-
-	</pluginRepositories>
-	
-	<repositories>
-	
-		<repository>
-	    <id>EBIBioSamples-GH-repo</id>
-	    <url>https://raw.githubusercontent.com/EBIBioSamples/EBIBioSamples.github.io/maven-repo</url>
-	    <snapshots>
-        <enabled>true</enabled>
-	    </snapshots>
-    </repository>
-
-		<!-- rdfutils -->
-		<repository>
-			<id>marcobrandizi.info</id>
-			<url>http://www.marcobrandizi.info:8081/artifactory/maven</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
-		</repository>	
-		
-	</repositories>
-	
-	<distributionManagement>
-	  <repository>
-			<id>knetminer-releases</id>
-			<name>Rothamsted Maven Repo for Releases</name>
-			<url>http://knetminer.org/artifactory/repository/maven-releases</url>
-	  </repository>
-	  <snapshotRepository>
-			<id>knetminer-snapshots</id>
-			<name>Rothamsted Maven Repo for Snapshots</name>
-			<url>http://knetminer.org/artifactory/repository/maven-snapshots</url>
-	  </snapshotRepository>	
-	</distributionManagement>	
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -186,7 +146,7 @@
 			  </plugin>
 			
 				<!-- 
-					A small plug-in that starts Neo4j, we maintain our own version of this at 
+					A small plug-in that starts Neo4j, we inherited this from André and it is now at 
 					https://github.com/Rothamsted/neo4j-server-maven-plugin
 				 -->
 				<plugin>
@@ -232,40 +192,4 @@
 		</pluginManagement>		
 	</build>
 	
-	
-	<profiles>
-
-		<profile>
-			<!-- TODO: remove when migration is completed -->
-			<id>old-nexus-repo</id>
-			<distributionManagement>
-			  <repository>
-					<id>ondex-releases</id>
-					<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/releases</url>
-			  </repository>
-			  <snapshotRepository>
-					<id>ondex-snapshots</id>
-					<url>http://ondex.rothamsted.ac.uk/nexus/content/repositories/snapshots</url>
-			  </snapshotRepository>
-			</distributionManagement>			
-		</profile>
-
-		<profile>
-			<!-- TODO: Remove after migration has completed -->
-			<id>intranet-repo</id>
-			<activation><activeByDefault>false</activeByDefault></activation>
-			
-			<distributionManagement>
-			  <repository>
-					<id>knetminer-releases</id>
-					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-releases</url>
-			  </repository>
-			  <snapshotRepository>
-					<id>knetminer-snapshots</id>
-					<url>http://babvs58.rothamsted.ac.uk:8081/artifactory/repository/maven-snapshots</url>
-			  </snapshotRepository>
-			</distributionManagement>				
-		</profile>
-
-	</profiles>
 </project>
