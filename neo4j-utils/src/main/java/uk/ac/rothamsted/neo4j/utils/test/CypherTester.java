@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.driver.internal.value.BooleanValue;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Value;
@@ -176,10 +175,10 @@ public class CypherTester
 		)
 		.stream ()
 		.sorted ()
+		.filter ( f -> f != null ) // forces peek()
 		.peek ( f -> {
 			log.info ( "Running '{}'", f.getName () );
-			if ( !this.askFromFile ( f.toString (), keyVals ) )
-				failAction.accept ( f );
+			if ( !this.askFromFile ( f.toString (), keyVals ) ) failAction.accept ( f );
 		})
 		.count ();
 		

@@ -1,4 +1,11 @@
 language: java
-jdk:
-  - oraclejdk8  
-script: mvn deploy --settings settings.xml
+jdk: openjdk8
+  
+install: echo "Skipping default installation step"
+
+script:
+  - mvn deploy --settings settings.xml
+
+cache:
+  directories:
+    - $HOME/.m2

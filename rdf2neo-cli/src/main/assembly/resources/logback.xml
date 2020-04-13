@@ -38,7 +38,7 @@
     <appender-ref ref="FileApp" />
   </root>
 
-	<!-- Add Loggers this way if you want finer reports for selected components -->
+	<!-- Define more Loggers this way if you want finer reports for selected components -->
   <!-- logger name="uk.ac.rothamsted.rdf.neo4j" level="INFO"/ -->
   
 </configuration>

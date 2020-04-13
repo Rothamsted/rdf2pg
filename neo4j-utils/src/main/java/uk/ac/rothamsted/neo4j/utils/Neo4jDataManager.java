@@ -40,28 +40,40 @@ public class Neo4jDataManager
 	}
 
 	/**
-	 * TODO: comment me!
+	 * <p>Runs a Neo4j client session, which is created and given to the action as a parameter. The action can return
+	 * a value useful for the invoker of this method.</p> 
 	 * 
 	 * <p>Because parallelism sometimes raises exceptions about race conditions, we use {@link MultipleAttemptsExecutor}
 	 * to re-attempt the command execution a couple of times, after such exceptions.</p>
 	 * 
 	 */
+	@SuppressWarnings ( "unchecked" )
 	public <V> V runSession ( Function<Session, V> action )
 	{
 		MultipleAttemptsExecutor attempter = new MultipleAttemptsExecutor (
-				TransientException.class,
-				DatabaseException.class,
-				ServiceUnavailableException.class
-			);
-			attempter.setMaxAttempts ( this.getMaxRetries () );
-			attempter.setMinPauseTime ( 30 * 1000 );
-			attempter.setMaxPauseTime ( 3 * 60 * 1000 );
-			
+			TransientException.class,
+			DatabaseException.class,
+			ServiceUnavailableException.class
+		);
+		attempter.setMaxAttempts ( this.getMaxRetries () );
+		attempter.setMinPauseTime ( 30 * 1000 );
+		attempter.setMaxPauseTime ( 3 * 60 * 1000 );
+		
+		Object[] result = new Object [ 1 ];
+		attempter.execute ( () -> 
+		{
 			try ( Session session = this.neo4jDriver.session () ) {
-				return action.apply ( session );
+				result [ 0 ] = action.apply ( session );
 			}
+		});
+		return (V) result [ 0 ];
 	}
 
+	/**
+	 * A convenience wrapper of {@link #runSession(Function)} that doesn't force the action executor to return a value, if that's not
+	 * expected by the invoker of this method.
+	 * 
+	 */
 	public void runSessionVoid ( Consumer<Session> action ) {
 		// TODO: Java commons collections 4.x
 		runSession ( session -> { action.accept ( session ); return null; } );

@@ -1,6 +1,5 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.jena.rdf.model.Resource;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.utils.threading.BatchProcessor;
+import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
 
 /**
  * <H1>The Node Loading processor</H1>
@@ -23,32 +22,21 @@ import uk.ac.ebi.utils.threading.BatchProcessor;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
+public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeLoadingHandler>
 {
 	private String nodeIrisSparql;
 	
-	@Override
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Nodes Loading" );
 		
-		@SuppressWarnings ( "unchecked" )
-		Set<Resource> chunk[] = new Set[] { this.getDestinationSupplier ().get () };
+		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
+		// pushes the IRI into a batch and submits a full batch to the parallel executor.
+		Consumer<Consumer<Resource>> nodeIriProcessor = 
+			resProc -> rdfMgr.processNodeIris ( this.getNodeIrisSparql (), resProc );
 		
-		rdfMgr.processNodeIris ( this.getNodeIrisSparql (), res ->
-		{
-			chunk [ 0 ].add ( res );
-
-			// This checks if we have enough items in the chunk and, if yes, it submit a new Loading job and returns a new
-			// empty chunk to refill.
-			chunk [ 0 ] = handleNewTask ( chunk [ 0 ] );
-		});
-		
-		// The last chunk needs to be always submitted
-		handleNewTask ( chunk [ 0 ], true );
-		
-		this.waitExecutor ( "Waiting for Cyhper Node Loading tasks to finish" );
-		log.info ( "Cypher Nodes Loading ended" );
+		super.process ( nodeIriProcessor );
+		log.info ( "Cypher Node Loading ended" );
 	}
 
 	/**
@@ -71,11 +59,11 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource>
 	}
 
 	/**
-	 * Does nothing but invoking {@link #setConsumer(Consumer)}. It's here just to accommodate Spring annotations. 
+	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
 	public CyNodeLoadingProcessor setConsumer ( CyNodeLoadingHandler handler ) {
-		super.setConsumer ( handler );
+		super.setBatchJob ( handler );
 		return this;
 	}
 }

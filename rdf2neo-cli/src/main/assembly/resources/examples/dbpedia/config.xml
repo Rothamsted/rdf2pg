@@ -7,7 +7,7 @@
 
 		<!-- 
 		  Just leave this here. It means some components are got from the Java source files, by means of
-		  Spring annotations. You do need this base (which the declaration below extend/override). 
+		  Spring annotations. You do need this base (which the declarations below extend/override). 
 		-->
     <context:component-scan base-package = "uk.ac.rothamsted.rdf.neo4j" />
 
@@ -108,8 +108,6 @@
 			<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
 						
 		</bean>
-
-
 
 
 		<!-- And some boilerplate -->
