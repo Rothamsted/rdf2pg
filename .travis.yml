@@ -3,6 +3,8 @@ language: java
 jdk:
   - openjdk11
   
+install: echo "Skipping default installation step"
+  
 script:
   - mvn deploy --settings settings.xml
 
