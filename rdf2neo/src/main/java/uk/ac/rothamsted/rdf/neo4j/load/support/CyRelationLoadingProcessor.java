@@ -33,7 +33,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 		CyRelationLoadingHandler handler = this.getBatchJob ();
 
 		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
-		// pushes the IRI into a batch and submits a full batch to the parallel executor.
+		// pushes each IRI into a batch and submits a filled-up batch to the parallel executor.
 		Consumer<Consumer<QuerySolution>> relIriProcessor = 
 			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), solProc );
 		
@@ -45,8 +45,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
-	public CyRelationLoadingProcessor setConsumer ( CyRelationLoadingHandler handler ) {
+	public void setBatchJob ( CyRelationLoadingHandler handler ) {
 		super.setBatchJob ( handler );
-		return this;
 	}	
 }
