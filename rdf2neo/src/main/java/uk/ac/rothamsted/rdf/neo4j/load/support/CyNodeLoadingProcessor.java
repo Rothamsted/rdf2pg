@@ -31,7 +31,7 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeL
 		log.info ( "Starting Cypher Nodes Loading" );
 		
 		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
-		// pushes the IRI into a batch and submits a full batch to the parallel executor.
+		// pushes each IRI into a batch and submits a filled-up batch to the parallel executor.
 		Consumer<Consumer<Resource>> nodeIriProcessor = 
 			resProc -> rdfMgr.processNodeIris ( this.getNodeIrisSparql (), resProc );
 		
@@ -62,8 +62,7 @@ public class CyNodeLoadingProcessor extends CyLoadingProcessor<Resource, CyNodeL
 	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
-	public CyNodeLoadingProcessor setConsumer ( CyNodeLoadingHandler handler ) {
+	public void setBatchJob ( CyNodeLoadingHandler handler ) {
 		super.setBatchJob ( handler );
-		return this;
 	}
 }
