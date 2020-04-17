@@ -1,12 +1,16 @@
 package uk.ac.rothamsted.rdf.neo4j.load;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.jena.graph.impl.SimpleGraphMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -16,12 +20,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.neo4j.load.graphml.SimpleGraphMLExporter;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.GraphMLConfiguration;
+import uk.ac.rothamsted.rdf.neo4j.load.support.GraphMLUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.graphml.GraphMLNodeExportHandler;
 import uk.ac.rothamsted.rdf.neo4j.load.support.graphml.GraphMLNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.graphml.GraphMLRelationExportHandler;
@@ -46,7 +50,6 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 {
 	private List<ConfigItem> configItems = new LinkedList<> ();
 	private ObjectFactory<SimpleCyLoader> cypherLoaderFactory;
-	
 	private ObjectFactory<SimpleGraphMLExporter> graphMLExporterFactory; 
 	
 	private OutputConfig outputConfig; 
@@ -250,6 +253,11 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	public void load ( String tdbPath, Object... opts )
 	{
 		
+		log.info("Using {} exporter", outputConfig.getSelectedOutput());
+		if (OutputConfig.GeneratorOutput.GraphML.equals(outputConfig.getSelectedOutput())) {
+			log.info("GraphML configuration: {}", graphMLConfiguration.printableConfig()); 
+		}
+		
 		switch (getOutputConfig().getSelectedOutput()) {
 			case Cypher: 
 				// First the nodes ( mode = 0 ) and then the relations ( mode = 1 )
@@ -325,7 +333,61 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 				// should try to store the data in an intermediate storage (Redis is very good candidate for this) 
 				// to avoid this final step. 
 				
-				try {
+				try (BufferedReader inNodes = Files.newBufferedReader(Paths.get(GraphMLConfiguration.getOutputFile()+GraphMLConfiguration.NODE_FILE_EXTENSION)); 
+					BufferedReader inEdges = Files.newBufferedReader(Paths.get(GraphMLConfiguration.getOutputFile()+GraphMLConfiguration.EDGE_FILE_EXTENSION)) ) {
+					
+					BufferedWriter outGraphMLFile = null; 
+					
+					if (Files.exists(Paths.get(GraphMLConfiguration.getOutputFile()))) {
+						outGraphMLFile = Files.newBufferedWriter(Paths.get(GraphMLConfiguration.getOutputFile()), StandardOpenOption.TRUNCATE_EXISTING); 
+					}
+					else {
+						outGraphMLFile = Files.newBufferedWriter(Paths.get(GraphMLConfiguration.getOutputFile()), StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND); 
+					}
+					
+					// we preapre the headers and the schema information 
+					
+					StringBuilder strB = new StringBuilder(); 
+					
+					strB.append(GraphMLUtils.GRAPHML_TAG_HEADER).append("\n");
+					
+					for (String nodeAttribute: GraphMLNodeExportHandler.getGatheredNodeProperties()) {
+						strB.append(GraphMLUtils.KEY_TAG_START); 
+						strB.append(GraphMLUtils.ID_ATTR).append("=\"").append(nodeAttribute).append("\" "); 
+						strB.append(GraphMLUtils.FOR_ATTR).append("=\"").append(GraphMLUtils.NODE_FOR_VALUE).append("\" ");
+						// for the time being, we don't support typing for the key / data 
+						// maybe we could add it via 
+						strB.append(GraphMLUtils.ATTR_NAME_ATTR).append("=\"").append(nodeAttribute).append("\" /> \n"); 
+					}
+					for (String edgeAttribute: GraphMLRelationExportHandler.getGatheredEdgeProperties()) {
+						strB.append(GraphMLUtils.KEY_TAG_START); 
+						strB.append(GraphMLUtils.ID_ATTR).append("=\"").append(edgeAttribute).append("\" "); 
+						strB.append(GraphMLUtils.FOR_ATTR).append("=\"").append(GraphMLUtils.EDGE_FOR_VALUE).append("\" ");
+						// for the time being, we don't support typing for the key / data 
+						// maybe we could add it via 
+						strB.append(GraphMLUtils.ATTR_NAME_ATTR).append("=\"").append(edgeAttribute).append("\" /> \n"); 
+					}
+					
+					strB.append(GraphMLUtils.GRAPH_TAG_START); 
+					strB.append(GraphMLUtils.DEFAULT_DIRECTED_ATTR).append("=\"").append(GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE).append("\" > \n"); 
+					
+					outGraphMLFile.write(strB.toString());
+					
+					String element = null;
+				    while ((element= inNodes.readLine()) != null) {
+				        outGraphMLFile.write(element); 
+				        outGraphMLFile.newLine();
+				    }
+				    while ((element= inEdges.readLine()) != null) {
+				    	outGraphMLFile.write(element);
+				    	outGraphMLFile.newLine();
+				    }
+					
+				    strB = new StringBuilder(); 
+				    strB.append(GraphMLUtils.GRAPH_TAG_END).append("\n").append(GraphMLUtils.GRAPHML_TAG_END); 
+				    
+				    outGraphMLFile.write(strB.toString());
+					outGraphMLFile.flush();
 				}
 				catch (IOException e) {
 					log.error("Problems writing all the data together"); 
@@ -340,10 +402,11 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 		}
 	}
 
+	
 	public OutputConfig getOutputConfig() {
 		return outputConfig;
 	}
-
+	@Resource (name="outputConfig")
 	public void setOutputConfig(OutputConfig output) {
 		this.outputConfig = output;
 	}
@@ -351,7 +414,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	public GraphMLConfiguration getGraphMLConfiguration() {
 		return graphMLConfiguration;
 	}
-
+	@Resource (name="graphMLConfiguration")
 	public void setGraphMLConfiguration(GraphMLConfiguration graphMLConfiguration) {
 		this.graphMLConfiguration = graphMLConfiguration;
 	}
@@ -395,7 +458,7 @@ public class MultiConfigCyLoader implements CypherLoader, AutoCloseable
 	{
 		return graphMLExporterFactory; 
 	}
-	@Resource ( name = "simpleGraphMLExporterLoaderFactory" )
+	@Resource (name = "simpleGraphMLExporterFactory")
 	public void setGraphMLExporterFactory ( ObjectFactory<SimpleGraphMLExporter> graphMLExporterFactory)
 	{
 		this.graphMLExporterFactory = graphMLExporterFactory;

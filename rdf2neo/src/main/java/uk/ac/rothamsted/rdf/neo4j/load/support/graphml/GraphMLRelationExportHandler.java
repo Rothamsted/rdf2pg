@@ -44,15 +44,19 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 	{	
 		// in this case the iri is built using the md5
 		// we get then the type as well at the same point
-		addGatheredProperty("iri");
-		addGatheredProperty("type"); 
-		addGatheredProperty("fromIri"); 
-		addGatheredProperty("toIri"); 
+		addGatheredEdgeProperty("iri");
+		addGatheredEdgeProperty("edgeType"); 
+		addGatheredEdgeProperty("fromIri"); 
+		addGatheredEdgeProperty("toIri"); 
 	}
 	
 	// for threading safety purposes
-	private static synchronized void addGatheredProperty(String property) {
+	private static synchronized void addGatheredEdgeProperty(String property) {
 		gatheredEdgeProperties.add(property); 
+	}
+	
+	public static synchronized HashSet<String> getGatheredEdgeProperties() {
+		return gatheredEdgeProperties; 
 	}
 	
 	// semaphore to write in the appropriate file
@@ -90,6 +94,7 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 			// We have a top map containing basic relation elements (from, to, properties)
 			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
 			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
+			cyparams.put ( "iri", String.valueOf (cyRelation.getIri())); 
 			// And then we have an inner map containing the relation properties/attributes
 			
 			HashMap<String, Object> relProperties = new HashMap<> ();
@@ -101,9 +106,8 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 				Object cyAttrVal = vals.size () > 1 ? vals.toArray ( new Object [ 0 ] ) : vals.iterator ().next ();
 				relProperties.put ( attre.getKey (), cyAttrVal );
 				// we add the property to the global keys
-				addGatheredProperty(attre.getKey()); 
+				addGatheredEdgeProperty(attre.getKey()); 
 			}
-			
 			cyparams.put ( "properties", relProperties );
 			
 			cyRels.add ( cyparams );				
@@ -119,21 +123,27 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 				List<Map<String, Object>> relPropertiesList = entry.getValue(); 
 				relPropertiesList.parallelStream().parallel().forEach(
 					rel -> {
-						URI fromIRI = URI.create((String)rel.get("fromIRI")); 
-						URI toIRI = URI.create((String)rel.get("toIRI"));
+//						URI fromIRI = URI.create((String)rel.get("fromIri")); 
+//						URI toIRI = URI.create((String)rel.get("toIri"));
 						// warning: it's not the IRI of the property, but a generated one for the 
 						// actual instance of the relationship
-						URI relIRI = URI.create((String)rel.get("iri")); 
+//						URI relIRI = URI.create((String)rel.get("iri")); 
 						StringBuilder strB = new StringBuilder(); 
 						strB.append(GraphMLUtils.EDGE_TAG_START); 
-						strB.append(GraphMLUtils.ID_ATTR).append("=\"").append(relIRI.hashCode()).append("\" ");
+						strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)rel.get("iri")).append("\" ");
 						// we now establish the oriented edge
-						strB.append(GraphMLUtils.SOURCE_ATTR).append("=\"").append(fromIRI.hashCode()).append("\" ");
-						strB.append(GraphMLUtils.TARGET_ATTR).append("=\"").append(toIRI.hashCode()).append("\" ");
+						strB.append(GraphMLUtils.SOURCE_ATTR).append("=\"").append((String)rel.get("fromIri")).append("\" ");
+						strB.append(GraphMLUtils.TARGET_ATTR).append("=\"").append((String)rel.get("toIri")).append("\" >");
 						// apparently gremlin/janusgraph takes into account the labels for the edges (not for the vertex)
-						strB.append(GraphMLUtils.LABEL_ATTR).append("=\"").append(type).append("\" >"); 
+						// strB.append(GraphMLUtils.LABEL_ATTR).append("=\"").append(type).append("\" >"); 
+						
+						// we include the type as a property of the edge 
+						strB.append(GraphMLUtils.DATA_TAG_START); 
+						strB.append(GraphMLUtils.KEY_ATTR).append("=\"edgeType\">").append(type); 
+						strB.append(GraphMLUtils.DATA_TAG_END); 
+						
 						// now the possible properties 
-						strB.append(GraphMLUtils.dataValues(rel)); 
+						strB.append(GraphMLUtils.dataValues((Map<String, Object>)rel.get("properties"))); 
 						strB.append(GraphMLUtils.EDGE_TAG_END).append("\n"); 
 						String relString = strB.toString(); 
 						synchronized (lock) {

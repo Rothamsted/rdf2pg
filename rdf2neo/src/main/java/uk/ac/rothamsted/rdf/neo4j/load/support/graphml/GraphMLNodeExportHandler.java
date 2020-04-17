@@ -56,6 +56,10 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 		gatheredNodeProperties.add(property); 
 	}
 	
+	public static synchronized HashSet<String> getGatheredNodeProperties() {
+		return gatheredNodeProperties; 
+	}
+	
 	
 	public GraphMLNodeExportHandler ()
 	{
@@ -80,6 +84,7 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 				
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 
+		log.info("GraphML Resources: {}", nodeResources.size()); 
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
 		{
@@ -110,33 +115,43 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 			cyNodes.add ( properties );
 		} 
 		
-		log.trace ( "Sending {} node(s) to file {}", nodeResources.size (), GraphMLConfiguration.getOutputFile()+GraphMLConfiguration.NODE_FILE_EXTENSION);
+		log.info ( "Sending node(s) to file {}", GraphMLConfiguration.getOutputFile()+GraphMLConfiguration.NODE_FILE_EXTENSION);
 		
+		log.info("GraphMLNodeSize: {}", graphMLNodeData.keySet().size()); 
 		// and this is where it happens
 		graphMLNodeData.entrySet().parallelStream().parallel().forEach(
 				entry -> {
+					log.info("entrySet: {}", entry.getValue().size()); 
 					// all of this nodes share this labels
 					SortedSet<String> labels = entry.getKey(); 
 					String labelsStr = labels
 							.stream ()
-							.map ( label -> '`' + label + '`' )
+							.map ( label -> label.replace("\"", "\\\"") )
 							.collect ( Collectors.joining ( ":" ) );
 					
 					List<Map<String, Object>> nodePropertiesList = entry.getValue ();
 
 					nodePropertiesList.parallelStream().parallel().forEach( 
 						node ->  {
-							URI nodeIRI = URI.create((String)node.get("iri")); 
+//							URI nodeIRI = URI.create((String)node.get("iri")); 
 							StringBuilder strB = new StringBuilder(); 
 							strB.append(GraphMLUtils.NODE_TAG_START); 
-							strB.append(GraphMLUtils.ID_ATTR).append("=\"").append(nodeIRI.hashCode()).append("\" >"); 
-							strB.append(GraphMLUtils.dataValues(node)); 
+							strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)node.get("iri")).append("\" >"); 
+							//we write the labels
+							strB.append(GraphMLUtils.DATA_TAG_START); 
+							strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABELS_ATTR).append("\" >");
+				    		strB.append(labelsStr);
+				    		strB.append(GraphMLUtils.DATA_TAG_END); 
+				    		// we write the rest of properties
+				    		strB.append(GraphMLUtils.dataValues(node)); 
 							strB.append(GraphMLUtils.NODE_TAG_END).append("\n");
-							String nodeString = strB.toString(); 
+							String nodeString = strB.toString();
+
 							synchronized (lock) {
 								try {
 									Files.writeString(Paths.get(GraphMLConfiguration.getOutputFile()+GraphMLConfiguration.NODE_FILE_EXTENSION), 
-											nodeString, StandardOpenOption.CREATE, StandardOpenOption.APPEND); 
+											nodeString, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+									
 								}
 								catch (IOException e) {
 									log.error("Problems writing the node{}", nodeString); 
@@ -148,6 +163,7 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 	        	}	
 				
 		);
+		
 		log.debug(" Node export process finished");
 	}
 			

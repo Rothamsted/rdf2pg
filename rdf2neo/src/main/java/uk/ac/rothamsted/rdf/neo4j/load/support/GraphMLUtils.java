@@ -28,13 +28,24 @@ public class GraphMLUtils {
 	public static final String EDGE_TAG_END = "</edge>";
 	public static final String DATA_TAG_START = "<data "; 
 	public static final String DATA_TAG_END = "</data>";
+	public static final String KEY_TAG_START = "<key ";
+	public static final String KEY_TAG_END = "</key>"; 
 	public static final String ID_ATTR = "id";
-	public static final String KEY_ATTR = "key"; 
+	public static final String KEY_ATTR = "key";
+	public static final String LABELS_ATTR = "labels"; 
 	public static final String SOURCE_ATTR = "source"; 
 	public static final String TARGET_ATTR = "target"; 
 	public static final String LABEL_ATTR = "label"; 
 	public static final String DIRECTED_ATTR = "directed"; 
-	public static final String DEFAULT_DIRECTED_ATTR = "edgedefault"; 
+	public static final String DEFAULT_DIRECTED_ATTR = "edgedefault";
+	public static final String FOR_ATTR = "for"; 
+	public static final String ATTR_NAME_ATTR = "attr.name"; 
+	public static final String EDGE_FOR_VALUE = "edge"; 
+	public static final String NODE_FOR_VALUE = "node"; 
+	public static final String DIRECTED_DEFAULT_DIRECTED_VALUE="directed"; 
+	
+	public static final String EDGE_TYPE_TAG = "type"; 
+	
 	
 	/** 
 	 * Modification of the the Value method in neo4j driver to map all the values to String

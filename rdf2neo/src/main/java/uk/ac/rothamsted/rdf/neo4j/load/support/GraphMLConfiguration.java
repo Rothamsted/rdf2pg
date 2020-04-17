@@ -22,4 +22,11 @@ public class GraphMLConfiguration {
 	public static void setNodeDefaultLabel(String defaultNodeLabel) {
 		GraphMLConfiguration.defaultNodeLabel = defaultNodeLabel;
 	} 
+	
+	public static String printableConfig() {
+		StringBuilder strB = new StringBuilder(); 
+		strB.append("Output File:: ").append(outputFile).append("\n"); 
+		strB.append("Default Node Label::").append(defaultNodeLabel).append("\n"); 
+		return strB.toString(); 
+	}
 }

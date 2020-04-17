@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.neo4j.load.graphml;
+package uk.ac.rothamsted.rdf.neo4j.load;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Dataset;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.neo4j.load.CypherLoader;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 import uk.ac.rothamsted.rdf.neo4j.load.support.graphml.GraphMLNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.graphml.GraphMLRelationLoadingProcessor;
@@ -69,14 +68,14 @@ public class SimpleGraphMLExporter implements CypherLoader, AutoCloseable
 			if ( doRels ) this.getGraphMLRelationLoader ().process ( rdfMgr, opts );
 
 			
-			// User-defined indices
-			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
-
-			if ( doIdx ) {
-				log.info("{}Indexing not available for this exporter");
-			}
-			
-			log.info ( "{}RDF-Cypher conversion finished", nameStr [ 0 ] );
+//			// User-defined indices
+//			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
+//
+//			if ( doIdx ) {
+//				log.info("{}Indexing not available for this exporter");
+//			}
+//			
+			log.info ( "{}RDF-GraphML conversion finished", nameStr [ 0 ] );
 		}
 		catch ( Exception ex ) {
 			throw new RuntimeException ( "Error while running the RDF/Cypher loader:" + ex.getMessage (), ex );
