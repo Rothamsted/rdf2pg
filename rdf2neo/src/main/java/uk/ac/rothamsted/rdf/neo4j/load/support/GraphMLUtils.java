@@ -31,11 +31,13 @@ public class GraphMLUtils {
 	public static final String KEY_TAG_START = "<key ";
 	public static final String KEY_TAG_END = "</key>"; 
 	public static final String ID_ATTR = "id";
+	// these two attributes are the default for gremlin graphML 
+	public static final String LABEL_VERTEX_ATTR = "labelV";
+	public static final String LABEL_EDGE_ATTR = "labelE"; 
 	public static final String KEY_ATTR = "key";
 	public static final String LABELS_ATTR = "labels"; 
 	public static final String SOURCE_ATTR = "source"; 
 	public static final String TARGET_ATTR = "target"; 
-	public static final String LABEL_ATTR = "label"; 
 	public static final String DIRECTED_ATTR = "directed"; 
 	public static final String DEFAULT_DIRECTED_ATTR = "edgedefault";
 	public static final String FOR_ATTR = "for"; 

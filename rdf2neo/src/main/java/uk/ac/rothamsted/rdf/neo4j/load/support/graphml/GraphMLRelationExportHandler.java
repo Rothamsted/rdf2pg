@@ -44,10 +44,7 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 	{	
 		// in this case the iri is built using the md5
 		// we get then the type as well at the same point
-		addGatheredEdgeProperty("iri");
-		addGatheredEdgeProperty("edgeType"); 
-		addGatheredEdgeProperty("fromIri"); 
-		addGatheredEdgeProperty("toIri"); 
+		addGatheredEdgeProperty(GraphMLUtils.LABEL_EDGE_ATTR); 
 	}
 	
 	// for threading safety purposes
@@ -135,11 +132,11 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 						strB.append(GraphMLUtils.SOURCE_ATTR).append("=\"").append((String)rel.get("fromIri")).append("\" ");
 						strB.append(GraphMLUtils.TARGET_ATTR).append("=\"").append((String)rel.get("toIri")).append("\" >");
 						// apparently gremlin/janusgraph takes into account the labels for the edges (not for the vertex)
-						// strB.append(GraphMLUtils.LABEL_ATTR).append("=\"").append(type).append("\" >"); 
+						strB.append(GraphMLUtils.LABEL_EDGE_ATTR).append("=\"").append(type).append("\" >"); 
 						
 						// we include the type as a property of the edge 
 						strB.append(GraphMLUtils.DATA_TAG_START); 
-						strB.append(GraphMLUtils.KEY_ATTR).append("=\"edgeType\">").append(type); 
+						strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABEL_EDGE_ATTR).append("\">").append(type); 
 						strB.append(GraphMLUtils.DATA_TAG_END); 
 						
 						// now the possible properties 

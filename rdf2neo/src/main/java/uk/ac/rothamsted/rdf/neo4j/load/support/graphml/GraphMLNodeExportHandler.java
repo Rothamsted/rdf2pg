@@ -49,6 +49,7 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 	private static HashSet<String> gatheredNodeProperties = new HashSet<String>();
 	{
 		addGatheredProperty("iri");
+		addGatheredProperty(GraphMLUtils.LABEL_VERTEX_ATTR); 
 	}
 	
 	// for threading safety purposes
@@ -136,10 +137,12 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 //							URI nodeIRI = URI.create((String)node.get("iri")); 
 							StringBuilder strB = new StringBuilder(); 
 							strB.append(GraphMLUtils.NODE_TAG_START); 
-							strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)node.get("iri")).append("\" >"); 
+							strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)node.get("iri")).append("\" ");
 							//we write the labels
+							strB.append(GraphMLUtils.LABEL_VERTEX_ATTR).append("=\"").append(labelsStr).append("\" >");
+							//we include them as property of the node in the labels field (to use them in other indexes)
 							strB.append(GraphMLUtils.DATA_TAG_START); 
-							strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABELS_ATTR).append("\" >");
+							strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABEL_VERTEX_ATTR).append("\" >");
 				    		strB.append(labelsStr);
 				    		strB.append(GraphMLUtils.DATA_TAG_END); 
 				    		// we write the rest of properties
