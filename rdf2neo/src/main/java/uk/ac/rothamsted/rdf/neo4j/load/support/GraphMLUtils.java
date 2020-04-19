@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 public class GraphMLUtils {
 	
 	/** Some constants related to GraphML **/ 
@@ -94,7 +96,7 @@ public class GraphMLUtils {
     	for (String key: properties.keySet()) {
     		strB.append(GraphMLUtils.DATA_TAG_START); 
     		strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(key).append("\" >");
-    		strB.append(value(properties.get(key)).replace("\"", "\\\""));
+    		strB.append(StringEscapeUtils.escapeXml11(value(properties.get(key))).replace("\"", "\\\""));
     		strB.append(GraphMLUtils.DATA_TAG_END); 
     	}
     	return strB.toString(); 

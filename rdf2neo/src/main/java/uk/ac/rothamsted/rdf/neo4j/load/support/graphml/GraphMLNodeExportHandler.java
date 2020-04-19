@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -139,11 +140,11 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 							strB.append(GraphMLUtils.NODE_TAG_START); 
 							strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)node.get("iri")).append("\" ");
 							//we write the labels
-							strB.append(GraphMLUtils.LABEL_VERTEX_ATTR).append("=\"").append(labelsStr).append("\" >");
+							strB.append(GraphMLUtils.LABEL_VERTEX_ATTR).append("=\"").append(StringEscapeUtils.escapeXml11(labelsStr)).append("\" >");
 							//we include them as property of the node in the labels field (to use them in other indexes)
 							strB.append(GraphMLUtils.DATA_TAG_START); 
 							strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABEL_VERTEX_ATTR).append("\" >");
-				    		strB.append(labelsStr);
+				    		strB.append(StringEscapeUtils.escapeXml11(labelsStr));
 				    		strB.append(GraphMLUtils.DATA_TAG_END); 
 				    		// we write the rest of properties
 				    		strB.append(GraphMLUtils.dataValues(node)); 

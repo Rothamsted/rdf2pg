@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.query.QuerySolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -130,13 +131,13 @@ public class GraphMLRelationExportHandler extends GraphMLLoadingHandler<QuerySol
 						strB.append(GraphMLUtils.ID_ATTR).append("=\"").append((String)rel.get("iri")).append("\" ");
 						// we now establish the oriented edge
 						strB.append(GraphMLUtils.SOURCE_ATTR).append("=\"").append((String)rel.get("fromIri")).append("\" ");
-						strB.append(GraphMLUtils.TARGET_ATTR).append("=\"").append((String)rel.get("toIri")).append("\" >");
+						strB.append(GraphMLUtils.TARGET_ATTR).append("=\"").append((String)rel.get("toIri")).append("\" ");
 						// apparently gremlin/janusgraph takes into account the labels for the edges (not for the vertex)
-						strB.append(GraphMLUtils.LABEL_EDGE_ATTR).append("=\"").append(type).append("\" >"); 
+						strB.append(GraphMLUtils.LABEL_EDGE_ATTR).append("=\"").append(StringEscapeUtils.escapeXml11(type)).append("\" >"); 
 						
 						// we include the type as a property of the edge 
 						strB.append(GraphMLUtils.DATA_TAG_START); 
-						strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABEL_EDGE_ATTR).append("\">").append(type); 
+						strB.append(GraphMLUtils.KEY_ATTR).append("=\"").append(GraphMLUtils.LABEL_EDGE_ATTR).append("\">").append(StringEscapeUtils.escapeXml11(type)); 
 						strB.append(GraphMLUtils.DATA_TAG_END); 
 						
 						// now the possible properties 
