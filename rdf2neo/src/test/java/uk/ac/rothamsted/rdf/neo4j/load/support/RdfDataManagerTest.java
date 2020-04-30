@@ -26,6 +26,9 @@ import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
+import uk.ac.rothamsted.rdf.pg.load.support.CyNode;
+import uk.ac.rothamsted.rdf.pg.load.support.CyRelation;
+import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
 
 /**
  * A few tests for the {@link RdfDataManager}.

@@ -17,18 +17,21 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
-import uk.ac.rothamsted.rdf.neo4j.load.support.Neo4jDataManager;
-import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManager;
 import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
+import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
+import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
+import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
+import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
+import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.Neo4jDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
 
 /**
- * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigCyLoader}.
+ * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
  *
  * As developer user, you're probably interested in invoking the converter using Spring configuration,
  * @see {@link #testSpringMultiConfig()} or {@link #testNeoIndexing()}. 
@@ -109,7 +112,7 @@ public class CypherLoaderIT
 	@Test
 	public void testMultiConfigLoading () throws Exception
 	{
-		try ( MultiConfigCyLoader cymloader = new MultiConfigCyLoader (); )
+		try ( MultiConfigPGLoader cymloader = new MultiConfigPGLoader (); )
 		{
 			cymloader.setCypherLoaderFactory ( () -> 
 			{
@@ -176,7 +179,7 @@ public class CypherLoaderIT
 	  // automatically 
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
-			CypherLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
+			PropertyGraphLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
 			cyloader.load ( RdfDataManagerTest.TDB_PATH );
 			// TODO: test
 		}
@@ -188,7 +191,7 @@ public class CypherLoaderIT
 	{
 		try ( 
 			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config.xml" );
-			MultiConfigCyLoader mloader = MultiConfigCyLoader.getSpringInstance ( beanCtx );				
+			MultiConfigPGLoader mloader = MultiConfigPGLoader.getSpringInstance ( beanCtx );				
 		)
 		{			
 			mloader.load ( RdfDataManagerTest.TDB_PATH );
@@ -202,7 +205,7 @@ public class CypherLoaderIT
 	{
 		try ( 
 			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config_indexing.xml" );
-			MultiConfigCyLoader mloader = MultiConfigCyLoader.getSpringInstance ( beanCtx );				
+			MultiConfigPGLoader mloader = MultiConfigPGLoader.getSpringInstance ( beanCtx );				
 		)
 		{			
 			mloader.load ( RdfDataManagerTest.TDB_PATH );
