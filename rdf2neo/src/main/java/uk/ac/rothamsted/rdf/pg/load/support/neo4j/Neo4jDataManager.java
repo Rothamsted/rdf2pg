@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
 
 /**
  * An extension of {@link uk.ac.rothamsted.neo4j.utils.Neo4jDataManager} that adds some RDF import-related
@@ -29,19 +31,19 @@ public class Neo4jDataManager extends uk.ac.rothamsted.neo4j.utils.Neo4jDataMana
 	}
 
 	/**
-	 * <p>Gets the properties in a {@link CypherEntity} as a key/value structure.</p>
+	 * <p>Gets the properties in a {@link PGEntity} as a key/value structure.</p>
 	 * 
 	 * <p>This does some processing:
 	 *   <ul>
 	 *     <li>safeguards against empty values</li>
 	 *     <li>turns multiple values into an array object, which is what the Neo4j driver expects for them</li>
-	 *     <li>Adds a the {@link CypherEntity#getIri() parameter IRI} as the 'iri' proerty to the result; this is because
+	 *     <li>Adds a the {@link PGEntity#getIri() parameter IRI} as the 'iri' proerty to the result; this is because
 	 *     we want always to identify nodes/relations in Neo4j with their original IRI</li>
 	 *   </ul>
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> getCypherProperties ( CypherEntity cyEnt )
+	public Map<String, Object> getCypherProperties ( PGEntity cyEnt )
 	{
 		Map<String, Object> cyProps = new HashMap<> ();
 		for ( Entry<String, Set<Object>> attre: cyEnt.getProperties ().entrySet () )

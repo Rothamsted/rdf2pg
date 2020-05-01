@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.entities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,12 +9,15 @@ import java.util.Set;
  * @author brandizi
  * <dl><dt>Date:</dt><dd>5 Dec 2017</dd></dl>
  *
+ *  Modifified by cbobed for refactoring purposes  
+ * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
-public class CyNode extends CypherEntity
+ 
+public class PGNode extends PGEntity
 {
 	private Set<String> labels = new HashSet<> ();
 
-	public CyNode ( String iri )
+	public PGNode ( String iri )
 	{
 		super ( iri );
 	}

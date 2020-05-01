@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.rothamsted.rdf.pg.Rdf2PGCli;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * Unit test for the example CLI {@link Rdf2PGCli}.

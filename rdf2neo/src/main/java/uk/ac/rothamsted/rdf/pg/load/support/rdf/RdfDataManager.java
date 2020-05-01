@@ -1,7 +1,8 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.rdf;
 
 import static info.marcobrandizi.rdfutils.jena.JenaGraphUtils.JENAUTILS;
 
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -22,6 +23,11 @@ import org.springframework.stereotype.Component;
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
 import uk.ac.rothamsted.rdf.pg.idconvert.DefaultIri2IdConverter;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 
 /**
  * <h1>The RDF source data manager.</h1> 
@@ -34,6 +40,7 @@ import uk.ac.rothamsted.rdf.pg.idconvert.DefaultIri2IdConverter;
  * @author brandizi
  * <dl><dt>Date:</dt><dd>7 Dec 2017</dd></dl>
  *
+ * 
  */
 @Component
 public class RdfDataManager extends TDBEndPointHelper
@@ -50,20 +57,20 @@ public class RdfDataManager extends TDBEndPointHelper
 	}
 
 	/**
-	 * Uses the underlining TDB and mapping queries to create a new {@link CyNode} instance.
+	 * Uses the underlining TDB and mapping queries to create a new {@link PGNode} instance.
 	 * 
 	 * @param nodeRes the RDF/Jena resource correspnding to the Cypher node. This provides the ?iri paramter in the queries below.
 	 * @param labelsSparql the node labels query, which is usually taken from {@link CyNodeLoadingHandler#getLabelsSparql()}.
 	 * @param propsSparql the node properties query, which is usually taken from {@link CyNodeLoadingHandler#getNodePropsSparql()}.
 	 */
-	public CyNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
+	public PGNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
 		params.add ( "iri", nodeRes );
 
-		CyNode cyNode = new CyNode ( nodeRes.getURI () );
+		PGNode cyNode = new PGNode ( nodeRes.getURI () );
 		
 		// The node's labels
 		if ( labelsSparql != null )
@@ -94,7 +101,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	/**
 	 * Just a variant of {@link #getCyNode(Resource, String, String)}.
 	 */
-	public CyNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
+	public PGNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
 		Resource nodeRes = this.getDataSet().getUnionModel().getResource ( nodeIri );
@@ -107,7 +114,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * 
 	 * Helper method used in other methods in this class.
 	 */
-	protected String getCypherId ( RDFNode node, Function<String, String> idConverter )
+	public String getCypherId ( RDFNode node, Function<String, String> idConverter )
 	{
 		if ( node == null ) return null;
 		
@@ -121,14 +128,14 @@ public class RdfDataManager extends TDBEndPointHelper
 	}
 	
 	/**
-	 * Take an existing {@link CypherEntity} and adds the properties that can be mapped from the underlining TDB by means 
+	 * Take an existing {@link PGEntity} and adds the properties that can be mapped from the underlining TDB by means 
 	 * of a property query, like {@link CyNodeLoadingHandler#getNodePropsSparql()}, or 
 	 * {@link CyRelationLoadingHandler#getRelationPropsSparql()}.
 	 * 
 	 * It doesn't do anything if the query is null.
 	 * 
 	 */
-	protected void addCypherProps ( CypherEntity cyEnt, String propsSparql )
+	protected void addCypherProps ( PGEntity cyEnt, String propsSparql )
 	{
 		ensureOpen ();		
 		Dataset dataSet = this.getDataSet ();
@@ -178,13 +185,13 @@ public class RdfDataManager extends TDBEndPointHelper
 	
 	/**
 	 * Similarly to {@link #getCyNode(Resource, String, String)}, uses a binding (i.e., row) from a 
-	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation type query} and creates a new {@link CyRelation}
+	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation type query} and creates a new {@link PGRelation}
 	 * with the RDF mapped data.
 	 */
-	public CyRelation getCyRelation ( QuerySolution relRow )
+	public PGRelation getCyRelation ( QuerySolution relRow )
 	{		
 		Resource relRes = relRow.get ( "iri" ).asResource ();
-		CyRelation cyRelation = new CyRelation ( relRes.getURI () );
+		PGRelation cyRelation = new PGRelation ( relRes.getURI () );
 		
 		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getCyRelationTypeIdConverter () ) );
 
@@ -195,11 +202,11 @@ public class RdfDataManager extends TDBEndPointHelper
 	}
 	
 	/**
-	 * Similarly to {@link #addCypherProps(CypherEntity, String)}, takes a {@link CyRelation} and adds the properties that
+	 * Similarly to {@link #addCypherProps(PGEntity, String)}, takes a {@link PGRelation} and adds the properties that
 	 * can be mapped via {@link CyRelationLoadingHandler#getRelationPropsSparql() relation property query}.
 	 * 
 	 */
-	public void setCyRelationProps ( CyRelation cyRelation, String propsSparql )
+	public void setCyRelationProps ( PGRelation cyRelation, String propsSparql )
 	{
 		this.addCypherProps ( cyRelation, propsSparql );
 	}

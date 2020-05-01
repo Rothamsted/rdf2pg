@@ -33,11 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.rothamsted.neo4j.utils.test.CypherTester;
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CypherLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.Neo4jDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * Runs {@link CypherLoadingHandler}-related tests.

@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * TODO: comment me!

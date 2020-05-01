@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
 import java.time.Duration;
 import java.time.LocalDate;

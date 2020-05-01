@@ -20,16 +20,17 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.GraphMLConfiguration;
-import uk.ac.rothamsted.rdf.pg.load.support.GraphMLUtils;
-import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLNodeExportHandler;
-import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLRelationExportHandler;
-import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLConfiguration;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationExportHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 
 /**
  * <H1>The multi-configuration property graph loader.</H1>
@@ -39,7 +40,6 @@ import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLRelationLoadingProcessor;
  * queries.</p> 
  *
  * <p>Note also that everything is designed to support configuration via Spring Bean files.</p>
- *
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>12 Jan 2018</dd></dl>
@@ -51,8 +51,7 @@ import uk.ac.rothamsted.rdf.pg.support.graphml.GraphMLRelationLoadingProcessor;
 public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 {
 	private List<ConfigItem> configItems = new LinkedList<> ();
-	private ObjectFactory<SimpleCyLoader> cypherLoaderFactory;
-	private ObjectFactory<SimpleGraphMLExporter> graphMLExporterFactory; 
+	private ObjectFactory<SimplePGLoader> loaderFactory;
 	
 	private OutputConfig outputConfig; 
 	private GraphMLConfiguration graphMLConfiguration; 
@@ -268,12 +267,12 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 				{
 					for ( ConfigItem cfg: this.getConfigItems () )
 					{		
-						try ( SimpleCyLoader cypherLoader = this.getCypherLoaderFactory ().getObject (); )
+						try ( SimpleCyLoader cypherLoader = (SimpleCyLoader) this.getLoaderFactory ().getObject (); )
 						{
 							cypherLoader.setName ( cfg.getName () );
 							
-							CyNodeLoadingProcessor cyNodeLoader = cypherLoader.getCyNodeLoader ();
-							CyRelationLoadingProcessor cyRelLoader = cypherLoader.getCyRelationLoader ();
+							CyNodeLoadingProcessor cyNodeLoader = cypherLoader.getPGNodeLoader ();
+							CyRelationLoadingProcessor cyRelLoader = cypherLoader.getPGRelationLoader ();
 							
 							CyNodeLoadingHandler cyNodehandler = (CyNodeLoadingHandler) cyNodeLoader.getBatchJob ();
 							CyRelationLoadingHandler cyRelhandler = (CyRelationLoadingHandler) cyRelLoader.getBatchJob ();
@@ -303,12 +302,12 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 				for (int mode = 0; mode<=1; mode++) {
 					for ( ConfigItem cfg: this.getConfigItems () )
 					{		
-						try ( SimpleGraphMLExporter graphMLExporter = this.getGraphMLExporterFactory().getObject (); )
+						try ( SimpleGraphMLExporter graphMLExporter = (SimpleGraphMLExporter) this.getLoaderFactory().getObject (); )
 						{
 							graphMLExporter.setName ( cfg.getName () );
 							
-							GraphMLNodeLoadingProcessor graphMLNodeLoader = graphMLExporter.getGraphMLNodeLoader();
-							GraphMLRelationLoadingProcessor graphMLRelLoader = graphMLExporter.getGraphMLRelationLoader ();
+							GraphMLNodeLoadingProcessor graphMLNodeLoader = graphMLExporter.getPGNodeLoader();
+							GraphMLRelationLoadingProcessor graphMLRelLoader = graphMLExporter.getPGRelationLoader ();
 							
 							GraphMLNodeExportHandler graphMLNodeExportHandler = (GraphMLNodeExportHandler) graphMLNodeLoader.getBatchJob ();
 							GraphMLRelationExportHandler graphMLRelExportHandler = (GraphMLRelationExportHandler) graphMLRelLoader.getBatchJob ();
@@ -444,28 +443,16 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 	 * a factory via Spring.
 	 * 
 	 */
-	public ObjectFactory<SimpleCyLoader> getCypherLoaderFactory ()
+	public ObjectFactory<SimplePGLoader> getLoaderFactory ()
 	{
-		return cypherLoaderFactory;
+		return loaderFactory;
 	}
 
-	@Resource ( name = "simpleCyLoaderFactory" )
-	public void setCypherLoaderFactory ( ObjectFactory<SimpleCyLoader> cypherLoaderFactory )
+	@Resource ( name = "simpleLoaderFactory" )
+	public void setPGLoaderFactory ( ObjectFactory<SimplePGLoader> loaderFactory )
 	{
-		this.cypherLoaderFactory = cypherLoaderFactory;
+		this.loaderFactory = loaderFactory;
 	}
-
-
-	public ObjectFactory<SimpleGraphMLExporter> getGraphMLExporterFactory() 
-	{
-		return graphMLExporterFactory; 
-	}
-	@Resource (name = "simpleGraphMLExporterFactory")
-	public void setGraphMLExporterFactory ( ObjectFactory<SimpleGraphMLExporter> graphMLExporterFactory)
-	{
-		this.graphMLExporterFactory = graphMLExporterFactory;
-	}
-
 	
 	
 	/**

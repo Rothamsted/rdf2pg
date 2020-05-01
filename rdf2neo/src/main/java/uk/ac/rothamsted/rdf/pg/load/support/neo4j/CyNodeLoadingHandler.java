@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,10 +16,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
+
 /**
  * <h1>The Cypher Node Loading handler.</h1>
  *
- * <p>This is used by {@link CyNodeLoadingProcessor} and corresponds to the tasks that are run to load 
+ * <p>This is used by {@link PGNodeLoadingProcessor} and corresponds to the tasks that are run to load 
  * sets of nodes in Cypher/Neo4j.</p>
  *
  * @author brandizi
@@ -27,9 +32,9 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
+public class CyNodeLoadingHandler extends PGNodeHandler
 {
-	private String labelsSparql, nodePropsSparql;
+	private Neo4jDataManager neo4jDataManager;
 	
 	public CyNodeLoadingHandler ()
 	{
@@ -56,7 +61,7 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
 		{
-			CyNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+			PGNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 			
@@ -105,35 +110,19 @@ public class CyNodeLoadingHandler extends CypherLoadingHandler<Resource>
 	}
 			
 	
-  /**
-   * This is a query that must returns the variable ?label and contains the variable ?iri, which is bound to a node's 
-   * IRI, to fetch its labels. It must return distinct results (we obviously don't care if you don't use the DISTINCT
-   * SPARQL clause).
-   */
-	public String getLabelsSparql ()
+	/**
+	 * This is used to manage operations with the Neo4j target. We don't care about closing this, the invoker
+	 * has to do it. 
+	 */	
+	public Neo4jDataManager getNeo4jDataManager ()
 	{
-		return labelsSparql;
+		return neo4jDataManager;
 	}
 
-	@Autowired ( required = false ) @Qualifier ( "labelsSparql" )
-	public void setLabelsSparql ( String labelsSparql )
+	@Autowired
+	public void setNeo4jDataManager ( Neo4jDataManager neo4jDataManager )
 	{
-		this.labelsSparql = labelsSparql;
-	}
-
-  /**
-   * This is a query that must returns the variables ?name and ?value and must contain the variable ?iri, which is bound 
-   * to a node's IRI, to fetch its property. Similarly {@link #getLabelsSparql()}, it must return distinct results.
-   */	
-	public String getNodePropsSparql ()
-	{
-		return nodePropsSparql;
-	}
-
-	@Autowired ( required = false ) @Qualifier ( "nodePropsSparql" )
-	public void setNodePropsSparql ( String nodePropsSparql )
-	{
-		this.nodePropsSparql = nodePropsSparql;
+		this.neo4jDataManager = neo4jDataManager;
 	}
 	
 }

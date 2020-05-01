@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.support.graphml;
+package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
 import java.util.function.Consumer;
 
@@ -7,32 +7,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.PGLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.PGRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <H1>The Relation Loading processor</H1>
  * 
- * <p>Similarly to the {@link GraphMLNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
+ * <p>Similarly to the {@link CyNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
  * tuples of relation basic properties () and then send them to a 
- * {@link GraphMLRelationExportHandler}, for storing the information about the relations. As for the node processor, 
+ * {@link CyRelationLoadingHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
  * this processor does things in multi-thread fashion.</p>
  *
- * @author cbobed
- * <dl><dt>Date:</dt><dd>16 Apr 2020</dd></dl>
+ * @author brandizi
+ * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLRelationLoadingProcessor extends GraphMLLoadingProcessor<QuerySolution, GraphMLRelationExportHandler>
+public class CyRelationLoadingProcessor extends PGRelationLoadingProcessor<CyRelationLoadingHandler>
 {	
 	/**
-	 * This takes the relations mapped via {@link GraphMLRelationExportHandler#getRelationTypesSparql()} and creates
-	 * sets of {@link QuerySolution}s that are sent to {@link GraphMLRelationExportHandler} tasks.
+	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
+	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
 	 */
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
 		
-		GraphMLRelationExportHandler handler = this.getBatchJob ();
+		CyRelationLoadingHandler handler = this.getBatchJob ();
 
 		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
 		// pushes the IRI into a batch and submits a full batch to the parallel executor.
@@ -40,14 +42,14 @@ public class GraphMLRelationLoadingProcessor extends GraphMLLoadingProcessor<Que
 			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), solProc );
 		
 		super.process ( relIriProcessor );
-		log.info ( "GraphML Loading ended" );
+		log.info ( "Cypher Relations Loading ended" );
 	}
 
 	/**
 	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
-	public GraphMLRelationLoadingProcessor setConsumer ( GraphMLRelationExportHandler handler ) {
+	public CyRelationLoadingProcessor setConsumer ( CyRelationLoadingHandler handler ) {
 		super.setBatchJob ( handler );
 		return this;
 	}	

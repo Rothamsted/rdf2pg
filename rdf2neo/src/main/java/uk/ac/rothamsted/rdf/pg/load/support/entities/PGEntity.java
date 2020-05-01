@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.entities;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,23 +10,25 @@ import java.util.Set;
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
- *
+ * 
+ *  Modifified by cbobed for refactoring purposes  
+ * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
-public abstract class CypherEntity
+public abstract class PGEntity
 {
 
 	private String iri;
 	private Map<String, Set<Object>> properties = new HashMap<> ();
 
 	
-	public CypherEntity ( String iri )
+	public PGEntity ( String iri )
 	{
 		super ();
 		this.iri = iri;
 	}
 
 	/** 
-	 * For us, every cypher entity must have an IRI/URI identifier.
+	 * For us, every entity must have an IRI/URI identifier.
 	 */
 	public String getIri ()
 	{

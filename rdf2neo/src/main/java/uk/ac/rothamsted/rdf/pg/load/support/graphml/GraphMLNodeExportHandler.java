@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.support.graphml;
+package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,15 +15,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.rdf.model.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.CyNode;
-import uk.ac.rothamsted.rdf.pg.load.support.GraphMLConfiguration;
-import uk.ac.rothamsted.rdf.pg.load.support.GraphMLUtils;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,9 +37,8 @@ import java.nio.file.StandardOpenOption;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
+public class GraphMLNodeExportHandler extends PGNodeHandler
 {
-	private String labelsSparql, nodePropsSparql;
 	
 	// First version: in order to create the key values, we have to store the property names gathered 
 	// for each of the nodes 
@@ -62,11 +58,6 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 		return gatheredNodeProperties; 
 	}
 	
-	
-	public GraphMLNodeExportHandler ()
-	{
-		super ();
-	}
 	
 	// semaphore to write in the appropriate file
 	private static Object lock = new Object(); 
@@ -90,7 +81,7 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
 		{
-			CyNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+			PGNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
 
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 			
@@ -170,37 +161,5 @@ public class GraphMLNodeExportHandler extends GraphMLLoadingHandler<Resource>
 		
 		log.debug(" Node export process finished");
 	}
-			
-	
-  /**
-   * This is a query that must returns the variable ?label and contains the variable ?iri, which is bound to a node's 
-   * IRI, to fetch its labels. It must return distinct results (we obviously don't care if you don't use the DISTINCT
-   * SPARQL clause).
-   */
-	public String getLabelsSparql ()
-	{
-		return labelsSparql;
-	}
-
-	@Autowired ( required = false ) @Qualifier ( "labelsSparql" )
-	public void setLabelsSparql ( String labelsSparql )
-	{
-		this.labelsSparql = labelsSparql;
-	}
-
-  /**
-   * This is a query that must returns the variables ?name and ?value and must contain the variable ?iri, which is bound 
-   * to a node's IRI, to fetch its property. Similarly {@link #getLabelsSparql()}, it must return distinct results.
-   */	
-	public String getNodePropsSparql ()
-	{
-		return nodePropsSparql;
-	}
-
-	@Autowired ( required = false ) @Qualifier ( "nodePropsSparql" )
-	public void setNodePropsSparql ( String nodePropsSparql )
-	{
-		this.nodePropsSparql = nodePropsSparql;
-	}
-	
+		
 }

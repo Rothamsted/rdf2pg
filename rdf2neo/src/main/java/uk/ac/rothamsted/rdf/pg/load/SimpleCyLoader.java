@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.CypherIndexer;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CypherIndexer;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <h1>The simple Cypher/Neo4j loader</h1> 
@@ -32,19 +33,10 @@ import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class SimpleCyLoader implements PropertyGraphLoader, AutoCloseable
+public class SimpleCyLoader extends SimplePGLoader<CyNodeLoadingProcessor, CyRelationLoadingProcessor>
 {	
-	private CyNodeLoadingProcessor cyNodeLoader;
-	private CyRelationLoadingProcessor cyRelationLoader;
 	private CypherIndexer cypherIndexer;
 	
-	private RdfDataManager rdfDataManager = new RdfDataManager ();
-	
-	private String name;
-	
-	private Logger log = LoggerFactory.getLogger ( this.getClass () );
-	
-
 	/**
 	 * <p>Uses the {@link #getCyNodeLoader()} and {@link #getCyRelationLoader()} to map data from an RDF/TDB
 	 * data source into Cypher entities and load them into a pre-configured Neo4j server.</p> 
@@ -80,11 +72,11 @@ public class SimpleCyLoader implements PropertyGraphLoader, AutoCloseable
 			
 			// Nodes
 			boolean doNodes = opts != null && opts.length > 0 ? (Boolean) opts [ 0 ] : true;
-			if ( doNodes ) this.getCyNodeLoader ().process ( rdfMgr, opts );
+			if ( doNodes ) this.getPGNodeLoader ().process ( rdfMgr, opts );
 	
 			// Relations
 			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
-			if ( doRels ) this.getCyRelationLoader ().process ( rdfMgr, opts );
+			if ( doRels ) this.getPGRelationLoader ().process ( rdfMgr, opts );
 
 			
 			// User-defined indices
@@ -102,67 +94,6 @@ public class SimpleCyLoader implements PropertyGraphLoader, AutoCloseable
 		}
 	}
 	
-	/**
-	 * Closes dependency objects. It DOES NOT deal with Neo4j driver closing, since this could be reused 
-	 * across multiple instantiations of this class.
-	 */
-	@Override
-	public void close ()
-	{
-		try
-		{
-			if ( this.getRdfDataManager () != null ) this.rdfDataManager.close ();
-			if ( this.getCyNodeLoader () != null ) this.cyNodeLoader.close ();
-			if ( this.getCyRelationLoader () != null ) this.cyRelationLoader.close ();
-		}
-		catch ( Exception ex ) {
-			throw new RuntimeException ( "Internal error while running the Cypher Loader: " + ex.getMessage (), ex );
-		}
-	}
-
-
-	/**
-	 * The manager to access to the underlining RDF source.
-	 */
-	public RdfDataManager getRdfDataManager ()
-	{
-		return rdfDataManager;
-	}
-
-	@Autowired
-	public void setRdfDataManager ( RdfDataManager rdfDataManager )
-	{
-		this.rdfDataManager = rdfDataManager;
-	}
-
-	/**
-	 * Works out the mapping and loading of Cypher nodes. 
-	 *  
-	 */
-	public CyNodeLoadingProcessor getCyNodeLoader ()
-	{
-		return cyNodeLoader;
-	}
-
-	@Autowired
-	public void setCyNodeLoader ( CyNodeLoadingProcessor cyNodeLoader )
-	{
-		this.cyNodeLoader = cyNodeLoader;
-	}
-
-	/**
-	 * Works out the mapping and loading of Cypher relations.
-	 */
-	public CyRelationLoadingProcessor getCyRelationLoader ()
-	{
-		return cyRelationLoader;
-	}
-
-	@Autowired
-	public void setCyRelationLoader ( CyRelationLoadingProcessor cyRelationLoader )
-	{
-		this.cyRelationLoader = cyRelationLoader;
-	}
 	
 	public CypherIndexer getCypherIndexer ()
 	{
@@ -174,20 +105,4 @@ public class SimpleCyLoader implements PropertyGraphLoader, AutoCloseable
 	{
 		this.cypherIndexer = cypherIndexer;
 	}
-
-	
-	/**
-	 * Represents the nodes/relations kind that are loaded by this loader. This is prefixed to logging messages
-	 * and is primarily useful when the simple loader is used by {@link MultiConfigPGLoader}. 
-	 */
-	public String getName ()
-	{
-		return name;
-	}
-
-	@Autowired ( required = false ) @Qualifier ( "defaultLoaderName" )
-	public void setName ( String name )
-	{
-		this.name = name;
-	}	
 }

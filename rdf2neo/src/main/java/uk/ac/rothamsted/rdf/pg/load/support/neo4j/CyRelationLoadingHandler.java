@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.rothamsted.rdf.pg.load.support.PGRelationHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
+
 /**
  * Similarly to {@link CyNodeLoadingHandler}, this is used to {@link CyRelationLoadingProcessor} to process relation 
  * mappings from RDF and load them into Cypher/Neo4J. 
@@ -22,10 +26,12 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution>
+public class CyRelationLoadingHandler extends PGRelationHandler
 {
 	private String relationTypesSparql, relationPropsSparql;
 
+	private Neo4jDataManager neo4jDataManager;
+	
 	public CyRelationLoadingHandler ()
 	{
 		super ();
@@ -47,7 +53,7 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 		//
 		for ( QuerySolution row: relRecords )
 		{
-			CyRelation cyRelation = rdfMgr.getCyRelation ( row );
+			PGRelation cyRelation = rdfMgr.getCyRelation ( row );
 			rdfMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
 
 			String type = cyRelation.getType ();
@@ -98,50 +104,18 @@ public class CyRelationLoadingHandler extends CypherLoadingHandler<QuerySolution
 		
 	
 	/**
-	 * <p>A SPARQL that must return the variables: ?iri ?type ?fromIri ?toIri and distinct result rows (whether you use 
-	 * DISTINCT or not).</p>
-	 * 
-	 * <p>This maps to Cypher relations. fromIri and toIri must correspond to nodes defined by 
-	 * {@link CyNodeLoadingProcessor#getNodeIrisSparql()}, so that such nodes, previously inserted in the Neo4J), can be 
-	 * matched and linked by the relation.</p>
-	 * 
-	 * <p>Each relation has an ?iri identifier.
-	 * For <a href = 'https://www.w3.org/TR/swbp-n-aryRelations/'>reified RDF relations</a>, this is typically the IRI of 
-	 * the reified relation, for plain RDF triples, this is a fictitious IRI, which is typically built by joining and 
-	 * hashing the triple subject/predicate/object IRIs (see examples in the src/test/resources).</p> 
-	 * 
-	 * <p>This is used both by {@link CyRelationLoadingProcessor}, to fetch all relations and their basic 
-	 * properties (there must be one type per relation), and by this handler, to fetch elements like a relation 
-	 * end points (from/to IRIs) and type, after the ?iri variable is bound to some specific IRI.</p> 
-	 * 
-	 */
-	public String getRelationTypesSparql ()
+	 * This is used to manage operations with the Neo4j target. We don't care about closing this, the invoker
+	 * has to do it. 
+	 */	
+	public Neo4jDataManager getNeo4jDataManager ()
 	{
-		return relationTypesSparql;
+		return neo4jDataManager;
 	}
 
-	@Autowired	( required = false ) @Qualifier ( "relationTypesSparql" )
-	public void setRelationTypesSparql ( String relationTypesSparql )
+	@Autowired
+	public void setNeo4jDataManager ( Neo4jDataManager neo4jDataManager )
 	{
-		this.relationTypesSparql = relationTypesSparql;
-	}
-
-	/**
-	 * <p>This is similar to {@link CyNodeLoadingHandler#getNodePropsSparql()}, it is a SPARQL query that must contain
-	 * the variables ?name ?value in the result and the ?iri variable in the WHERE clause. The latter is instantiated
-	 * with a specific relation IRI, to get the relation properties.</p> 
-	 *
-	 * <p>Because of the nature of RDF, this query will typically return properties for reified relations.</p>
-	 */
-	public String getRelationPropsSparql ()
-	{
-		return relationPropsSparql;
-	}
-
-	@Autowired ( required = false ) @Qualifier ( "relationPropsSparql" )
-	public void setRelationPropsSparql ( String relationPropsSparql )
-	{
-		this.relationPropsSparql = relationPropsSparql;
+		this.neo4jDataManager = neo4jDataManager;
 	}
 	
 }

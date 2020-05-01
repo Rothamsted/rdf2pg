@@ -23,12 +23,13 @@ import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CyNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.Neo4jDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
@@ -92,15 +93,15 @@ public class CypherLoaderIT
 			cyRelHandler.setRdfDataManager ( rdfMgr );
 			cyRelHandler.setNeo4jDataManager ( neoMgr );
 
-			CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
+			CyNodeLoadingProcessor cyNodeProc = new  CyNodeLoadingProcessor();
 			cyNodeProc.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
 			cyNodeProc.setConsumer ( cyNodeHandler );
 			
 			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
 			cyRelProc.setConsumer ( cyRelHandler );
 
-			cyloader.setCyNodeLoader ( cyNodeProc );
-			cyloader.setCyRelationLoader ( cyRelProc );
+			cyloader.setPGNodeLoader ( cyNodeProc );
+			cyloader.setPGRelationLoader ( cyRelProc );
 			
 			cyloader.load ( RdfDataManagerTest.TDB_PATH );
 			// TODO: test!
@@ -114,7 +115,7 @@ public class CypherLoaderIT
 	{
 		try ( MultiConfigPGLoader cymloader = new MultiConfigPGLoader (); )
 		{
-			cymloader.setCypherLoaderFactory ( () -> 
+			cymloader.setPGLoaderFactory ( () -> 
 			{
 				// You don't want to do this, see #testSpring()
 				
@@ -138,8 +139,8 @@ public class CypherLoaderIT
 				cyRelProc.setConsumer ( cyRelHandler );
 	
 				SimpleCyLoader cyloader = new SimpleCyLoader ();
-				cyloader.setCyNodeLoader ( cyNodeProc );
-				cyloader.setCyRelationLoader ( cyRelProc );
+				cyloader.setPGNodeLoader ( cyNodeProc );
+				cyloader.setPGRelationLoader ( cyRelProc );
 				cyloader.setRdfDataManager ( rdfMgr );
 				
 				return cyloader;

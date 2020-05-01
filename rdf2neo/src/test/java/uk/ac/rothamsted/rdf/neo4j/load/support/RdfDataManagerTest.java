@@ -26,9 +26,9 @@ import com.google.common.collect.Sets;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.rdf.pg.load.support.CyNode;
-import uk.ac.rothamsted.rdf.pg.load.support.CyRelation;
-import uk.ac.rothamsted.rdf.pg.load.support.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * A few tests for the {@link RdfDataManager}.
@@ -109,7 +109,7 @@ public class RdfDataManagerTest
 		Dataset ds = rdfMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		
-		CyNode cyNode = rdfMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
+		PGNode cyNode = rdfMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
 		assertNotNull ( "CyNode 1 not found!", cyNode );
 		log.info ( "Got node 1" );
 
@@ -129,16 +129,16 @@ public class RdfDataManagerTest
 	{
 		log.info ( "Verifying Relations" );
 
-		List<CyRelation> cyRelations = new ArrayList<> ();
+		List<PGRelation> cyRelations = new ArrayList<> ();
 		rdfMgr.processRelationIris ( SPARQL_REL_TYPES, 
 			row -> 
 			{
-				CyRelation rel = rdfMgr.getCyRelation ( row );
+				PGRelation rel = rdfMgr.getCyRelation ( row );
 				rdfMgr.setCyRelationProps ( rel, SPARQL_REL_PROPS );
 				cyRelations.add ( rel );
 		});
 		
-		CyRelation cyRelation = cyRelations.stream ()
+		PGRelation cyRelation = cyRelations.stream ()
 		.filter ( rel -> 
 			"relatedTo".equals ( rel.getType () ) 
 			&& iri ( "ex:1" ).equals ( rel.getFromIri () ) 

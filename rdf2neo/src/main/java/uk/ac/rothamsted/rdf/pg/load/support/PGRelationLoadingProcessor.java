@@ -3,16 +3,20 @@ package uk.ac.rothamsted.rdf.pg.load.support;
 import java.util.function.Consumer;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import uk.ac.rothamsted.rdf.pg.load.support.PGLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <H1>The Relation Loading processor</H1>
  * 
  * <p>Similarly to the {@link CyNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
  * tuples of relation basic properties () and then send them to a 
- * {@link CyRelationLoadingHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
+ * {@link PGRelationHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
  * this processor does things in multi-thread fashion.</p>
  *
  * @author brandizi
@@ -20,17 +24,20 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution, CyRelationLoadingHandler>
+public abstract class PGRelationLoadingProcessor<T extends PGRelationHandler>  
+extends PGLoadingProcessor<QuerySolution, T>
+
+
 {	
 	/**
-	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
-	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
+	 * This takes the relations mapped via {@link PGRelationHandler#getRelationTypesSparql()} and creates
+	 * sets of {@link QuerySolution}s that are sent to {@link PGRelationHandler} tasks.
 	 */
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
 		
-		CyRelationLoadingHandler handler = this.getBatchJob ();
+		T handler = this.getBatchJob ();
 
 		// processNodeIris() passes the IRIs obtained from SPARQL to the IRI consumer set by the BatchProcessor. The latter
 		// pushes the IRI into a batch and submits a full batch to the parallel executor.
@@ -45,7 +52,7 @@ public class CyRelationLoadingProcessor extends CyLoadingProcessor<QuerySolution
 	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
 	 */
 	@Autowired
-	public CyRelationLoadingProcessor setConsumer ( CyRelationLoadingHandler handler ) {
+	public PGRelationLoadingProcessor setConsumer ( T handler ) {
 		super.setBatchJob ( handler );
 		return this;
 	}	

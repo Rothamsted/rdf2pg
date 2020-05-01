@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.support;
+package uk.ac.rothamsted.rdf.pg.load.support.entities;
 
 /**
  * Represents a Cypher/Neo4J relation.
@@ -6,12 +6,14 @@ package uk.ac.rothamsted.rdf.pg.load.support;
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
+ * Modifified by cbobed for refactoring purposes  
+ * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
-public class CyRelation extends CypherEntity
+public class PGRelation extends PGEntity
 {
 	private String type, fromIri, toIri; 
 	
-	public CyRelation ( String iri ) {
+	public PGRelation ( String iri ) {
 		super ( iri );
 	}
 

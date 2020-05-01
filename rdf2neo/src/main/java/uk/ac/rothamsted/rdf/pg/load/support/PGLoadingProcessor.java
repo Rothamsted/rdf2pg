@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import uk.ac.ebi.utils.threading.batchproc.collectors.SetBatchCollector;
 import uk.ac.ebi.utils.threading.batchproc.processors.SetBasedBatchProcessor;
 import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 
 /**
  * <H1>The base for a Cypher/Neo4j loading processor.</H1>
@@ -24,11 +25,11 @@ import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
  * <dl><dt>Date:</dt><dd>13 Jan 2018</dd></dl>
  *
  */
-public abstract class CyLoadingProcessor<T, BJ extends CypherLoadingHandler<T>> 
+public abstract class PGLoadingProcessor<T, BJ extends PGEntityHandler<T>> 
 	extends SetBasedBatchProcessor<T, BJ>
 	implements AutoCloseable
 {
-	public CyLoadingProcessor ()
+	public PGLoadingProcessor ()
 	{
 		super ();
 		this.setBatchCollector ( new SetBatchCollector<> ( 2500 ) );
