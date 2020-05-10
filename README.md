@@ -126,7 +126,7 @@ relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).
 
 TODO: we plan to ship our tools with SPARQL mappings for 'natural RDF mapping'.
 
-[40] https://swat4hcls.figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
+[40]: https://swat4hcls.figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
 
 ## Spring-based configuration
 
