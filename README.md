@@ -1,13 +1,21 @@
 # The RDF-to-Neo4j Converter
 
-This is a Java-based project providing configurable components to convert RDF data into [Cypher](https://neo4j.com/developer/cypher-query-language/) commands that can populate a [Neo4j](https://neo4j.com) graph database.
+This is a Java-based project providing configurable components to convert RDF data into 
+[Cypher](https://neo4j.com/developer/cypher-query-language/) commands that can populate a 
+[Neo4j](https://neo4j.com) graph database.
 
-You can configure the way RDF is mapped into Neo4J entities (nodes, node properties, relations and relation properties) by means of SPARQL queries. More details in the next sections.
+You can configure the way RDF is mapped into Neo4J entities (nodes, node properties, 
+relations and relation properties) by means of SPARQL queries. More details in the next 
+sections.
 
-The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](rdf2neo-cli) module is a command line tool to manage Neo4J imports.
+The core of the project is the [rdf2neo](rdf2neo) library, while [rdf2neo-cli](rdf2neo-cli) 
+module is a command line tool to manage Neo4J imports.
 
-We recently [presented](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi) rdf2neo at the [SWAT4LS workshop](http://www.swat4ls.org/). See also the [paper](https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323) in the proceedings. 
+We recently [presented](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi) rdf2neo at 
+the [SWAT4LS workshop](http://www.swat4ls.org/). See also the [paper][10] in the 
+proceedings. 
 
+[10] https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
 
 # Table of Contents
 
@@ -41,44 +49,96 @@ We recently [presented](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi
 
 ## Cypher and Neo4j
 
-Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to access Neo4j. While we haven't extended our code to support [other graph databases](https://www.opencypher.org/projects) that support [OpenCypher](https://www.opencypher.org/), we would expect this to be easy to do. In the following, we mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
+Our converter works entirely via Cypher instructions, i.e., we don't use graph-level APIs to 
+access Neo4j. While we haven't extended our code to support [other graph databases][20] that 
+support [OpenCypher][30], we would expect this to be easy to do. In the following, we 
+mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
 
+[20] https://www.opencypher.org/projects
+[30] https://www.opencypher.org/
 
 ## Mapping RDF to Cypher/Neo4j entities: general concepts
 
 The RDF data model and the Cypher data model are rather similar, but there are significant differences:
 
-  * The native entities of Cypher are nodes, relations, node labels, relation types, and properties attached to nodes or relation. 
-  * Essentially, in RDF everything is a triple/statement, the equivalents of the above entities are all modelled after triples, even when the granularity on Cypher side is lower (e.g., node/relation properties).
-  * Nodes are URI-provided resources that appear as subject or object of triples
-  * Statements based on [rdf:type](https://www.w3.org/TR/rdf11-primer/#section-semantics) are the closest thing to the definition of node labels (in Cypher labels are strings, in RDF they are other resources/URIs)
-  * A triple (or statement) joining two resources/URIs is the closest thing to a Cypher relation. In that case, another resource/URI is used for the triple predicate, this is similar to stating the relation type. Again, the latter is a string, while a predicate is a URI.
-  * An RDF triple having a literal as object ([datatype properties](https://www.w3.org/TR/owl2-primer/#Datatypes) in [OWL](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/)) is roughly equivalent to a node property in Cypher. Again, Cypher property names are strings, triple datatype properties are URIs. There are other significant differences, for instance, string literals in RDF can have a language tag attached, no equivalent exists in Cypher (it can be modelled as a 2-sized array). As another example, a property in Cypher can have an array as value, but the array contents must be homogeneous (i.e., all values must have the same raw type), while in RDF an array is nothing but a [special set of statements](https://www.w3.org/TR/rdf-schema/#ch_othervocab). Moreover, in RDF you can (obviously) have multiple statements associtated to a subject that define multiple values for a property  (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be emulated in Cypher, typically by merging multiple values into an array (having set semantics).
-  * Cypher relations can have property/value pairs attached. In RDF you can only emulate this with constructs like [reified statements](https://www.w3.org/TR/rdf-schema/#ch_reificationvocab), [named graphs](https://www.w3.org/2011/prov/wiki/Using_named_graphs_to_model_Accounts) or [singleton properties](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4350149/).
+  * The native entities of Cypher are nodes, relations, node labels, relation types, and 
+properties attached to nodes or relation. 
+  * Essentially, in RDF everything is a triple/statement, the equivalents of the above 
+entities are all modelled after triples, even when the granularity on Cypher side is lower 
+(e.g., node/relation properties).
+  * In RDF, nodes are URI-identifiable entities named resources, which appear as subject or 
+object of triples.
+  * Statements based on [rdf:type](https://www.w3.org/TR/rdf11-primer/#section-semantics) 
+are the closest thing to the definition of node labels (in Cypher labels are strings, in RDF 
+they are other resources/URIs)
+  * A triple (or statement) joining two resources/URIs is the closest thing to a Cypher 
+relation. In that case, another resource/URI is used for the triple predicate, this is 
+similar to stating the relation type. Again, the latter is a string, while a predicate is a 
+URI.
+  * An RDF triple having a literal as object ([datatype properties](https://www.w3.org/TR/owl2-primer/#Datatypes) in [OWL](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/)) is roughly equivalent to a node property in Cypher. Again, Cypher 
+property names are strings, triple datatype properties are URIs. There are other significant 
+differences, for instance, string literals in RDF can have a language tag attached, no 
+equivalent exists in Cypher (it can be modelled as a 2-sized array). As another example, a 
+property in Cypher can have an array as value, but the array contents must be homogeneous 
+(i.e., all values must have the same raw type), while in RDF an array is nothing but a 
+[special set of statements](https://www.w3.org/TR/rdf-schema/#ch_othervocab). Moreover, in 
+RDF you can (obviously) have multiple statements associtated to a subject that define 
+multiple values for a property  (e.g., ex:bob schema:name 'Robert', 'Bob'). This can only be 
+emulated in Cypher, typically by merging multiple values into an array (having set 
+semantics).
+  * Cypher relations can have property/value pairs attached. In RDF you can only emulate 
+this with constructs like [reified statements](https://www.w3.org/TR/rdf-schema/#ch_reificationvocab), [named graphs](https://www.w3.org/2011/prov/wiki/Using_named_graphs_to_model_Accounts) or [singleton properties](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4350149/).
   		
 So, two similar graph models and a number of differences. How to map one to the other?
  
-On a first look, one may think that there is a sort of 'natural mapping' between RDF and Cypher. Rougly: anything having an `rdf:type` will generate a Cypher node with that type used as label (maybe not a whole URI like `http://www.example.com/ontology#Person`, just the last part of it, `Person`), any triple will generate a Cypher relation, maybe any reified statement based on the RDF syntax will be converted into a property-attached relation.
+On a first look, one may think that there is a sort of 'natural mapping' between RDF and 
+Cypher. Rougly: anything having an `rdf:type` will generate a Cypher node with that type 
+used as label (maybe not a whole URI like `http://www.example.com/ontology#Person`, just the 
+last part of it, `Person`), any triple will generate a Cypher relation, maybe any reified 
+statement based on the RDF syntax will be converted into a property-attached relation.
 
-Indeed, [other projects](https://jbarrasa.com/2016/06/07/importing-rdf-data-into-neo4j) before our rdf2neo have adopted this approach. However, hard-wiring the mapping to a particular view of things can be too inflexible, no matter how natural that view is. For instance, in RDF we might have an ontology providing targets for `rdf:type` where all the classes have an `rdfs:label` associated (e.g., `ex:bob rdf:type ex:Person. ex:Person a owl:Class; rdfs:label 'Human Being'.`) and this might be the thing we want to use as the Cypher node label (`(bob:'Human Being')`). As another example, we might be using our own way to define reified relations on the RDF side (e.g., `ex:annotation1 a ex:Annotation; ex:source ex:doc1; ex:target ex:topic1; ex:score '0.9'^xsd:real`) and we may want to turn that schema of ours into Cypher relations (e.g., `(doc1:Document)-[:ANNOTATION{ score: 0.9}]->(topic1:Topic)`), while in the 'natural' mapping those sets of statements would be blindly mapped to Cypher nodes and binary property-less relations, (`(annotation1:Annotation{ score:0.9 })-[:SOURCE]->(doc1:Document), (annotation1)-[:TARGET]->(topic1:Topic)`).
+Indeed, [other projects](https://jbarrasa.com/2016/06/07/importing-rdf-data-into-neo4j) 
+before our rdf2neo have adopted this approach. However, hard-wiring the mapping to a 
+particular view of things can be too inflexible, no matter how natural that view is. For 
+instance, in RDF we might have an ontology providing targets for `rdf:type` where all the 
+classes have an `rdfs:label` associated (e.g., `ex:bob rdf:type ex:Person. ex:Person a 
+owl:Class; rdfs:label 'Human Being'.`) and this might be the thing we want to use as the 
+Cypher node label (`(bob:'Human Being')`). As another example, we might be using our own way 
+to define reified relations on the RDF side (e.g., `ex:annotation1 a ex:Annotation; ex:source ex:doc1; ex:target ex:topic1; ex:score '0.9'^xsd:real`) and we may want to turn 
+that schema of ours into Cypher relations (e.g., `(doc1:Document)-[:ANNOTATION{ score: 0.9}]->(topic1:Topic)`), while in the 'natural' mapping those sets of statements would be 
+blindly mapped to Cypher nodes and binary property-less relations, (`(annotation1:Annotation{ score:0.9 })-[:SOURCE]->(doc1:Document), (annotation1)-[:TARGET]->(topic1:Topic)`).
 
 
 ## SPARQL-based mapping
 
-In order to provide the flexibility necessary in the use case above, we have decided another way to map RDF to Cypher: a set of SPARQL queries that return a list of Cypher entities (nodes and their labels, node details like properties, relations, etc) from the initial RDF data.
+In order to provide the flexibility necessary in the use case above, we have decided another 
+way to map RDF to Cypher: a set of SPARQL queries that return a list of Cypher entities 
+(nodes and their labels, node details like properties, relations, etc) from the initial RDF 
+data.
 
-In the following, we show how to define such queries.
+[Figure 1 from our paper][40] summarises the concept, we show the details in the follow.
 
-In addition to SPARQL, we use a couple of components to define further configuration details, which cannot be managed via SPARQL-based mapping, or are too difficult to do so. For example, we have a [default URI-to-identifier converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java), which converts URIs to short identifier strings, suitable to be used as node labels or relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
+In addition to SPARQL, we use a couple of components to define further configuration 
+details, which cannot be managed via SPARQL-based mapping, or are too difficult to do so. 
+For example, we have a [default URI-to-identifier converter](rdf2neo/src/main/java/uk/ac/rothamsted/rdf/neo4j/idconvert/DefaultIri2IdConverter.java), 
+which converts URIs to short identifier strings, suitable to be used as node labels or 
+relation types (e.g., `http://www.example.com/ontology#Person` => `Person`).  
 
 TODO: we plan to ship our tools with SPARQL mappings for 'natural RDF mapping'.
 
+[40] https://swat4hcls.figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
 
 ## Spring-based configuration
 
-SPARQL queries, the target Neo4j database and components like the URI-to-identifier converters are all configurable components in neo4j. You can work out a particular configuration for a given RDF data set, where you put together all these components. A configuration is defined as a [Spring configuration file](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html), which provides with a powerful language to assemble components together (it plugs in the underlying Java entities, but you don't need to know Java to understand these files).
+SPARQL queries, the target Neo4j database and components like the URI-to-identifier 
+converters are all configurable components in neo4j. You can work out a particular 
+configuration for a given RDF data set, where you put together all these components. A 
+configuration is defined as a [Spring configuration file](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html), which 
+provides with a powerful language to assemble components together (it plugs in the 
+underlying Java entities, but you don't need to know Java to understand these files).
 
-*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally use other Spring configuration means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
+*Note to developers: because we're using Spring, if you're going to use our [core library](rdf2neo) programmatically, you can additionally/optionally use other Spring configuration 
+means, such as [Java annotations](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java)*      
 
 ##  rdf2neo4 architecture
 
