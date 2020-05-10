@@ -15,7 +15,7 @@ We recently [presented](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi
 the [SWAT4LS workshop](http://www.swat4ls.org/). See also the [paper][10] in the 
 proceedings. 
 
-[10] https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
+[10]: https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
 
 # Table of Contents
 
@@ -54,8 +54,8 @@ access Neo4j. While we haven't extended our code to support [other graph databas
 support [OpenCypher][30], we would expect this to be easy to do. In the following, we 
 mention mappings from RDF to Cypher, meaning the Cypher running on Neo4j.
 
-[20] https://www.opencypher.org/projects
-[30] https://www.opencypher.org/
+[20]: https://www.opencypher.org/projects
+[30]: https://www.opencypher.org/
 
 ## Mapping RDF to Cypher/Neo4j entities: general concepts
 
