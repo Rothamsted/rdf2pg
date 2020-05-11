@@ -11,15 +11,15 @@ import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 
 /**
- * <H1>The base for a Cypher/Neo4j loading processor.</H1>
+ * <H1>The base for a property graph loading processor.</H1>
  * 
  * <p>We use this just to factorise a few common parameters and methods.</p>
  *
- * <p>@see CyNodeLoadingProcessor and {@link CyRelationLoadingProcessor}.</p>
+ * <p>@see {@link PGNodeLoadingProcessor} and {@link PGRelationLoadingProcessor}.</p>
  * 
- * <p>This class extends {@link SizedBatchProcessor} with the generic type {@code Set<T>}, since each loader
- * processes a collection of entity pointers (node IRIs/relation base structures), which are obtained from RDF, 
- * via SPARQL mappings (see {@link SimpleCyLoader}).</p>
+ * <p>This class extends {@link SetBasedBatchProcessor}, since each loader processes a collection of entity 
+ * pointers (node IRIs/relation base structures), which are obtained from RDF, via SPARQL 
+ * mappings (see {@link SimpleCyLoader}).</p>
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>13 Jan 2018</dd></dl>

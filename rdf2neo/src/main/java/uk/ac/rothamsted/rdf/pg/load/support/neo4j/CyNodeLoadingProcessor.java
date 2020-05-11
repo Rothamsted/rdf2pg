@@ -1,14 +1,10 @@
 package uk.ac.rothamsted.rdf.pg.load.support.neo4j;
 
-import org.apache.jena.rdf.model.Resource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.PGLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.PGRelationLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 
 /**
  * <H1>The Node Loading processor</H1>
@@ -26,5 +22,4 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 @Component @Scope ( scopeName = "loadingSession" )
 public class CyNodeLoadingProcessor extends PGNodeLoadingProcessor<CyNodeLoadingHandler>
 {
-	
 }

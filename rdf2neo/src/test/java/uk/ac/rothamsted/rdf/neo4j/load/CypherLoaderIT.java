@@ -95,7 +95,7 @@ public class CypherLoaderIT
 
 			CyNodeLoadingProcessor cyNodeProc = new  CyNodeLoadingProcessor();
 			cyNodeProc.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
-			cyNodeProc.setConsumer ( cyNodeHandler );
+			cyNodeProc.setBatchJob ( cyNodeHandler );
 			
 			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
 			cyRelProc.setConsumer ( cyRelHandler );
@@ -133,7 +133,7 @@ public class CypherLoaderIT
 				cyRelHandler.setNeo4jDataManager ( neoMgr );
 	
 				CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
-				cyNodeProc.setConsumer ( cyNodeHandler );
+				cyNodeProc.setBatchJob ( cyNodeHandler );
 				
 				CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
 				cyRelProc.setConsumer ( cyRelHandler );

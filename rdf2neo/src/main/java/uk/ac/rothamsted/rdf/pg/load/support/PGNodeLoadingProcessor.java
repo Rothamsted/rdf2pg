@@ -9,24 +9,22 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
-import uk.ac.ebi.utils.threading.batchproc.processors.SetBasedBatchProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <H1>The Node Loading processor</H1>
  * 
  * <p>This gets node IRIs from a SPARQL query and then send them to a 
- * {@link CyNodeLoadingHandler}, for issuing Cypher creation commands. Being a subclass of {@link BatchProcessor}, 
- * this processor manages the Cypher loading in a multi-thread mode.</p>
+ * {@link PGNodeHandler}, for issuing Cypher creation commands. Being a subclass of {@link BatchProcessor}, 
+ * this processor manages the loading in a multi-thread mode.</p>
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public abstract class PGNodeLoadingProcessor<T extends PGNodeHandler>  
-			extends PGLoadingProcessor<Resource, T>
+public abstract class PGNodeLoadingProcessor<NH extends PGNodeHandler>
+	extends PGLoadingProcessor<Resource, NH>
 {
 	private String nodeIrisSparql;
 	
@@ -44,12 +42,12 @@ public abstract class PGNodeLoadingProcessor<T extends PGNodeHandler>
 	}
 
 	/**
-	 * The query to be used with the {@link RdfDataManager} to fetch the IRIs of Cypher/Neo4J nodes that needs to be
-	 * loaded. This usually goes together with {@link CyNodeLoadingHandler#getLabelsSparql()} and
-	 * {@link CyNodeLoadingHandler#getNodePropsSparql()}.
+	 * The query to be used with the {@link RdfDataManager} to fetch the IRIs about PG nodes that need to be
+	 * loaded (created/exported/whatever). This usually goes together with {@link PGNodeHandler#getLabelsSparql()} and
+	 * {@link PGNodeHandler#getNodePropsSparql()}.
 	 * 
-	 * This query <b>must</b> return the variables ?iri in its result. It must also return distinct results (we 
-	 * obviously don't care if you don't use the DISTINCT SPARQL clause). 
+	 * This query <b>must</b> return the variables {@code ?iri} in its result. It must also return distinct results (we 
+	 * obviously don't care if you obtain that by means of {@code DISTINCT} or not). 
 	 */
 	public String getNodeIrisSparql ()
 	{
@@ -63,11 +61,10 @@ public abstract class PGNodeLoadingProcessor<T extends PGNodeHandler>
 	}
 
 	/**
-	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
+	 * I'm here just to accommodate Spring annotations. 
 	 */
 	@Autowired
-	public PGNodeLoadingProcessor setConsumer ( T handler ) {
+	public void setBatchJob ( NH handler ) {
 		super.setBatchJob ( handler );
-		return this;
 	}
 }

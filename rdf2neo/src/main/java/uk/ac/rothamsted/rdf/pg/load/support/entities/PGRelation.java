@@ -1,12 +1,12 @@
 package uk.ac.rothamsted.rdf.pg.load.support.entities;
 
 /**
- * Represents a Cypher/Neo4J relation.
+ * Represents a property graph relation.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
- * Modifified by cbobed for refactoring purposes  
+ * cbobed, generalised from Cypher-specific terminology.  
  * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
 public class PGRelation extends PGEntity

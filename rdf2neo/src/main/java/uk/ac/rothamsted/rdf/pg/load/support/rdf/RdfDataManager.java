@@ -45,9 +45,9 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 @Component
 public class RdfDataManager extends TDBEndPointHelper
 {
-	private Function<String, String> cyNodeLabelIdConverter = new DefaultIri2IdConverter ();
-	private Function<String, String> propertyIdConverter = new DefaultIri2IdConverter (); 
-	private Function<String, String> cyRelationIdConverter = new DefaultIri2IdConverter ();
+	private Function<String, String> pgNodeLabelIdConverter = new DefaultIri2IdConverter ();
+	private Function<String, String> pgPropertyIdConverter = new DefaultIri2IdConverter (); 
+	private Function<String, String> pgRelationIdConverter = new DefaultIri2IdConverter ();
 	
 	public RdfDataManager () {
 	}
@@ -63,28 +63,28 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * @param labelsSparql the node labels query, which is usually taken from {@link CyNodeLoadingHandler#getLabelsSparql()}.
 	 * @param propsSparql the node properties query, which is usually taken from {@link CyNodeLoadingHandler#getNodePropsSparql()}.
 	 */
-	public PGNode getCyNode ( Resource nodeRes, String labelsSparql, String propsSparql )
+	public PGNode getPGNode ( Resource nodeRes, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
 		params.add ( "iri", nodeRes );
 
-		PGNode cyNode = new PGNode ( nodeRes.getURI () );
+		PGNode pgNode = new PGNode ( nodeRes.getURI () );
 		
 		// The node's labels
 		if ( labelsSparql != null )
 		{
 			// If it's omitted, it will get the default label.
 			Query qry = SparqlUtils.getCachedQuery ( labelsSparql );
-			Function<String, String> labelIdConverter = this.getCyNodeLabelIdConverter ();
+			Function<String, String> labelIdConverter = this.getPGNodeLabelIdConverter ();
 			
 			boolean wasInTnx = dataSet.isInTransaction ();
 			if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
 			try {
 				QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params );
 				qx.execSelect ().forEachRemaining ( row ->
-					cyNode.addLabel ( this.getCypherId ( row.get ( "label" ), labelIdConverter ) )
+					pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) )
 				);
 			}
 			finally {
@@ -93,19 +93,19 @@ public class RdfDataManager extends TDBEndPointHelper
 		}
 		
 		// and the properties
-		this.addCypherProps ( cyNode, propsSparql );
+		this.addPGProps ( pgNode, propsSparql );
 		
-		return cyNode;
+		return pgNode;
 	}
 
 	/**
-	 * Just a variant of {@link #getCyNode(Resource, String, String)}.
+	 * Just a variant of {@link #getPGNode(Resource, String, String)}.
 	 */
-	public PGNode getCyNode ( String nodeIri, String labelsSparql, String propsSparql )
+	public PGNode getPGNode ( String nodeIri, String labelsSparql, String propsSparql )
 	{
 		ensureOpen ();
 		Resource nodeRes = this.getDataSet().getUnionModel().getResource ( nodeIri );
-		return getCyNode ( nodeRes, labelsSparql, propsSparql ); 
+		return getPGNode ( nodeRes, labelsSparql, propsSparql ); 
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * 
 	 * Helper method used in other methods in this class.
 	 */
-	public String getCypherId ( RDFNode node, Function<String, String> idConverter )
+	public String getPGId ( RDFNode node, Function<String, String> idConverter )
 	{
 		if ( node == null ) return null;
 		
@@ -135,7 +135,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * It doesn't do anything if the query is null.
 	 * 
 	 */
-	protected void addCypherProps ( PGEntity cyEnt, String propsSparql )
+	protected void addPGProps ( PGEntity cyEnt, String propsSparql )
 	{
 		ensureOpen ();		
 		Dataset dataSet = this.getDataSet ();
@@ -147,7 +147,7 @@ public class RdfDataManager extends TDBEndPointHelper
 		if ( propsSparql == null ) return;
 		
 		Query qry = SparqlUtils.getCachedQuery ( propsSparql );
-		Function<String, String> propIdConverter = this.getCyPropertyIdConverter ();
+		Function<String, String> propIdConverter = this.getPGPropertyIdConverter ();
 		
 		boolean wasInTnx = dataSet.isInTransaction ();
 		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
@@ -156,7 +156,7 @@ public class RdfDataManager extends TDBEndPointHelper
 			QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params );
 			qx.execSelect ().forEachRemaining ( row ->
 			{
-				String propName = this.getCypherId ( row.get ( "name" ), propIdConverter );
+				String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
 				if ( propName == null ) throw new IllegalArgumentException ( 
 					"Null property name for " + cyEnt.getIri () 
 				);
@@ -184,31 +184,31 @@ public class RdfDataManager extends TDBEndPointHelper
 	
 	
 	/**
-	 * Similarly to {@link #getCyNode(Resource, String, String)}, uses a binding (i.e., row) from a 
+	 * Similarly to {@link #getPGNode(Resource, String, String)}, uses a binding (i.e., row) from a 
 	 * {@link CyRelationLoadingHandler#getRelationTypesSparql() relation type query} and creates a new {@link PGRelation}
 	 * with the RDF mapped data.
 	 */
-	public PGRelation getCyRelation ( QuerySolution relRow )
+	public PGRelation getPGRelation ( QuerySolution relRow )
 	{		
 		Resource relRes = relRow.get ( "iri" ).asResource ();
-		PGRelation cyRelation = new PGRelation ( relRes.getURI () );
+		PGRelation pgRelation = new PGRelation ( relRes.getURI () );
 		
-		cyRelation.setType ( this.getCypherId ( relRow.get ( "type" ), this.getCyRelationTypeIdConverter () ) );
+		pgRelation.setType ( this.getPGId ( relRow.get ( "type" ), this.getPGRelationTypeIdConverter () ) );
 
-		cyRelation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
-		cyRelation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
+		pgRelation.setFromIri ( relRow.get ( "fromIri" ).asResource ().getURI () );
+		pgRelation.setToIri ( relRow.get ( "toIri" ).asResource ().getURI () );
 				
-		return cyRelation;
+		return pgRelation;
 	}
 	
 	/**
-	 * Similarly to {@link #addCypherProps(PGEntity, String)}, takes a {@link PGRelation} and adds the properties that
+	 * Similarly to {@link #addPGProps(PGEntity, String)}, takes a {@link PGRelation} and adds the properties that
 	 * can be mapped via {@link CyRelationLoadingHandler#getRelationPropsSparql() relation property query}.
 	 * 
 	 */
-	public void setCyRelationProps ( PGRelation cyRelation, String propsSparql )
+	public void setPGRelationProps ( PGRelation cyRelation, String propsSparql )
 	{
-		this.addCypherProps ( cyRelation, propsSparql );
+		this.addPGProps ( cyRelation, propsSparql );
 	}
 	
 	/**
@@ -221,53 +221,53 @@ public class RdfDataManager extends TDBEndPointHelper
 	}
 	
 	/** 
-	 * Methods like {@link #getCyNode(Resource, String, String)} use this {@link DefaultIri2IdConverter ID} converter to 
+	 * Methods like {@link #getPGNode(Resource, String, String)} use this {@link DefaultIri2IdConverter ID} converter to 
 	 * get IDs for Cypher node labels from RDF IRIs (or even literal).
 	 * 
 	 */
-	public Function<String, String> getCyNodeLabelIdConverter ()
+	public Function<String, String> getPGNodeLabelIdConverter ()
 	{
-		return cyNodeLabelIdConverter;
+		return pgNodeLabelIdConverter;
 	}
 
 	@Autowired ( required = false ) @Qualifier ( "nodeLabelIdConverter" )
-	public void setCyNodeLabelIdConverter ( Function<String, String> labelIdConverter )
+	public void setPGNodeLabelIdConverter ( Function<String, String> labelIdConverter )
 	{
-		this.cyNodeLabelIdConverter = labelIdConverter;
+		this.pgNodeLabelIdConverter = labelIdConverter;
 	}
 	
 	/**
-	 * Similarly to {@link #getCyNodeLabelIdConverter()}, this is used to get a relation type string from 
+	 * Similarly to {@link #getPGNodeLabelIdConverter()}, this is used to get a relation type string from 
 	 * a relation type IRI (or even literal). 
 	 * 
 	 */
-	public Function<String, String> getCyRelationTypeIdConverter ()
+	public Function<String, String> getPGRelationTypeIdConverter ()
 	{
-		return cyRelationIdConverter;
+		return pgRelationIdConverter;
 	}
 
 	@Autowired ( required = false )	@Qualifier ( "relationIdConverter" )
-	public void setCyRelationTypeIdConverter ( Function<String, String> relationIdConverter )
+	public void setPGRelationTypeIdConverter ( Function<String, String> relationIdConverter )
 	{
-		this.cyRelationIdConverter = relationIdConverter;
+		this.pgRelationIdConverter = relationIdConverter;
 	}
 
 
 
 	/**
-	 * Similarly to {@link #getCyNodeLabelIdConverter()}, this is used to get a Cypher node/relation property name
+	 * Similarly to {@link #getPGNodeLabelIdConverter()}, this is used to get a Cypher node/relation property name
 	 * from an RDF IRI (or even literal). 
 	 * 
 	 */
-	public Function<String, String> getCyPropertyIdConverter ()
+	public Function<String, String> getPGPropertyIdConverter ()
 	{
-		return propertyIdConverter;
+		return pgPropertyIdConverter;
 	}
 
-	@Autowired ( required = false )	@Qualifier ( "propertyIdConverter" )
-	public void setCyPropertyIdConverter ( Function<String, String> propertyIdConverter )
+	@Autowired ( required = false )	@Qualifier ( "pgPropertyIdConverter" )
+	public void setPGPropertyIdConverter ( Function<String, String> propertyIdConverter )
 	{
-		this.propertyIdConverter = propertyIdConverter;
+		this.pgPropertyIdConverter = propertyIdConverter;
 	}
 
 	/**

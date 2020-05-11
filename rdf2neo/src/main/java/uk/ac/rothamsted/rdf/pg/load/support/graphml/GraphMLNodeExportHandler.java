@@ -81,7 +81,7 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 		// So, let's prepare the nodes
 		for ( Resource nodeRes: nodeResources )
 		{
-			PGNode cyNode = rdfMgr.getCyNode ( nodeRes, this.labelsSparql, this.nodePropsSparql );
+			PGNode cyNode = rdfMgr.getPGNode ( nodeRes, this.getLabelsSparql (), this.getNodePropsSparql () );
 
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 			

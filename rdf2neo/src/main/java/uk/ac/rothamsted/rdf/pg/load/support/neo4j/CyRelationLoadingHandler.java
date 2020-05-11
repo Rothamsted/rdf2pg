@@ -53,8 +53,8 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 		//
 		for ( QuerySolution row: relRecords )
 		{
-			PGRelation cyRelation = rdfMgr.getCyRelation ( row );
-			rdfMgr.setCyRelationProps ( cyRelation, this.relationPropsSparql );
+			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
+			rdfMgr.setPGRelationProps ( cyRelation, this.relationPropsSparql );
 
 			String type = cyRelation.getType ();
 			List<Map<String, Object>> cyRels = cyData.get ( type );

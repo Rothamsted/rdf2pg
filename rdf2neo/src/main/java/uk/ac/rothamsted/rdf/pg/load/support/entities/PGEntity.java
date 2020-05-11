@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Subclasses of this represents Cypher entities that can be loaded by the language, i.e., nodes/classes.
+ * Subclasses of this represents property graph components, i.e., nodes and relations.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  * 
- *  Modifified by cbobed for refactoring purposes  
+ * cbobed, generalised from Cypher-specific terminology.  
  * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
 public abstract class PGEntity

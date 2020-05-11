@@ -1,7 +1,7 @@
 package uk.ac.rothamsted.rdf.neo4j.load.support;
 
 import static info.marcobrandizi.rdfutils.namespaces.NamespaceUtils.iri;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -109,16 +109,16 @@ public class RdfDataManagerTest
 		Dataset ds = rdfMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		
-		PGNode cyNode = rdfMgr.getCyNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
-		assertNotNull ( "CyNode 1 not found!", cyNode );
+		PGNode pgNode = rdfMgr.getPGNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
+		assertNotNull ( "PGNode 1 not found!", pgNode );
 		log.info ( "Got node 1" );
 
-		assertEquals ( "CyNode 1's Label not found!", 1, cyNode.getLabels ().size () );
-		assertEquals ( "CyNode 1's Label not found!", "TestNode", cyNode.getLabels ().iterator ().next () );
+		assertEquals ( "PGNode 1's Label not found!", 1, pgNode.getLabels ().size () );
+		assertEquals ( "PGNode 1's Label not found!", "TestNode", pgNode.getLabels ().iterator ().next () );
 		
-		assertEquals ( "CyNode 1's wrong properties count!", 2, cyNode.getProperties ().size () );
-		assertEquals ( "CyNode 1's prop1 not found!", "10.0", cyNode.getPropValue ( "attrib1" ) );
-		assertEquals ( "CyNode 1's prop2 not found!", "a string", cyNode.getPropValue ( "attrib2" ) );
+		assertEquals ( "PGNode 1's wrong properties count!", 2, pgNode.getProperties ().size () );
+		assertEquals ( "PGNode 1's prop1 not found!", "10.0", pgNode.getPropValue ( "attrib1" ) );
+		assertEquals ( "PGNode 1's prop2 not found!", "a string", pgNode.getPropValue ( "attrib2" ) );
 		
 		log.info ( "End" );
 	}
@@ -129,16 +129,16 @@ public class RdfDataManagerTest
 	{
 		log.info ( "Verifying Relations" );
 
-		List<PGRelation> cyRelations = new ArrayList<> ();
+		List<PGRelation> pgRelations = new ArrayList<> ();
 		rdfMgr.processRelationIris ( SPARQL_REL_TYPES, 
 			row -> 
 			{
-				PGRelation rel = rdfMgr.getCyRelation ( row );
-				rdfMgr.setCyRelationProps ( rel, SPARQL_REL_PROPS );
-				cyRelations.add ( rel );
+				PGRelation rel = rdfMgr.getPGRelation ( row );
+				rdfMgr.setPGRelationProps ( rel, SPARQL_REL_PROPS );
+				pgRelations.add ( rel );
 		});
 		
-		PGRelation cyRelation = cyRelations.stream ()
+		PGRelation pgRelation = pgRelations.stream ()
 		.filter ( rel -> 
 			"relatedTo".equals ( rel.getType () ) 
 			&& iri ( "ex:1" ).equals ( rel.getFromIri () ) 
@@ -146,9 +146,9 @@ public class RdfDataManagerTest
 		)
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "{ex:1 ex:relatedTo ex:2} not found!", cyRelation );
+		assertNotNull ( "{ex:1 ex:relatedTo ex:2} not found!", pgRelation );
 		
-		cyRelation = cyRelations.stream ()
+		pgRelation = pgRelations.stream ()
 		.filter ( rel -> 
 			"derivedFrom".equals ( rel.getType () ) 
 			&& iri ( "ex:3" ).equals ( rel.getFromIri () ) 
@@ -156,19 +156,19 @@ public class RdfDataManagerTest
 		)
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "{ex:3 ex:derivedFrom ex:1} not found!", cyRelation );
+		assertNotNull ( "{ex:3 ex:derivedFrom ex:1} not found!", pgRelation );
 
-		cyRelation = cyRelations.stream ()
+		pgRelation = pgRelations.stream ()
 		.filter ( rel -> iri ( "ex:2_3" ).equals ( rel.getIri () ) )
 		.findAny ()
 		.orElse ( null );
-		assertNotNull ( "reified relation not found!", cyRelation );
-		assertEquals ( "reified relation's type wrong!", "relatedTo", cyRelation.getType () );
-		assertEquals ( "reified relation's fromIri wrong!", iri ( "ex:2" ), cyRelation.getFromIri () );
-		assertEquals ( "reified relation's toIri wrong!", iri ( "ex:3" ),  cyRelation.getToIri () );		
-		assertEquals ( "reified relation, wrong properties count!", 1, cyRelation.getProperties ().size () );
+		assertNotNull ( "reified relation not found!", pgRelation );
+		assertEquals ( "reified relation's type wrong!", "relatedTo", pgRelation.getType () );
+		assertEquals ( "reified relation's fromIri wrong!", iri ( "ex:2" ), pgRelation.getFromIri () );
+		assertEquals ( "reified relation's toIri wrong!", iri ( "ex:3" ),  pgRelation.getToIri () );		
+		assertEquals ( "reified relation, wrong properties count!", 1, pgRelation.getProperties ().size () );
 		
-		Set<String> values = cyRelation.getPropValues ( "note" );
+		Set<String> values = pgRelation.getPropValues ( "note" );
 		Set<String> refValues = new HashSet<> ( Arrays.asList ( new String[] { "Reified Relation", "Another Note" } ) ) ;
 		assertTrue ( 
 			"reified relation, wrong property value for 'note'!", 

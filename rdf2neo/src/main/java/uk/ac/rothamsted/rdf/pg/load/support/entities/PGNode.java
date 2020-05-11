@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a Cypher/Neo4J node.
+ * Represents a Property Graph node.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>5 Dec 2017</dd></dl>
  *
- *  Modifified by cbobed for refactoring purposes  
+ * cbobed, generalised from Cypher-specific terminology.  
  * <dl><dt>Date:</dt><dd>29 Apr 2020</dd></dl>
  */
  

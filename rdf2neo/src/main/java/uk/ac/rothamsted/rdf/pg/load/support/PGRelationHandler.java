@@ -2,7 +2,6 @@ package uk.ac.rothamsted.rdf.pg.load.support;
 
 
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -10,8 +9,16 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 
-public abstract class PGRelationHandler extends PGEntityHandler<QuerySolution> {
-	
+/**
+ * 
+ * A generic {@link PGEntityHandler} to manage the creation of a property graph relation.
+ *
+ * @author brandizi
+ * <dl><dt>Date:</dt><dd>11 May 2020</dd></dl>
+ *
+ */
+public abstract class PGRelationHandler extends PGEntityHandler<QuerySolution>
+{
 	protected String relationTypesSparql, relationPropsSparql;
 
 	

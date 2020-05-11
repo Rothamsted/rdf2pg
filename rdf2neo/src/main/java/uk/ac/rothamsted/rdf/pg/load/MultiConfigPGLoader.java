@@ -20,7 +20,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLConfiguration;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;

@@ -1,20 +1,14 @@
 package uk.ac.rothamsted.rdf.pg.load;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.system.Txn;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CypherIndexer;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <h1>The simple Cypher/Neo4j loader</h1> 
@@ -25,7 +19,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  *  queries and deal with different node/relation types separately.
  * </p>  
  *
- * <p><b>WARNING</b>: we assume the target graph database is initially empty. For instances, we send CREATE
+ * <p><b>WARNING</b>: we assume the target graph database is initially empty. For instance, we send CREATE
  * &lt;node&gt; instructions, without checking if a node already exists.</p>
  * 
  * @author brandizi
@@ -33,7 +27,8 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class SimpleCyLoader extends SimplePGLoader<CyNodeLoadingProcessor, CyRelationLoadingProcessor>
+public class SimpleCyLoader extends
+  SimplePGLoader<CyNodeLoadingHandler, CyRelationLoadingHandler, CyNodeLoadingProcessor, CyRelationLoadingProcessor>
 {	
 	private CypherIndexer cypherIndexer;
 	
@@ -54,30 +49,11 @@ public class SimpleCyLoader extends SimplePGLoader<CyNodeLoadingProcessor, CyRel
 	 * 
 	 */
 	@Override
-	public void load ( String tdbPath, Object... opts )
+	protected void loadBody ( String tdbPath, Object... opts )
 	{		
 		try
 		{
-			RdfDataManager rdfMgr = this.getRdfDataManager ();
-
-			rdfDataManager.open ( tdbPath );
-			Dataset ds = rdfMgr.getDataSet ();
-			
-			String[] nameStr = { StringUtils.trimToEmpty ( this.getName () ) };
-			if ( !nameStr [ 0 ].isEmpty () ) nameStr [ 0 ] ="[" + nameStr [ 0 ] + "] ";
-			
-			Txn.executeRead ( ds, () -> 
-				log.info ( "{}Sending {} RDF triples to Cypher", nameStr [ 0 ], ds.getDefaultModel ().size () )
-			);
-			
-			// Nodes
-			boolean doNodes = opts != null && opts.length > 0 ? (Boolean) opts [ 0 ] : true;
-			if ( doNodes ) this.getPGNodeLoader ().process ( rdfMgr, opts );
-	
-			// Relations
-			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
-			if ( doRels ) this.getPGRelationLoader ().process ( rdfMgr, opts );
-
+			super.load ( tdbPath, opts );
 			
 			// User-defined indices
 			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
@@ -86,8 +62,6 @@ public class SimpleCyLoader extends SimplePGLoader<CyNodeLoadingProcessor, CyRel
 				CypherIndexer indexer = this.getCypherIndexer ();
 				if ( indexer != null ) indexer.index ();
 			}
-			
-			log.info ( "{}RDF-Cypher conversion finished", nameStr [ 0 ] );
 		}
 		catch ( Exception ex ) {
 			throw new RuntimeException ( "Error while running the RDF/Cypher loader:" + ex.getMessage (), ex );

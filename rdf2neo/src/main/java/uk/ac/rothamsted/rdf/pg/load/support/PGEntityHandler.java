@@ -15,7 +15,8 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 
 /**
- * <p>A Cypher loading handler, which of instances are used by {@link CyLoadingProcessor} instances.</p>
+ * <p>A property graph creation handler, which of instances are used by {@link PGLoadingProcessor} instances
+ * to do the job of loading/creating/exporting/materialising/etc a property graph in its target form.</p>
  * 
  * <p>This has a few common functions and class fields.</p>
  *

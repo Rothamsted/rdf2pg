@@ -41,14 +41,14 @@ public class CypherIndexer
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
 		
-		Function<String, String> labelIdConverter = rdfMgr.getCyNodeLabelIdConverter ();
-		Function<String, String> propIdConverter = rdfMgr.getCyPropertyIdConverter ();
+		Function<String, String> labelIdConverter = rdfMgr.getPGNodeLabelIdConverter ();
+		Function<String, String> propIdConverter = rdfMgr.getPGPropertyIdConverter ();
 		
 		final List<String> allLabels = new LinkedList<> ();
 		
 		rdfMgr.processSelect ( "CypherIndexer", idxSparql, row -> 
 		{  
-			String label = rdfMgr.getCypherId ( row.get ( "label" ), labelIdConverter );
+			String label = rdfMgr.getPGId ( row.get ( "label" ), labelIdConverter );
 			if ( label == null ) throw new IllegalArgumentException ( "Null label in the indices query" );
 			
 			List<String> labels;
@@ -71,7 +71,7 @@ public class CypherIndexer
 			}
 			
 			// And now the property
-			String propName = rdfMgr.getCypherId ( row.get ( "propertyName" ), propIdConverter );
+			String propName = rdfMgr.getPGId ( row.get ( "propertyName" ), propIdConverter );
 			if ( propName == null ) throw new IllegalArgumentException ( String.format (  
 				"Null property name in the indices query, for the label %s", label 
 			));
