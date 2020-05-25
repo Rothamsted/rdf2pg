@@ -53,7 +53,7 @@ public class SimpleCyLoader extends
 	{		
 		try
 		{
-			super.load ( tdbPath, opts );
+			super.loadBody ( tdbPath, opts );
 			
 			// User-defined indices
 			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;

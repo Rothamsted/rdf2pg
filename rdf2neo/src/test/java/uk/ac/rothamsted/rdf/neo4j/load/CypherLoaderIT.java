@@ -23,7 +23,6 @@ import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
-import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;

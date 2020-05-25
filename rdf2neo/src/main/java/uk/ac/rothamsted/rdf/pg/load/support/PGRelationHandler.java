@@ -19,7 +19,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
  */
 public abstract class PGRelationHandler extends PGEntityHandler<QuerySolution>
 {
-	protected String relationTypesSparql, relationPropsSparql;
+	private String relationTypesSparql, relationPropsSparql;
 
 	
 	/**

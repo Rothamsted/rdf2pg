@@ -28,8 +28,6 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 @Component @Scope ( scopeName = "loadingSession" )
 public class CyRelationLoadingHandler extends PGRelationHandler
 {
-	private String relationTypesSparql, relationPropsSparql;
-
 	private Neo4jDataManager neo4jDataManager;
 	
 	public CyRelationLoadingHandler ()
@@ -54,7 +52,7 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 		for ( QuerySolution row: relRecords )
 		{
 			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
-			rdfMgr.setPGRelationProps ( cyRelation, this.relationPropsSparql );
+			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
 
 			String type = cyRelation.getType ();
 			List<Map<String, Object>> cyRels = cyData.get ( type );
