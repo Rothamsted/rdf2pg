@@ -5,7 +5,7 @@
   <parent>
     <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
     <artifactId>rdf2neo-pom</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>rdf2neo</artifactId>
@@ -37,11 +37,17 @@
 		</dependency>		
 		
 		<dependency>
+	    <groupId>javax.annotation</groupId>
+	    <artifactId>javax.annotation-api</artifactId>
+		</dependency>
+		
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- TODO: remove, it's already a transitive dep. -->
 		<dependency>
 		  <groupId>org.apache.commons</groupId>
 		  <artifactId>commons-lang3</artifactId>
