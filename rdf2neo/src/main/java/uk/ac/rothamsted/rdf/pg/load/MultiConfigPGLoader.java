@@ -47,10 +47,11 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
  * <dl><dt>Date:</dt><dd>28 Apr 2020</dd></dl>
  */
 @Component
-public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
+public class MultiConfigPGLoader<CI extends ConfigItem>
+  implements PropertyGraphLoader, AutoCloseable
 {
 	private List<ConfigItem> configItems = new LinkedList<> ();
-	private ObjectFactory<SimplePGLoader> loaderFactory;
+	private ObjectFactory<SimplePGLoader> pgLoaderFactory;
 	
 	private OutputConfig outputConfig; 
 	private GraphMLConfiguration graphMLConfiguration; 
@@ -60,124 +61,7 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 	private static Logger slog = LoggerFactory.getLogger ( MultiConfigPGLoader.class );
 	
-	/**
-	 * Represents the RDF/Cypher configuration for a single node/relation type.
-	 *
-	 * @author brandizi
-	 * <dl><dt>Date:</dt><dd>20 Jan 2018</dd></dl>
-	 *
-	 */
-	public static class ConfigItem
-	{
-		private String name;
 		
-		private String nodeIrisSparql, labelsSparql, nodePropsSparql;
-		private String relationTypesSparql, relationPropsSparql;
-		private String indexesSparql;
-		
-		public ConfigItem () {
-		}
-
-		public ConfigItem ( 
-			String name, 
-			String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
-			String relationTypesSparql, String relationPropsSparql,
-			String indexesSparql
-		)
-		{
-			this.name = name;
-			this.nodeIrisSparql = nodeIrisSparql;
-			this.labelsSparql = labelsSparql;
-			this.nodePropsSparql = nodePropsSparql;
-			this.relationTypesSparql = relationTypesSparql;
-			this.relationPropsSparql = relationPropsSparql;
-			this.indexesSparql = indexesSparql;
-		}
-		
-		public ConfigItem ( 
-			String name, 
-			String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
-			String relationTypesSparql, String relationPropsSparql
-		)
-		{
-			this ( name, nodeIrisSparql, labelsSparql, nodePropsSparql, relationTypesSparql, relationPropsSparql, null );
-		}
-		
-		/**
-		 * @see SimpleCyLoader#getName().
-		 */
-		public String getName () {
-			return name;
-		}
-		public void setName ( String name ) {
-			this.name = name;
-		}
-		
-		/**
-		 * @see CyNodeLoadingProcessor#getNodeIrisSparql(). 
-		 */
-		public String getNodeIrisSparql () {
-			return nodeIrisSparql;
-		}
-		public void setNodeIrisSparql ( String nodeIrisSparql ) {
-			this.nodeIrisSparql = nodeIrisSparql;
-		}
-
-		/**
-		 * @see CyNodeLoadingHandler#getLabelsSparql().
-		 */
-		public String getLabelsSparql () {
-			return labelsSparql;
-		}
-		public void setLabelsSparql ( String labelsSparql ) {
-			this.labelsSparql = labelsSparql;
-		}
-		
-		/**
-		 * @see CyNodeLoadingHandler#getNodePropsSparql(). 
-		 */
-		public String getNodePropsSparql () {
-			return nodePropsSparql;
-		}
-		public void setNodePropsSparql ( String nodePropsSparql ) {
-			this.nodePropsSparql = nodePropsSparql;
-		}
-		
-		/**
-		 * @see CyRelationLoadingHandler#getRelationTypesSparql(). 
-		 */
-		public String getRelationTypesSparql () {
-			return relationTypesSparql;
-		}
-		public void setRelationTypesSparql ( String relationTypesSparql ) {
-			this.relationTypesSparql = relationTypesSparql;
-		}
-		
-		/**
-		 * @see CyRelationLoadingHandler#getRelationPropsSparql().
-		 */
-		public String getRelationPropsSparql () {
-			return relationPropsSparql;
-		}
-		public void setRelationPropsSparql ( String relationPropsSparql ) {
-			this.relationPropsSparql = relationPropsSparql;
-		}
-
-		/**
-		 * @see CypherIndexer#getIndexesSparql(). 
-		 */
-		public String getIndexesSparql ()
-		{
-			return indexesSparql;
-		}
-
-		public void setIndexesSparql ( String indexesSparql )
-		{
-			this.indexesSparql = indexesSparql;
-		}
-	}
-	
-	
 	/** 
 	 * Represents the propertyGraph format selector 
 	 * @author cbobed
@@ -247,7 +131,7 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 	
 	/** 
 	 * Loops through {@link #getConfigItems() config items} and instantiates a {@link #getCypherLoaderFactory() new simple loader}
-	 * for eache item, to load nodes/relations mapped by the config item.
+	 * for each item, to load nodes/relations mapped by the config item.
 	 */
 	@Override
 	public void load ( String tdbPath, Object... opts )
@@ -266,7 +150,7 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 				{
 					for ( ConfigItem cfg: this.getConfigItems () )
 					{		
-						try ( SimpleCyLoader cypherLoader = (SimpleCyLoader) this.getLoaderFactory ().getObject (); )
+						try ( SimpleCyLoader cypherLoader = (SimpleCyLoader) this.getPGLoaderFactory ().getObject (); )
 						{
 							cypherLoader.setName ( cfg.getName () );
 							
@@ -301,7 +185,7 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 				for (int mode = 0; mode<=1; mode++) {
 					for ( ConfigItem cfg: this.getConfigItems () )
 					{		
-						try ( SimpleGraphMLExporter graphMLExporter = (SimpleGraphMLExporter) this.getLoaderFactory().getObject (); )
+						try ( SimpleGraphMLExporter graphMLExporter = (SimpleGraphMLExporter) this.getPGLoaderFactory().getObject (); )
 						{
 							graphMLExporter.setName ( cfg.getName () );
 							
@@ -442,15 +326,15 @@ public class MultiConfigPGLoader implements PropertyGraphLoader, AutoCloseable
 	 * a factory via Spring.
 	 * 
 	 */
-	public ObjectFactory<SimplePGLoader> getLoaderFactory ()
+	public ObjectFactory<SimplePGLoader> getPGLoaderFactory ()
 	{
-		return loaderFactory;
+		return pgLoaderFactory;
 	}
 
 	@Resource ( name = "simpleLoaderFactory" )
 	public void setPGLoaderFactory ( ObjectFactory<SimplePGLoader> loaderFactory )
 	{
-		this.loaderFactory = loaderFactory;
+		this.pgLoaderFactory = loaderFactory;
 	}
 	
 	

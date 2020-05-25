@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.*;
-import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
+import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 
 /**
  * This is a simple {@link SimpleCyLoader} factory which of {@link #getObject()} invokes a 
