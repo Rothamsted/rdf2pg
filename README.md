@@ -205,7 +205,8 @@ WHERE
 }
 ```
 
-Typically this query will be listing instances of target classes, although you might also catch resources of interest by targeting subjects or objects of given relations.
+Typically this query will be listing instances of target classes, although you might also catch resources of interest by 
+targeting subjects or objects of given relations.
 
 
 **Note: it is very important that the query above returns distinct results.**
