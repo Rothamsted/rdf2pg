@@ -5,12 +5,12 @@ env:
   # Use this to release. See: 
   #   https://github.com/Rothamsted/knetminer-common/blob/master/.travis.yml
   #   https://github.com/Rothamsted/knetminer-common
-  # - NEW_RELEASE_VER='1.0-TEST' NEW_SNAPSHOT_VER='1.0-SNAPSHOT'
-  - TRAVIS_DIR_URL="https://raw.githubusercontent.com/Rothamsted/knetminer-common/master/travis"
+  # - NEW_RELEASE_VER='1.0-TEST' NEW_SNAPSHOT_VER='1.0.2-SNAPSHOT'
 
 install:
   # The common settings file used to build with Travis, downloaded in a bootstrap fashion
   - mkdir -p travis
+  - export TRAVIS_DIR_URL="https://raw.githubusercontent.com/Rothamsted/knetminer-common/master/travis"
   - wget "$TRAVIS_DIR_URL/install.sh" -O travis/install.sh
   - bash ./travis/install.sh
 
