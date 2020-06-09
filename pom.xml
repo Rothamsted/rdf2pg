@@ -34,7 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<jutils.version>9.0.1-SNAPSHOT</jutils.version>
+		<jutils.version>9.1</jutils.version>
   </properties>
   
   <dependencyManagement>
@@ -66,7 +66,7 @@
   			<dependency>
 				<groupId>info.marcobrandizi</groupId>
 				<artifactId>rdfutils-jena</artifactId>
-				<version>2.1</version>
+				<version>2.1.1</version>
   			</dependency>  			
 
 			<dependency>
