@@ -17,7 +17,7 @@
   <artifactId>rdf2neo-pom</artifactId>
   <packaging>pom</packaging>
   
-  <version>1.0-TEST</version>
+  <version>1.0.2-SNAPSHOT</version>
   
   <name>rdf2neo-pom - top POM</name>
   <url/>
