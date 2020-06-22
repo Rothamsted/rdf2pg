@@ -205,7 +205,8 @@ WHERE
 }
 ```
 
-Typically this query will be listing instances of target classes, although you might also catch resources of interest by targeting subjects or objects of given relations.
+Typically this query will be listing instances of target classes, although you might also catch resources of interest by 
+targeting subjects or objects of given relations.
 
 
 **Note: it is very important that the query above returns distinct results.**
@@ -213,7 +214,8 @@ Typically this query will be listing instances of target classes, although you m
 
 ### Node labels
 
-This query is invoked for each of the URIs found by the node URIs and is parameterised over a single node URIs. It should return all the labels that you want to assign to that node on the Cypher side. For instance,
+This query is invoked for each of the URIs found by the node URIs and is parameterised over a single node URIs. 
+It should return all the labels that you want to assign to that node on the Cypher side. For instance,
 
 ```sql
 #  The node list query must always project a ?label variable and must use the ?iri variable in the WHERE clause. 
