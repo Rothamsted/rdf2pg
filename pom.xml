@@ -34,6 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
+		<!-- Overrides the version defined in the parent POM -->
 		<jutils.version>10.0-SNAPSHOT</jutils.version>
   </properties>
   
