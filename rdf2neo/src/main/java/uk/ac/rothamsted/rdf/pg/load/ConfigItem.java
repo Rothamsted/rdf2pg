@@ -19,36 +19,11 @@ public class ConfigItem
 	
 	private String nodeIrisSparql, labelsSparql, nodePropsSparql;
 	private String relationTypesSparql, relationPropsSparql;
-	private String indexesSparql;
 	
-	public ConfigItem () {
-	}
+	public ConfigItem () {}
 
-	public ConfigItem ( 
-		String name, 
-		String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
-		String relationTypesSparql, String relationPropsSparql,
-		String indexesSparql
-	)
-	{
-		this.name = name;
-		this.nodeIrisSparql = nodeIrisSparql;
-		this.labelsSparql = labelsSparql;
-		this.nodePropsSparql = nodePropsSparql;
-		this.relationTypesSparql = relationTypesSparql;
-		this.relationPropsSparql = relationPropsSparql;
-		this.indexesSparql = indexesSparql;
-	}
-	
-	public ConfigItem ( 
-		String name, 
-		String nodeIrisSparql, String labelsSparql, String nodePropsSparql,
-		String relationTypesSparql, String relationPropsSparql
-	)
-	{
-		this ( name, nodeIrisSparql, labelsSparql, nodePropsSparql, relationTypesSparql, relationPropsSparql, null );
-	}
-	
+
+		
 	/**
 	 * @see SimpleCyLoader#getName().
 	 */
@@ -109,16 +84,4 @@ public class ConfigItem
 		this.relationPropsSparql = relationPropsSparql;
 	}
 
-	/**
-	 * @see CypherIndexer#getIndexesSparql(). 
-	 */
-	public String getIndexesSparql ()
-	{
-		return indexesSparql;
-	}
-
-	public void setIndexesSparql ( String indexesSparql )
-	{
-		this.indexesSparql = indexesSparql;
-	}
 }

@@ -22,7 +22,7 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
-import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
+import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
@@ -147,22 +147,26 @@ public class CypherLoaderIT
 	
 			
 			List<ConfigItem> config = new LinkedList<> ();
-			config.add ( new ConfigItem ( 
-				"places", 
-				readResource ( "dbpedia_node_iris.sparql" ), 
-				readResource ( "dbpedia_node_labels.sparql" ), 
-				readResource ( "dbpedia_node_props.sparql" ), 
-				readResource ( "dbpedia_rel_types.sparql" ), 
-				readResource ( "dbpedia_rel_props.sparql" )			 
-			));
-			config.add ( new ConfigItem ( 
-				"people", 
-				readResource ( "dbpedia_people_iris.sparql" ), 
-				readResource ( "dbpedia_people_labels.sparql" ), 
-				readResource ( "dbpedia_people_props.sparql" ), 
-				readResource ( "dbpedia_people_rel_types.sparql" ), 
-				null			 
-			));
+			{
+				ConfigItem cfgi = new ConfigItem ();
+				cfgi.setName ( "places" );
+				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_node_iris.sparql" ) );
+				cfgi.setLabelsSparql ( readResource ( "dbpedia_node_labels.sparql" ) );
+				cfgi.setNodePropsSparql ( readResource ( "dbpedia_node_props.sparql" ) );
+				cfgi.setRelationTypesSparql ( readResource ( "dbpedia_rel_types.sparql" ) );
+				cfgi.setRelationPropsSparql ( "dbpedia_rel_props.sparql" );
+				config.add ( cfgi );
+			}
+
+			{
+				ConfigItem cfgi = new ConfigItem ();
+				cfgi.setName ( "people" );
+				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_people_iris.sparql" ) );
+				cfgi.setLabelsSparql ( readResource ( "dbpedia_people_labels.sparql" ) );
+				cfgi.setNodePropsSparql ( readResource ( "dbpedia_people_props.sparql" ) );
+				cfgi.setRelationTypesSparql ( readResource ( "dbpedia_people_rel_types.sparql" ) );
+				config.add ( cfgi );
+			}
 			
 			cymloader.setConfigItems ( config );
 	

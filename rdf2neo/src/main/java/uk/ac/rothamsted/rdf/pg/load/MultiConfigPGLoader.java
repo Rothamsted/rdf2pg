@@ -68,7 +68,8 @@ public class MultiConfigPGLoader<CI extends ConfigItem>
 	 * <dl><dt>Date: </dt><dd> 15 Apr 2020</dd></dl>
 	 */
 	
-	public static class OutputConfig {
+	public static class OutputConfig 
+	{
 		public enum GeneratorOutput{
 			Cypher, 
 			GraphML

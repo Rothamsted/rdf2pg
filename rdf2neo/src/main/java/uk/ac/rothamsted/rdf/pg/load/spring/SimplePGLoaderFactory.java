@@ -17,27 +17,25 @@ import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
  * {@link MultiConfigPGLoader#setCypherLoaderFactory(ObjectFactory)}, where a new simple loader is
  * invoked per every new {@link ConfigItem} query type to be processed.
  *
+ * TODO: no longer autowired as component in order to have it configured via the .xml file
+ *
+ *  
  * @author brandizi
  * <dl><dt>Date:</dt><dd>1 Feb 2018</dd></dl>
  *
  */
-
-// no longer autowired as component in order to have it configured via the .xml file
-
 public class SimplePGLoaderFactory<T> implements ObjectFactory<T>, ApplicationContextAware
 {
-	// workaround to have the information about the generic type
-	// without using reflection
 	private final Class<T> type; 
-	
-	public SimplePGLoaderFactory(Class<T> type) {
-		this.type = type; 
-	}
-	
 	private ApplicationContext appCtx;
 
 	@Autowired
 	private LoadingSessionScope session;
+
+	public SimplePGLoaderFactory(Class<T> type) {
+		this.type = type; 
+	}
+	
 	
 	/**
 	 * @return the {@link SimpleCyLoader} configured in the current Spring container.
