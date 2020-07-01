@@ -5,7 +5,7 @@
   <parent>
     <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
     <artifactId>rdf2neo-pom</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>rdf2neo</artifactId>
