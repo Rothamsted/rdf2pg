@@ -22,7 +22,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
  * TODO: Better new name.
  *
  */
-public class ConfigItem
+public class ConfigItem<SL extends SimplePGLoader>
 {
 	private String name;
 	
@@ -30,7 +30,6 @@ public class ConfigItem
 	private String relationTypesSparql, relationPropsSparql;
 	
 	public ConfigItem () {}
-
 
 		
 	/**
@@ -94,7 +93,7 @@ public class ConfigItem
 	}
 
 	@SuppressWarnings ( "rawtypes" )
-	public <L extends SimplePGLoader> void configureLoader ( L simpleLoader )
+	public void configureLoader ( SL simpleLoader )
 	{
 		simpleLoader.setName ( this.getName () );
 		

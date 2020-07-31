@@ -46,8 +46,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
  * Modifified by cbobed for refactoring purposes  
  * <dl><dt>Date:</dt><dd>28 Apr 2020</dd></dl>
  */
-@Component
-public abstract class MultiConfigPGLoader<CI extends ConfigItem, SL extends SimplePGLoader>
+public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends SimplePGLoader>
   implements PropertyGraphLoader, AutoCloseable
 {
 	private List<CI> configItems = new LinkedList<> ();
@@ -106,7 +105,9 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem, SL extends Simp
 	 * beans for this.
 	 * 
 	 */
-	public static MultiConfigPGLoader getSpringInstance ( ApplicationContext beanCtx )
+	@SuppressWarnings ( { "unchecked", "rawtypes" } )
+	public static <CI extends ConfigItem<SL>, SL extends SimplePGLoader> 
+	  MultiConfigPGLoader<CI, SL> getSpringInstance ( ApplicationContext beanCtx )
 	{
 		slog.info ( "Getting Loader configuration from Spring Context" );
 		MultiConfigPGLoader mloader = beanCtx.getBean ( MultiConfigPGLoader.class );
@@ -123,7 +124,7 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem, SL extends Simp
 	 *  
 	 */
 	@SuppressWarnings ( { "unchecked", "rawtypes" } )
-	public static <CI extends ConfigItem, SL extends SimplePGLoader> 
+	public static <CI extends ConfigItem<SL>, SL extends SimplePGLoader> 
 		MultiConfigPGLoader<CI, SL> getSpringInstance ( String xmlConfigPath )
 	{
 		slog.info ( "Getting Loader configuration from Spring XML file '{}'", xmlConfigPath );		
@@ -368,7 +369,6 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem, SL extends Simp
 		return pgLoaderFactory;
 	}
 
-	@Resource ( name = "simpleLoaderFactory" )
 	public void setPGLoaderFactory ( ObjectFactory<SL> loaderFactory )
 	{
 		this.pgLoaderFactory = loaderFactory;

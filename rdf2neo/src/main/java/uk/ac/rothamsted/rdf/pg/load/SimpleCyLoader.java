@@ -33,6 +33,9 @@ public class SimpleCyLoader extends
 	private CypherIndexer cypherIndexer;
 	
 	/**
+	 * 
+	 * TODO: move this upwards, introduce key/value options
+	 * 
 	 * <p>Uses the {@link #getCyNodeLoader()} and {@link #getCyRelationLoader()} to map data from an RDF/TDB
 	 * data source into Cypher entities and load them into a pre-configured Neo4j server.</p> 
 	 * 
