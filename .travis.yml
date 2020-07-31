@@ -1,6 +1,7 @@
 language: java
-jdk: openjdk8
 
+jdk:
+  - openjdk11
 env:
   # Use this to release. See: 
   #   https://github.com/Rothamsted/knetminer-common/blob/master/.travis.yml
@@ -20,3 +21,4 @@ script:
 cache:
   directories:
     - $HOME/.m2
+    
