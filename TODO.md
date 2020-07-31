@@ -4,3 +4,5 @@
 * To be decided: where is the class set? In the MPGL?! Probably yes, and this
   requires that MPGL becomes abstract.
 * MPGL needs a method to load config items and orchestrate base exec over them.
+  * Started, continue from uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.load(String, Object...)
+  

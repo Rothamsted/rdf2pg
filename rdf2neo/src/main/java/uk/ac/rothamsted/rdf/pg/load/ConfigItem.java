@@ -1,5 +1,14 @@
 package uk.ac.rothamsted.rdf.pg.load;
 
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.PGRelationHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.PGRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
+
 /**
  * Represents a configuration to be used for the conversion of a single node or relation type
  * to a property graph.
@@ -84,4 +93,23 @@ public class ConfigItem
 		this.relationPropsSparql = relationPropsSparql;
 	}
 
+	@SuppressWarnings ( "rawtypes" )
+	public <L extends SimplePGLoader> void configureLoader ( L simpleLoader )
+	{
+		simpleLoader.setName ( this.getName () );
+		
+		PGNodeLoadingProcessor nodeLoader = simpleLoader.getPGNodeLoader ();
+		PGRelationLoadingProcessor relLoader = simpleLoader.getPGRelationLoader ();
+		
+		PGNodeHandler nodeHandler = (PGNodeHandler) nodeLoader.getBatchJob ();
+		PGRelationHandler relHandler = (PGRelationHandler) relLoader.getBatchJob ();
+		
+		nodeLoader.setNodeIrisSparql ( this.getNodeIrisSparql () );
+
+		nodeHandler.setLabelsSparql ( this.getLabelsSparql () );
+		nodeHandler.setNodePropsSparql ( this.getNodePropsSparql () );
+		
+		relHandler.setRelationTypesSparql ( this.getRelationTypesSparql () );
+		relHandler.setRelationPropsSparql ( this.getRelationPropsSparql () );
+	}
 }

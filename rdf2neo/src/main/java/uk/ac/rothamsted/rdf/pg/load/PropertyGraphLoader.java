@@ -14,7 +14,9 @@ public interface PropertyGraphLoader
 	/**
 	 * Loads data into the configured format (neo4j server or graphML file for the time being). 
 	 * 
-	 * @param opts is a generic way to pass implementation-specific options 
+	 * @param opts is a generic way to pass implementation-specific options
+	 * 
+	 * TODO: it would be batter to have opts as a Map<String, Object> + an array of [key, val, key...].
 	 */
 	public void load ( String tdbPath, Object... opts );
 }

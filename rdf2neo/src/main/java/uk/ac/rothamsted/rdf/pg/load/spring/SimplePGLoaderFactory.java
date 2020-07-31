@@ -24,15 +24,15 @@ import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
  * <dl><dt>Date:</dt><dd>1 Feb 2018</dd></dl>
  *
  */
-public class SimplePGLoaderFactory<T> implements ObjectFactory<T>, ApplicationContextAware
+public abstract class SimplePGLoaderFactory<T extends SimplePGLoader> implements ObjectFactory<T>, ApplicationContextAware
 {
-	private final Class<T> type; 
-	private ApplicationContext appCtx;
+	protected Class<T> type; 
+	protected ApplicationContext appCtx;
 
 	@Autowired
-	private LoadingSessionScope session;
+	protected LoadingSessionScope session;
 
-	public SimplePGLoaderFactory(Class<T> type) {
+	protected SimplePGLoaderFactory ( Class<T> type ) {
 		this.type = type; 
 	}
 	
@@ -51,5 +51,5 @@ public class SimplePGLoaderFactory<T> implements ObjectFactory<T>, ApplicationCo
 	public void setApplicationContext ( ApplicationContext applicationContext ) throws BeansException
 	{
 		this.appCtx = applicationContext;
-	}
+	}	
 }

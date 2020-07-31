@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader.ConfigItem;
+import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 
 /**
  * This is a custom Spring bean {@link Scope} that models the notion of a loading session. 
@@ -68,7 +68,8 @@ public class LoadingSessionScope implements Scope
 	}
 
 	@Override
-	public void registerDestructionCallback ( String name, Runnable callback ) {		
+	public void registerDestructionCallback ( String name, Runnable callback ) {
+		// Nothing needed
 	}
 
 	@Override

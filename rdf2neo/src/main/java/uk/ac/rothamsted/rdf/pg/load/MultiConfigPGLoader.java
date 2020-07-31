@@ -47,11 +47,11 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
  * <dl><dt>Date:</dt><dd>28 Apr 2020</dd></dl>
  */
 @Component
-public class MultiConfigPGLoader<CI extends ConfigItem>
+public abstract class MultiConfigPGLoader<CI extends ConfigItem, SL extends SimplePGLoader>
   implements PropertyGraphLoader, AutoCloseable
 {
-	private List<ConfigItem> configItems = new LinkedList<> ();
-	private ObjectFactory<SimplePGLoader> pgLoaderFactory;
+	private List<CI> configItems = new LinkedList<> ();
+	private ObjectFactory<SL> pgLoaderFactory;
 	
 	private OutputConfig outputConfig; 
 	private GraphMLConfiguration graphMLConfiguration; 
@@ -122,7 +122,9 @@ public class MultiConfigPGLoader<CI extends ConfigItem>
 	 * method is invoked.
 	 *  
 	 */
-	public static MultiConfigPGLoader getSpringInstance ( String xmlConfigPath )
+	@SuppressWarnings ( { "unchecked", "rawtypes" } )
+	public static <CI extends ConfigItem, SL extends SimplePGLoader> 
+		MultiConfigPGLoader<CI, SL> getSpringInstance ( String xmlConfigPath )
 	{
 		slog.info ( "Getting Loader configuration from Spring XML file '{}'", xmlConfigPath );		
 		ApplicationContext ctx = new FileSystemXmlApplicationContext ( xmlConfigPath );
@@ -130,12 +132,46 @@ public class MultiConfigPGLoader<CI extends ConfigItem>
 	}
 	
 	
+	@Override
+	public void load ( String tdbPath, Object... opts )
+	{
+		this.loadBegin ( tdbPath, opts );
+		
+		// First the nodes ( mode = 0 ) and then the relations ( mode = 1 )
+		// That ensures that cross-references made by different queries are taken  
+		for ( int mode = 0; mode <= 2; mode++ )
+			for ( CI cfg: this.getConfigItems () )
+				this.loadIteration ( mode, cfg, tdbPath, opts );
+		
+		this.loadEnd ( tdbPath, opts );
+	}
+	
+	protected void loadBegin ( String tdbPath, Object... opts )
+	{
+		// None for now
+	}
+	
+	protected void loadIteration ( int mode, CI cfg, String tdbPath, Object... opts )
+	{
+		try ( SL pgLoader = this.getPGLoaderFactory ().getObject (); )
+		{
+			cfg.configureLoader ( pgLoader );
+			pgLoader.load ( tdbPath, mode == 0, mode == 1, mode == 2 );
+		}
+	}
+	
+	protected void loadEnd ( String tdbPath, Object... opts )
+	{
+		// None for now
+	}
+	
+	
+	
 	/** 
 	 * Loops through {@link #getConfigItems() config items} and instantiates a {@link #getCypherLoaderFactory() new simple loader}
 	 * for each item, to load nodes/relations mapped by the config item.
 	 */
-	@Override
-	public void load ( String tdbPath, Object... opts )
+	public void _load ( String tdbPath, Object... opts )
 	{
 		
 		log.info("Using {} exporter", outputConfig.getSelectedOutput());
@@ -309,14 +345,14 @@ public class MultiConfigPGLoader<CI extends ConfigItem>
 	 * 
 	 * @see {@link #load(String, Object...)} 
 	 */
-	public List<ConfigItem> getConfigItems ()
+	public List<CI> getConfigItems ()
 	{
 		return configItems;
 	}
 
 	
 	@Autowired ( required = false )
-	public void setConfigItems ( List<ConfigItem> configItems )
+	public void setConfigItems ( List<CI> configItems )
 	{
 		this.configItems = configItems;
 	}
@@ -327,13 +363,13 @@ public class MultiConfigPGLoader<CI extends ConfigItem>
 	 * a factory via Spring.
 	 * 
 	 */
-	public ObjectFactory<SimplePGLoader> getPGLoaderFactory ()
+	public ObjectFactory<SL> getPGLoaderFactory ()
 	{
 		return pgLoaderFactory;
 	}
 
 	@Resource ( name = "simpleLoaderFactory" )
-	public void setPGLoaderFactory ( ObjectFactory<SimplePGLoader> loaderFactory )
+	public void setPGLoaderFactory ( ObjectFactory<SL> loaderFactory )
 	{
 		this.pgLoaderFactory = loaderFactory;
 	}
