@@ -147,9 +147,12 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 		this.loadEnd ( tdbPath, opts );
 	}
 	
+	/**
+	 * Just logs that it's beginning with the current loader.
+	 */
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
-		// Defaults to null
+		log.info ( "Using {} exporter", this.getClass ().getSimpleName () );
 	}
 	
 	protected void loadIteration ( int mode, CI cfg, String tdbPath, Object... opts )

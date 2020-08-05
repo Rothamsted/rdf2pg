@@ -1,23 +1,5 @@
 package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
-
-import java.io.PrintStream;
-import java.lang.reflect.Array;
-import java.time.chrono.ChronoPeriod;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-
 public class GraphMLUtils 
 {	
 	/** Some constants related to GraphML **/ 

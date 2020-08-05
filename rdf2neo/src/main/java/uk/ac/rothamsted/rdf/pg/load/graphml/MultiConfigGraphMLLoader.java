@@ -1,6 +1,5 @@
 package uk.ac.rothamsted.rdf.pg.load.graphml;
 
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeAttribHeaders;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeEdgeAttribHeaders;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeNodeAttribHeaders;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
@@ -28,7 +27,6 @@ import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleGraphMLExporter;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationExportHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils;
 
 /**
@@ -56,6 +54,8 @@ public class MultiConfigGraphMLLoader
 	@Override
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
+		super.loadBegin ( tdbPath, opts );
+		
 		if ( opts == null || opts.length != 1 ) throw new IllegalArgumentException ( String.format (
 			"%s needs the output file parameter", this.getClass ().getSimpleName ()
 		));

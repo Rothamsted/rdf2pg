@@ -23,6 +23,8 @@ public class MultiConfigNeo4jLoader extends MultiConfigPGLoader<Neo4jConfigItem,
 	@Override
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
+		super.loadBegin ( tdbPath, opts );
+		
 		if ( opts == null || opts.length < 3 ) throw new IllegalArgumentException ( String.format (
 			"%s needs at least 3 parameters", this.getClass ().getSimpleName ()
 		));
