@@ -42,9 +42,14 @@ public abstract class SimplePGLoader
 		loadEnd ( tdbPath, opts );		
 	}
 
+	/**
+	 * The default checks we have at least two parameters
+	 */
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
-		// Nothing in this version
+		if ( opts == null || opts.length < 2 ) throw new IllegalArgumentException ( String.format (
+			"%s needs at least two parameters", this.getClass ().getSimpleName ()
+		));
 	}
 
 	protected void loadEnd ( String tdbPath, Object... opts )

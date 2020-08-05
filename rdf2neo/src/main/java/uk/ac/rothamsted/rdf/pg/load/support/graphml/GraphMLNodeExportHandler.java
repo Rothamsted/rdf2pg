@@ -41,7 +41,8 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 {
 	
 	// First version: in order to create the key values, we have to store the property names gathered 
-	// for each of the nodes 
+	// for each of the nodes
+	// TODO: They cannot be static, see TODO.md
 	
 	private static HashSet<String> gatheredNodeProperties = new HashSet<String>();
 	{
@@ -66,6 +67,9 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 	@Override
 	public void accept ( Set<Resource> nodeResources )
 	{
+		// TODO: The node/relation preparation is common code, doesn't depend on
+		// the target, FACTORISE THE COPY-PASTE!!!
+		
 		this.renameThread ( "graphMLNodeLoad:" );
 		log.trace ( "Begin of {} nodes", nodeResources.size () );
 		
@@ -155,7 +159,7 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 							}
 						}		
 					);
-	        	}	
+	   }	
 				
 		);
 		

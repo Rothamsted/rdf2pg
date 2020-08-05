@@ -149,7 +149,7 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
-		// None for now
+		// Defaults to null
 	}
 	
 	protected void loadIteration ( int mode, CI cfg, String tdbPath, Object... opts )
@@ -157,13 +157,13 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 		try ( SL pgLoader = this.getPGLoaderFactory ().getObject (); )
 		{
 			cfg.configureLoader ( pgLoader );
-			pgLoader.load ( tdbPath, mode == 0, mode == 1, mode == 2 );
+			pgLoader.load ( tdbPath, mode == 0, mode == 1 );
 		}
 	}
 	
 	protected void loadEnd ( String tdbPath, Object... opts )
 	{
-		// None for now
+		// Defaults to null
 	}
 	
 	
