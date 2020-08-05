@@ -111,20 +111,19 @@ public class MultiConfigGraphMLLoader
 		.forEach ( tempPath -> 
 		{
 			try ( Reader in = 
-					new BufferedReader ( new FileReader ( tempPath, StandardCharsets.UTF_8 ), 2<<19 )
-				) 
-				{
-					// TODO: we don't need two temp files, one would be enough
-					IOUtils.copy ( in, gmlOut, StandardCharsets.UTF_8 );
-				}
-				catch ( IOException ex ) {
-					throw new UncheckedIOException ( String.format ( 
-						"I/O error while copying '%s' to '%s': %s", tempPath, tmpFilesBasePath ), 
-						ex
-					);
-				}
+				new BufferedReader ( new FileReader ( tempPath, StandardCharsets.UTF_8 ), 2<<19 )
+			) 
+			{
+				// TODO: we don't need two temp files, one would be enough
+				IOUtils.copy ( in, gmlOut, StandardCharsets.UTF_8 );
+			}
+			catch ( IOException ex ) {
+				throw new UncheckedIOException ( String.format ( 
+					"I/O error while copying '%s' to '%s': %s", tempPath, tmpFilesBasePath ), 
+					ex
+				);
+			}
 		});
-		
 
 		gmlOut.println ( GraphMLUtils.GRAPH_TAG_END );
 		gmlOut.println ( GraphMLUtils.GRAPHML_TAG_END ); 
