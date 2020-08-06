@@ -107,7 +107,7 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	 * method is invoked.
 	 *  
 	 */
-	@SuppressWarnings ( { "unchecked", "rawtypes" } )
+	@SuppressWarnings ( { "rawtypes" } )
 	public static <CI extends ConfigItem<SL>, SL extends SimplePGLoader> 
 		MultiConfigPGLoader<CI, SL> getSpringInstance ( String xmlConfigPath )
 	{

@@ -158,7 +158,6 @@ public class GraphMLUtils
 			writeXMLAttrib ( GraphMLUtils.FOR_ATTR, forAttrib , out ); out.print ( ' ' );
 			
 			// TODO: for the time being, we don't support typing for the key / data 
-			// maybe we could add it via
 			writeXMLAttrib ( GraphMLUtils.ATTR_NAME_ATTR, attribID , out ); 
 			
 			out.println ( " />" );
