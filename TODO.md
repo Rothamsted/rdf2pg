@@ -30,7 +30,7 @@
   * is it needed? It doesn't seem the case 
   * If yes, Neo4j needs too, maybe it's worth to factorise. Moreover, let's move this
 to a new component, `GraphMLDataManager`, which will have a role similar to Neo4DataManager, ie, managing the data writing
-on the target. This class will deal with deatails like this default label and gathered node/rel properties mentioned above
+on the target. This class will deal with details like this default label and gathered node/rel properties mentioned above
 (it's a target PG detail, so it makes sense to have this here). This will also be a Spring component with singleton scope
 (not loading session, since it has re-used stuff).
 

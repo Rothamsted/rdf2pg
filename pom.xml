@@ -9,7 +9,7 @@
 	<parent>
 	  <groupId>uk.ac.rothamsted.knetminer</groupId>
 	  <artifactId>knetminer-common</artifactId>
-	  <version>1.0-SNAPSHOT</version>
+	  <version>1.0.1-SNAPSHOT</version>
 	</parent>  
   
   
