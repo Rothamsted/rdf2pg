@@ -9,16 +9,16 @@ dbr:Imagawa_Yoshimoto	rdf:type	schema:Person .
 dbr:Imagawa_Yoshimoto	rdfs:label	"Imagawa Yoshimoto"@en .
 @prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
 @prefix dbo:	<http://dbpedia.org/ontology/> .
-dbr:Imagawa_Yoshimoto	dbo:deathDate	"1560-6-12"^^xsd:date ,
+dbr:Imagawa_Yoshimoto	dbo:deathDate	"1560-06-12"^^xsd:date ,
 		"1560-06-12"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1519-1-1"^^xsd:date .
+	dbo:birthDate	"1519-01-01"^^xsd:date .
 @prefix foaf:	<http://xmlns.com/foaf/0.1/> .
 dbr:Imagawa_Yoshimoto	foaf:gender	"male"@en .
 dbr:Mitsuru_Nagata	rdf:type	schema:Person ;
 	rdfs:label	"Mitsuru Nagata"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1983-4-6"^^xsd:date ,
+	dbo:birthDate	"1983-04-06"^^xsd:date ,
 		"1983-04-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Albirex_Niigata ,
@@ -42,7 +42,7 @@ dbr:Jun_Sonoda	rdf:type	schema:Person ;
 	rdfs:label	"Jun Sonoda"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1989-01-23"^^xsd:date ,
-		"1989-1-23"^^xsd:date ;
+		"1989-01-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:FC_Machida_Zelvia ,
 		dbr:Roasso_Kumamoto ,
@@ -64,7 +64,7 @@ dbr:Yusuke_Mori	rdf:type	schema:Person ;
 	rdfs:label	"Yusuke Mori"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1980-07-24"^^xsd:date ,
-		"1980-7-24"^^xsd:date ;
+		"1980-07-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kawasaki_Frontale ,
 		dbr:Vegalta_Sendai ,
@@ -74,14 +74,14 @@ dbr:Yusuke_Mori	rdf:type	schema:Person ;
 dbr:Norifumi_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Norifumi Suzuki"@en ;
 	dbo:deathDate	"2014-05-15"^^xsd:date ,
-		"2014-5-15"^^xsd:date ;
+		"2014-05-15"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1933-11-26"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Takuya_Yokoyama	rdf:type	schema:Person ;
 	rdfs:label	"Takuya Yokoyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1985-6-29"^^xsd:date ,
+	dbo:birthDate	"1985-06-29"^^xsd:date ,
 		"1985-06-29"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Urawa_Red_Diamonds ,
@@ -94,20 +94,20 @@ dbr:Japan_national_under-20_football_team	rdf:type	schema:SportsTeam ,
 dbr:Itakura_Shigemune	rdf:type	schema:Person ;
 	rdfs:label	"Itakura Shigemune"@en ;
 	dbo:deathDate	"1657-01-15"^^xsd:date ,
-		"1657-1-15"^^xsd:date ;
+		"1657-01-15"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1586-1-1"^^xsd:date ;
+	dbo:birthDate	"1586-01-01"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Yōko_Kamikawa	rdf:type	schema:Person ;
 	rdfs:label	"Y\u014Dko Kamikawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1953-3-1"^^xsd:date ,
+	dbo:birthDate	"1953-03-01"^^xsd:date ,
 		"1953-03-01"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Koji_Gyotoku	rdf:type	schema:Person ;
 	rdfs:label	"Koji Gyotoku"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1965-1-28"^^xsd:date ,
+	dbo:birthDate	"1965-01-28"^^xsd:date ,
 		"1965-01-28"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Nagoya_Grampus ,
@@ -120,12 +120,12 @@ dbr:Keiko_Masuda	rdf:type	schema:MusicGroup ,
 	rdfs:label	"Keiko Masuda"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1957-09-02"^^xsd:date ,
-		"1957-9-2"^^xsd:date ;
+		"1957-09-02"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Teruyoshi_Ito	rdf:type	schema:Person ;
 	rdfs:label	"Teruyoshi Ito"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1974-8-31"^^xsd:date ,
+	dbo:birthDate	"1974-08-31"^^xsd:date ,
 		"1974-08-31"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_under-23_football_team ,
@@ -151,7 +151,7 @@ dbr:Takuya_Sugi	rdf:type	schema:Person ;
 	rdfs:label	"Takuya Sugi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1983-10-06"^^xsd:date ,
-		"1983-10-6"^^xsd:date ;
+		"1983-10-06"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Ventforet_Kofu	rdf:type	schema:Organization ,
 		schema:SportsTeam ;
@@ -162,7 +162,7 @@ dbr:Jatco_SC	rdf:type	schema:Organization ,
 dbr:Ryuji_Akiba	rdf:type	schema:Person ;
 	rdfs:label	"Ryuji Akiba"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1984-6-13"^^xsd:date ,
+	dbo:birthDate	"1984-06-13"^^xsd:date ,
 		"1984-06-13"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Vegalta_Sendai .
@@ -170,7 +170,7 @@ dbr:Kentaro_Oi	rdf:type	schema:Person ;
 	rdfs:label	"Kentaro Oi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1984-05-14"^^xsd:date ,
-		"1984-5-14"^^xsd:date ;
+		"1984-05-14"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shonan_Bellmare ,
 		dbr:Júbilo_Iwata ,
@@ -181,13 +181,13 @@ dbr:Atsushi_Yoshimoto	rdf:type	schema:Person ;
 	rdfs:label	"Atsushi Yoshimoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1982-01-14"^^xsd:date ,
-		"1982-1-14"^^xsd:date ;
+		"1982-01-14"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:V-Varen_Nagasaki .
 dbr:Bunichiro_Abe	rdf:type	schema:Person ;
 	rdfs:label	"Bunichiro Abe"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1985-4-2"^^xsd:date ,
+	dbo:birthDate	"1985-04-02"^^xsd:date ,
 		"1985-04-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Sagan_Tosu ,
@@ -195,7 +195,7 @@ dbr:Bunichiro_Abe	rdf:type	schema:Person ;
 dbr:Hiroshi_Moriyasu	rdf:type	schema:Person ;
 	rdfs:label	"Hiroshi Moriyasu"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1972-1-29"^^xsd:date ,
+	dbo:birthDate	"1972-01-29"^^xsd:date ,
 		"1972-01-29"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Sagan_Tosu ,
@@ -203,7 +203,7 @@ dbr:Hiroshi_Moriyasu	rdf:type	schema:Person ;
 dbr:Masato_Koga	rdf:type	schema:Person ;
 	rdfs:label	"Masato Koga"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1970-5-22"^^xsd:date ,
+	dbo:birthDate	"1970-05-22"^^xsd:date ,
 		"1970-05-22"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Sagan_Tosu ,
@@ -212,7 +212,7 @@ dbr:Masato_Koga	rdf:type	schema:Person ;
 dbr:Shin_Asahina	rdf:type	schema:Person ;
 	rdfs:label	"Shin Asahina"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1976-8-20"^^xsd:date ,
+	dbo:birthDate	"1976-08-20"^^xsd:date ,
 		"1976-08-20"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Roasso_Kumamoto ,
@@ -222,7 +222,7 @@ dbr:Shin_Asahina	rdf:type	schema:Person ;
 dbr:Takahiro_Endo	rdf:type	schema:Person ;
 	rdfs:label	"Takahiro Endo"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1968-7-7"^^xsd:date ,
+	dbo:birthDate	"1968-07-07"^^xsd:date ,
 		"1968-07-07"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Avispa_Fukuoka .
@@ -230,7 +230,7 @@ dbr:Takaya_Oishi	rdf:type	schema:Person ;
 	rdfs:label	"Takaya Oishi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1972-07-07"^^xsd:date ,
-		"1972-7-7"^^xsd:date ;
+		"1972-07-07"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Jatco_SC ,
 		dbr:Yokohama_FC ,
@@ -249,7 +249,7 @@ dbr:Yu_Kawamura	rdf:type	schema:Person ;
 	rdfs:label	"Yu Kawamura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1980-12-01"^^xsd:date ,
-		"1980-12-1"^^xsd:date ;
+		"1980-12-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Consadole_Sapporo ,
 		dbr:Avispa_Fukuoka ,
@@ -258,7 +258,7 @@ dbr:Yuya_Sano	rdf:type	schema:Person ;
 	rdfs:label	"Yuya Sano"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1982-04-22"^^xsd:date ,
-		"1982-4-22"^^xsd:date ;
+		"1982-04-22"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shonan_Bellmare ,
 		dbr:Shimizu_Commercial_High_School ,
@@ -269,7 +269,7 @@ dbr:Yuya_Sano	rdf:type	schema:Person ;
 dbr:Ryota_Oshima	rdf:type	schema:Person ;
 	rdfs:label	"Ryota Oshima"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1993-1-23"^^xsd:date ,
+	dbo:birthDate	"1993-01-23"^^xsd:date ,
 		"1993-01-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
@@ -280,7 +280,7 @@ dbr:Ryota_Oshima	rdf:type	schema:Person ;
 dbr:Tatsuya_Okamoto	rdf:type	schema:Person ;
 	rdfs:label	"Tatsuya Okamoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1986-9-19"^^xsd:date ,
+	dbo:birthDate	"1986-09-19"^^xsd:date ,
 		"1986-09-19"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Júbilo_Iwata ,
@@ -307,14 +307,14 @@ dbr:Montedio_Yamagata	rdf:type	schema:SportsTeam ,
 dbr:Noriko_Mizoguchi	rdf:type	schema:Person ;
 	rdfs:label	"Noriko Mizoguchi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1971-1-1"^^xsd:date ;
+	dbo:birthDate	"1971-01-01"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Pierre_Taki	rdf:type	schema:Person ,
 		schema:MusicGroup ;
 	rdfs:label	"Pierre Taki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1967-04-08"^^xsd:date ,
-		"1967-4-8"^^xsd:date ;
+		"1967-04-08"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Sagan_Tosu	rdf:type	schema:Organization ,
 		schema:SportsTeam ;
@@ -334,26 +334,26 @@ dbr:University_of_Tsukuba	rdf:type	schema:Organization ,
 dbr:Hisashi_Mizutori	rdf:type	schema:Person ;
 	rdfs:label	"Hisashi Mizutori"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1980-7-22"^^xsd:date ,
+	dbo:birthDate	"1980-07-22"^^xsd:date ,
 		"1980-07-22"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Iwao_Hakamada	rdf:type	schema:Person ;
 	rdfs:label	"Iwao Hakamada"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1936-3-10"^^xsd:date ,
+	dbo:birthDate	"1936-03-10"^^xsd:date ,
 		"1936-03-10"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Natsuki_Harada	rdf:type	schema:Person ;
 	rdfs:label	"Natsuki Harada"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1984-7-7"^^xsd:date ,
+	dbo:birthDate	"1984-07-07"^^xsd:date ,
 		"1984-07-07"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Natsuki_Takaya	rdf:type	schema:Person ;
 	rdfs:label	"Natsuki Takaya"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1973-07-07"^^xsd:date ,
-		"1973-7-7"^^xsd:date ;
+		"1973-07-07"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Takuma_Edamura	rdf:type	schema:Person ;
 	rdfs:label	"Takuma Edamura"@en ;
@@ -368,7 +368,7 @@ dbr:Toshihiro_Hattori	rdf:type	schema:Person ;
 	rdfs:label	"Toshihiro Hattori"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1973-09-23"^^xsd:date ,
-		"1973-9-23"^^xsd:date ;
+		"1973-09-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_under-23_football_team ,
 		dbr:Tokyo_Verdy ,
@@ -382,7 +382,7 @@ dbr:Keita_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Keita Suzuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1981-07-08"^^xsd:date ,
-		"1981-7-8"^^xsd:date ;
+		"1981-07-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
 		dbr:Urawa_Red_Diamonds ,
@@ -391,7 +391,7 @@ dbr:Koki_Mizuno	rdf:type	schema:Person ;
 	rdfs:label	"Koki Mizuno"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1985-09-06"^^xsd:date ,
-		"1985-9-6"^^xsd:date ;
+		"1985-09-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Vegalta_Sendai ,
 		dbr:Ventforet_Kofu ,
@@ -404,7 +404,7 @@ dbr:Koki_Mizuno	rdf:type	schema:Person ;
 dbr:Shohei_Ikeda	rdf:type	schema:Person ;
 	rdfs:label	"Shohei Ikeda"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1981-4-27"^^xsd:date ,
+	dbo:birthDate	"1981-04-27"^^xsd:date ,
 		"1981-04-27"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_under-20_football_team ,
@@ -416,7 +416,7 @@ dbr:Tetsuya_Yamazaki	rdf:type	schema:Person ;
 	rdfs:label	"Tetsuya Yamazaki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1978-07-25"^^xsd:date ,
-		"1978-7-25"^^xsd:date ;
+		"1978-07-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Cerezo_Osaka ,
 		dbr:Montedio_Yamagata ,
@@ -424,7 +424,7 @@ dbr:Tetsuya_Yamazaki	rdf:type	schema:Person ;
 <http://dbpedia.org/resource/Wataru_Inoue_(footballer)>	rdf:type	schema:Person ;
 	rdfs:label	"Wataru Inoue (footballer)"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1986-8-7"^^xsd:date ,
+	dbo:birthDate	"1986-08-07"^^xsd:date ,
 		"1986-08-07"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Tokushima_Vortis ,
@@ -447,14 +447,14 @@ dbr:Riyo_Mori	rdf:type	schema:Person ;
 dbr:Suzu_Hirose	rdf:type	schema:Person ;
 	rdfs:label	"Suzu Hirose"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1998-6-19"^^xsd:date ,
+	dbo:birthDate	"1998-06-19"^^xsd:date ,
 		"1998-06-19"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Tomonori_Hirayama	rdf:type	schema:Person ;
 	rdfs:label	"Tomonori Hirayama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1978-01-09"^^xsd:date ,
-		"1978-1-9"^^xsd:date ;
+		"1978-01-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol .
 dbr:Urawa_Red_Diamonds	rdf:type	schema:SportsTeam ,
@@ -463,13 +463,13 @@ dbr:Urawa_Red_Diamonds	rdf:type	schema:SportsTeam ,
 dbr:Yoshitaka_Amano	rdf:type	schema:Person ;
 	rdfs:label	"Yoshitaka Amano"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1952-3-26"^^xsd:date ,
+	dbo:birthDate	"1952-03-26"^^xsd:date ,
 		"1952-03-26"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Daisuke_Ichikawa	rdf:type	schema:Person ;
 	rdfs:label	"Daisuke Ichikawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1980-5-14"^^xsd:date ,
+	dbo:birthDate	"1980-05-14"^^xsd:date ,
 		"1980-05-14"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
@@ -482,19 +482,19 @@ dbr:Kaito_Yamamoto	rdf:type	schema:Person ;
 	rdfs:label	"Kaito Yamamoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1985-07-10"^^xsd:date ,
-		"1985-7-10"^^xsd:date ;
+		"1985-07-10"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Vissel_Kobe ,
 		dbr:Shimizu_S-Pulse .
 dbr:Kazuyoshi_Hoshino	rdf:type	schema:Person ;
 	rdfs:label	"Kazuyoshi Hoshino"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1947-7-1"^^xsd:date ;
+	dbo:birthDate	"1947-07-01"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Tadaaki_Hirakawa	rdf:type	schema:Person ;
 	rdfs:label	"Tadaaki Hirakawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1979-5-1"^^xsd:date ,
+	dbo:birthDate	"1979-05-01"^^xsd:date ,
 		"1979-05-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Urawa_Red_Diamonds ,
@@ -503,7 +503,7 @@ dbr:Takumi_Horiike	rdf:type	schema:Person ;
 	rdfs:label	"Takumi Horiike"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1965-09-06"^^xsd:date ,
-		"1965-9-6"^^xsd:date ;
+		"1965-09-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
 		dbr:Japan_national_football_team ,
@@ -515,14 +515,14 @@ dbr:Takumi_Horiike	rdf:type	schema:Person ;
 dbr:Noboru_Terada	rdf:type	schema:Person ;
 	rdfs:label	"Noboru Terada"@en ;
 	dbo:deathDate	"1986-09-26"^^xsd:date ,
-		"1986-9-26"^^xsd:date ;
+		"1986-09-26"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1917-11-25"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Tomoaki_Kuno	rdf:type	schema:Person ;
 	rdfs:label	"Tomoaki Kuno"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1973-9-25"^^xsd:date ,
+	dbo:birthDate	"1973-09-25"^^xsd:date ,
 		"1973-09-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kawasaki_Frontale .
@@ -530,7 +530,7 @@ dbr:Tomoaki_Kuno	rdf:type	schema:Person ;
 	rdfs:label	"Akira Matsunaga (footballer, born 1948)"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1948-08-08"^^xsd:date ,
-		"1948-8-8"^^xsd:date ;
+		"1948-08-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
 		dbr:Waseda_University ,
@@ -540,7 +540,7 @@ dbr:Hiromasa_Suguri	rdf:type	schema:Person ;
 	rdfs:label	"Hiromasa Suguri"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1976-07-29"^^xsd:date ,
-		"1976-7-29"^^xsd:date ;
+		"1976-07-29"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Sagan_Tosu ,
 		dbr:Omiya_Ardija ,
@@ -550,7 +550,7 @@ dbr:Hiromasa_Suguri	rdf:type	schema:Person ;
 dbr:Kota_Sugiyama	rdf:type	schema:Person ;
 	rdfs:label	"Kota Sugiyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1985-1-24"^^xsd:date ,
+	dbo:birthDate	"1985-01-24"^^xsd:date ,
 		"1985-01-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
@@ -559,7 +559,7 @@ dbr:Michitaka_Akimoto	rdf:type	schema:Person ;
 	rdfs:label	"Michitaka Akimoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1982-09-24"^^xsd:date ,
-		"1982-9-24"^^xsd:date ;
+		"1982-09-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_Commercial_High_School ,
 		dbr:Hosei_University ,
@@ -570,7 +570,7 @@ dbr:Ryuichi_Sugiyama	rdf:type	schema:Person ;
 	rdfs:label	"Ryuichi Sugiyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1941-07-04"^^xsd:date ,
-		"1941-7-4"^^xsd:date ;
+		"1941-07-04"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Urawa_Red_Diamonds ,
 		dbr:Japan_national_football_team ,
@@ -580,7 +580,7 @@ dbr:Junya_Sano	rdf:type	schema:Person ;
 	rdfs:label	"Junya Sano"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1982-01-09"^^xsd:date ,
-		"1982-1-9"^^xsd:date ;
+		"1982-01-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Nasu_Blasen .
 dbr:Takafumi_Suzuki	rdf:type	schema:Person ;
@@ -598,13 +598,13 @@ dbr:Yayoi_Matsumoto	rdf:type	schema:Person ;
 	rdfs:label	"Yayoi Matsumoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1990-03-08"^^xsd:date ,
-		"1990-3-8"^^xsd:date ;
+		"1990-03-08"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Rafael_Henmi	rdf:type	schema:Person ;
 	rdfs:label	"Rafael Henmi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1992-07-30"^^xsd:date ,
-		"1992-7-30"^^xsd:date ;
+		"1992-07-30"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	<http://dbpedia.org/resource/S.L._Benfica_(futsal)> ,
 		dbr:Nagoya_Oceans ,
@@ -620,7 +620,7 @@ dbr:Kenta_Hasegawa	rdf:type	schema:Person ;
 	rdfs:label	"Kenta Hasegawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1965-09-25"^^xsd:date ,
-		"1965-9-25"^^xsd:date ;
+		"1965-09-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:University_of_Tsukuba ,
 		<http://dbpedia.org/resource/Yokohama_F._Marinos> ,
@@ -631,7 +631,7 @@ dbr:Kenta_Hasegawa	rdf:type	schema:Person ;
 dbr:Masashi_Nakayama	rdf:type	schema:Person ;
 	rdfs:label	"Masashi Nakayama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1967-9-23"^^xsd:date ,
+	dbo:birthDate	"1967-09-23"^^xsd:date ,
 		"1967-09-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Azul_Claro_Numazu ,
@@ -665,10 +665,10 @@ dbr:Shimizu_Higashi_High_School	rdf:type	schema:School ,
 dbr:Nobuo_Matsunaga	rdf:type	schema:Person ;
 	rdfs:label	"Nobuo Matsunaga"@en ;
 	dbo:deathDate	"2007-09-25"^^xsd:date ,
-		"2007-9-25"^^xsd:date ;
+		"2007-09-25"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1921-12-06"^^xsd:date ,
-		"1921-12-6"^^xsd:date ;
+		"1921-12-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Hagoromo_Club ,
 		dbr:Japan_national_football_team ,
@@ -679,19 +679,19 @@ dbr:FK_Bodva_Moldava_nad_Bodvou	rdf:type	schema:SportsTeam ,
 dbr:Hidenori_Nodera	rdf:type	schema:Person ;
 	rdfs:label	"Hidenori Nodera"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1975-6-7"^^xsd:date ,
+	dbo:birthDate	"1975-06-07"^^xsd:date ,
 		"1975-06-07"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kotobuki_Shiriagari	rdf:type	schema:Person ;
 	rdfs:label	"Kotobuki Shiriagari"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1958-1-1"^^xsd:date ,
+	dbo:birthDate	"1958-01-01"^^xsd:date ,
 		"1958-01-01"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Shintarō_Sonooka	rdf:type	schema:Person ;
 	rdfs:label	"Shintar\u014D Sonooka"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1954-11-9"^^xsd:date ,
+	dbo:birthDate	"1954-11-09"^^xsd:date ,
 		"1954-11-09"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Shizuoka_Gakuen_School	rdf:type	schema:EducationalOrganization ,
@@ -701,7 +701,7 @@ dbr:Shizuoka_Gakuen_School	rdf:type	schema:EducationalOrganization ,
 dbr:Yoshikazu_Nonomura	rdf:type	schema:Person ;
 	rdfs:label	"Yoshikazu Nonomura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1972-5-8"^^xsd:date ,
+	dbo:birthDate	"1972-05-08"^^xsd:date ,
 		"1972-05-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:JEF_United_Ichihara_Chiba ,
@@ -714,24 +714,24 @@ dbr:Jun_Miho	rdf:type	schema:Person ;
 	rdfs:label	"Jun Miho"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1960-08-04"^^xsd:date ,
-		"1960-8-4"^^xsd:date ;
+		"1960-08-04"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Nobuhiro_Tanabe	rdf:type	schema:Person ;
 	rdfs:label	"Nobuhiro Tanabe"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1961-08-20"^^xsd:date ,
-		"1961-8-20"^^xsd:date ;
+		"1961-08-20"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Mitsuru_Mukojima	rdf:type	schema:Person ;
 	rdfs:label	"Mitsuru Mukojima"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1976-05-05"^^xsd:date ,
-		"1976-5-5"^^xsd:date ;
+		"1976-05-05"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Makoto_Tanaka	rdf:type	schema:Person ;
 	rdfs:label	"Makoto Tanaka"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1975-8-8"^^xsd:date ,
+	dbo:birthDate	"1975-08-08"^^xsd:date ,
 		"1975-08-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_Commercial_High_School ,
@@ -744,7 +744,7 @@ dbr:Takashi_Hirano	rdf:type	schema:Person ;
 	rdfs:label	"Takashi Hirano"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1974-07-15"^^xsd:date ,
-		"1974-7-15"^^xsd:date ;
+		"1974-07-15"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
 		dbr:Vissel_Kobe ,
@@ -762,7 +762,7 @@ dbr:Japan_national_under-23_football_team	rdf:type	schema:Organization ,
 dbr:Mayu_Asada	rdf:type	schema:Person ;
 	rdfs:label	"Mayu Asada"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1975-6-26"^^xsd:date ,
+	dbo:birthDate	"1975-06-26"^^xsd:date ,
 		"1975-06-26"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Ẽfini_Hiroshima_SC	rdf:type	schema:SportsTeam ,
@@ -774,7 +774,7 @@ dbr:Kashima_Antlers	rdf:type	schema:Organization ,
 dbr:Masatoshi_Shima	rdf:type	schema:Person ;
 	rdfs:label	"Masatoshi Shima"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1943-8-22"^^xsd:date ,
+	dbo:birthDate	"1943-08-22"^^xsd:date ,
 		"1943-08-22"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Meiji_University	rdf:type	schema:Organization ,
@@ -784,7 +784,7 @@ dbr:Meiji_University	rdf:type	schema:Organization ,
 dbr:Mitsutoshi_Tsushima	rdf:type	schema:Person ;
 	rdfs:label	"Mitsutoshi Tsushima"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1974-7-30"^^xsd:date ,
+	dbo:birthDate	"1974-07-30"^^xsd:date ,
 		"1974-07-30"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Nagoya_Grampus ,
@@ -817,7 +817,7 @@ dbr:Japan_national_under-17_football_team	rdf:type	schema:SportsTeam ,
 dbr:Kazuo_Uchida	rdf:type	schema:Person ;
 	rdfs:label	"Kazuo Uchida"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1962-4-18"^^xsd:date ,
+	dbo:birthDate	"1962-04-18"^^xsd:date ,
 		"1962-04-18"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Komazawa_University .
@@ -832,7 +832,7 @@ dbr:Kazuyori_Mochizuki	rdf:type	schema:Person ;
 dbr:Yuki_Nakamura	rdf:type	schema:Person ;
 	rdfs:label	"Yuki Nakamura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1987-6-4"^^xsd:date ,
+	dbo:birthDate	"1987-06-04"^^xsd:date ,
 		"1987-06-04"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:MŠK_Rimavská_Sobota ,
@@ -866,14 +866,14 @@ dbr:Keio_University	rdf:type	schema:CollegeOrUniversity ,
 dbr:Hisayasu_Satō	rdf:type	schema:Person ;
 	rdfs:label	"Hisayasu Sat\u014D"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1959-8-15"^^xsd:date ,
+	dbo:birthDate	"1959-08-15"^^xsd:date ,
 		"1959-08-15"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Atsuto_Tatara	rdf:type	schema:Person ;
 	rdfs:label	"Atsuto Tatara"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1987-06-23"^^xsd:date ,
-		"1987-6-23"^^xsd:date ;
+		"1987-06-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:JEF_United_Ichihara_Chiba ,
 		dbr:Vegalta_Sendai .
@@ -885,18 +885,18 @@ dbr:Hiromitsu_Horiike	rdf:type	schema:Person ;
 	rdfs:label	"Hiromitsu Horiike"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1971-05-24"^^xsd:date ,
-		"1971-5-24"^^xsd:date ;
+		"1971-05-24"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Hirotoki_Onozawa	rdf:type	schema:Person ;
 	rdfs:label	"Hirotoki Onozawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1978-3-29"^^xsd:date ;
+	dbo:birthDate	"1978-03-29"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Hiroyuki_Usui	rdf:type	schema:Person ;
 	rdfs:label	"Hiroyuki Usui"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1953-08-04"^^xsd:date ,
-		"1953-8-4"^^xsd:date ;
+		"1953-08-04"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
 		dbr:Waseda_University ,
@@ -905,20 +905,20 @@ dbr:Katsuyuki_Nakasuga	rdf:type	schema:Person ;
 	rdfs:label	"Katsuyuki Nakasuga"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1981-08-09"^^xsd:date ,
-		"1981-8-9"^^xsd:date ;
+		"1981-08-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Yamaha_Motor_Company .
 dbr:Kazuhito_Mochizuki	rdf:type	schema:Person ;
 	rdfs:label	"Kazuhito Mochizuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1957-12-01"^^xsd:date ,
-		"1957-12-1"^^xsd:date ;
+		"1957-12-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Júbilo_Iwata .
 dbr:Kazuki_Sakurada	rdf:type	schema:Person ;
 	rdfs:label	"Kazuki Sakurada"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1982-8-1"^^xsd:date ,
+	dbo:birthDate	"1982-08-01"^^xsd:date ,
 		"1982-08-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Thespakusatsu_Gunma ,
@@ -928,7 +928,7 @@ dbr:Kazunori_Iio	rdf:type	schema:Person ;
 	rdfs:label	"Kazunori Iio"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1982-02-23"^^xsd:date ,
-		"1982-2-23"^^xsd:date ;
+		"1982-02-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Tokyo_Verdy ,
 		dbr:Japan_national_under-20_football_team ,
@@ -937,21 +937,21 @@ dbr:Kazunori_Iio	rdf:type	schema:Person ;
 		dbr:Kawasaki_Frontale .
 dbr:Keisuke_Serizawa	rdf:type	schema:Person ;
 	rdfs:label	"Keisuke Serizawa"@en ;
-	dbo:deathDate	"1984-4-5"^^xsd:date ,
+	dbo:deathDate	"1984-04-05"^^xsd:date ,
 		"1984-04-05"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1895-05-13"^^xsd:date ,
-		"1895-5-13"^^xsd:date ;
+		"1895-05-13"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kōnosuke_Uda	rdf:type	schema:Person ;
 	rdfs:label	"K\u014Dnosuke Uda"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1966-2-1"^^xsd:date ;
+	dbo:birthDate	"1966-02-01"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Masaaki_Yanagishita	rdf:type	schema:Person ;
 	rdfs:label	"Masaaki Yanagishita"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1960-1-1"^^xsd:date ,
+	dbo:birthDate	"1960-01-01"^^xsd:date ,
 		"1960-01-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Júbilo_Iwata ,
@@ -961,7 +961,7 @@ dbr:Masataka_Imai	rdf:type	schema:Person ;
 	rdfs:label	"Masataka Imai"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1959-04-02"^^xsd:date ,
-		"1959-4-2"^^xsd:date ;
+		"1959-04-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Honda_FC ,
 		dbr:Kokushikan_University ;
@@ -970,7 +970,7 @@ dbr:Michihisa_Date	rdf:type	schema:Person ;
 	rdfs:label	"Michihisa Date"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1966-08-22"^^xsd:date ,
-		"1966-8-22"^^xsd:date ;
+		"1966-08-22"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Júbilo_Iwata ,
 		dbr:Kashiwa_Reysol ,
@@ -980,30 +980,30 @@ dbr:Mitsuhiro_Misaki	rdf:type	schema:Person ;
 	rdfs:label	"Mitsuhiro Misaki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1970-05-06"^^xsd:date ,
-		"1970-5-6"^^xsd:date ;
+		"1970-05-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Cerezo_Osaka .
 dbr:Motonobu_Tako	rdf:type	schema:Person ;
 	rdfs:label	"Motonobu Tako"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1972-4-22"^^xsd:date ,
+	dbo:birthDate	"1972-04-22"^^xsd:date ,
 		"1972-04-22"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Avispa_Fukuoka .
 dbr:Naotaka_Takeda	rdf:type	schema:Person ;
 	rdfs:label	"Naotaka Takeda"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1978-7-13"^^xsd:date ,
+	dbo:birthDate	"1978-07-13"^^xsd:date ,
 		"1978-07-13"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Albirex_Niigata .
 dbr:Shigeo_Arai	rdf:type	schema:Person ;
 	rdfs:label	"Shigeo Arai"@en ;
 	dbo:deathDate	"1944-07-19"^^xsd:date ,
-		"1944-7-19"^^xsd:date ;
+		"1944-07-19"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1916-08-08"^^xsd:date ,
-		"1916-8-8"^^xsd:date ;
+		"1916-08-08"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Shinichi_Morishita	rdf:type	schema:Person ;
 	rdfs:label	"Shinichi Morishita"@en ;
@@ -1018,7 +1018,7 @@ dbr:Tadaaki_Matsubara	rdf:type	schema:Person ;
 	rdfs:label	"Tadaaki Matsubara"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1977-07-02"^^xsd:date ,
-		"1977-7-2"^^xsd:date ;
+		"1977-07-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Tokyo_Verdy ,
 		dbr:Shimizu_S-Pulse .
@@ -1036,7 +1036,7 @@ dbr:Tadatoshi_Masuda	rdf:type	schema:Person ;
 dbr:Takayuki_Nishigaya	rdf:type	schema:Person ;
 	rdfs:label	"Takayuki Nishigaya"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1973-5-12"^^xsd:date ,
+	dbo:birthDate	"1973-05-12"^^xsd:date ,
 		"1973-05-12"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Albirex_Niigata ,
@@ -1049,7 +1049,7 @@ dbr:Takayuki_Nishigaya	rdf:type	schema:Person ;
 dbr:Takayuki_Sugiyama	rdf:type	schema:Person ;
 	rdfs:label	"Takayuki Sugiyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1976-3-24"^^xsd:date ,
+	dbo:birthDate	"1976-03-24"^^xsd:date ,
 		"1976-03-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:JEF_United_Ichihara_Chiba ,
@@ -1057,13 +1057,13 @@ dbr:Takayuki_Sugiyama	rdf:type	schema:Person ;
 dbr:Tomohiko_Hoshina	rdf:type	schema:Person ;
 	rdfs:label	"Tomohiko Hoshina"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1987-4-7"^^xsd:date ,
+	dbo:birthDate	"1987-04-07"^^xsd:date ,
 		"1987-04-07"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Tomoyasu_Ando	rdf:type	schema:Person ;
 	rdfs:label	"Tomoyasu Ando"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1974-5-23"^^xsd:date ,
+	dbo:birthDate	"1974-05-23"^^xsd:date ,
 		"1974-05-23"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Avispa_Fukuoka ,
@@ -1072,7 +1072,7 @@ dbr:Tomoyasu_Ando	rdf:type	schema:Person ;
 dbr:Tomoyuki_Arata	rdf:type	schema:Person ;
 	rdfs:label	"Tomoyuki Arata"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1985-10-3"^^xsd:date ,
+	dbo:birthDate	"1985-10-03"^^xsd:date ,
 		"1985-10-03"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Júbilo_Iwata ,
@@ -1086,13 +1086,13 @@ dbr:Tomoyuki_Higuchi	rdf:type	schema:Person ;
 	rdfs:label	"Tomoyuki Higuchi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1985-03-02"^^xsd:date ,
-		"1985-3-2"^^xsd:date ;
+		"1985-03-02"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Toshihide_Saito	rdf:type	schema:Person ;
 	rdfs:label	"Toshihide Saito"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1973-04-20"^^xsd:date ,
-		"1973-4-20"^^xsd:date ;
+		"1973-04-20"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
 		dbr:Shimizu_Higashi_High_School ,
@@ -1105,7 +1105,7 @@ dbr:Ushiomaru_Motoyasu	rdf:type	schema:Person ;
 	rdfs:label	"Ushiomaru Motoyasu"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1978-05-11"^^xsd:date ,
-		"1978-5-11"^^xsd:date ;
+		"1978-05-11"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Yahiro_Kazama	rdf:type	schema:Person ;
 	rdfs:label	"Yahiro Kazama"@en ;
@@ -1123,7 +1123,7 @@ dbr:Yahiro_Kazama	rdf:type	schema:Person ;
 dbr:Yasutoshi_Miura	rdf:type	schema:Person ;
 	rdfs:label	"Yasutoshi Miura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1965-7-15"^^xsd:date ,
+	dbo:birthDate	"1965-07-15"^^xsd:date ,
 		"1965-07-15"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
@@ -1136,7 +1136,7 @@ dbr:Yasutoshi_Miura	rdf:type	schema:Person ;
 dbr:Yōsuke_Nozawa	rdf:type	schema:Person ;
 	rdfs:label	"Y\u014Dsuke Nozawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1979-11-9"^^xsd:date ,
+	dbo:birthDate	"1979-11-09"^^xsd:date ,
 		"1979-11-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Albirex_Niigata_Singapore_FC ,
@@ -1161,7 +1161,7 @@ dbr:Tokyo_Verdy	rdf:type	schema:SportsTeam ,
 dbr:Toranosuke_Takagi	rdf:type	schema:Person ;
 	rdfs:label	"Toranosuke Takagi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1974-2-12"^^xsd:date ;
+	dbo:birthDate	"1974-02-12"^^xsd:date ;
 	foaf:gender	"male"@en .
 <http://dbpedia.org/resource/Vancouver_Whitecaps_(1986\u20132010)>	rdf:type	schema:SportsTeam ,
 		schema:Organization ;
@@ -1200,7 +1200,7 @@ dbr:Kashiwa_Reysol	rdf:type	schema:SportsTeam ,
 dbr:Kazuyoshi_Miura	rdf:type	schema:Person ;
 	rdfs:label	"Kazuyoshi Miura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1967-2-26"^^xsd:date ,
+	dbo:birthDate	"1967-02-26"^^xsd:date ,
 		"1967-02-26"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Vissel_Kobe ,
@@ -1240,28 +1240,28 @@ dbr:Mitsuteru_Watanabe	rdf:type	schema:Person ;
 	rdfs:label	"Mitsuteru Watanabe"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1974-04-10"^^xsd:date ,
-		"1974-4-10"^^xsd:date ;
+		"1974-04-10"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
 		dbr:Gamba_Osaka .
 dbr:Ryohei_Koike	rdf:type	schema:Person ;
 	rdfs:label	"Ryohei Koike"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1980-8-24"^^xsd:date ,
+	dbo:birthDate	"1980-08-24"^^xsd:date ,
 		"1980-08-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Oita_Trinita .
 dbr:Kinichiro_Ishikawa	rdf:type	schema:Person ;
 	rdfs:label	"Kinichiro Ishikawa"@en ;
 	dbo:deathDate	"1945-09-10"^^xsd:date ,
-		"1945-1-1"^^xsd:date ;
+		"1945-01-01"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1871-1-1"^^xsd:date ;
+	dbo:birthDate	"1871-01-01"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kenta_Kano	rdf:type	schema:Person ;
 	rdfs:label	"Kenta Kano"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1986-5-2"^^xsd:date ,
+	dbo:birthDate	"1986-05-02"^^xsd:date ,
 		"1986-05-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
@@ -1269,14 +1269,14 @@ dbr:Kenta_Kano	rdf:type	schema:Person ;
 		<http://dbpedia.org/resource/Yokohama_F._Marinos> .
 dbr:Masatomi_Kimura	rdf:type	schema:Person ;
 	rdfs:label	"Masatomi Kimura"@en ;
-	dbo:deathDate	"1960-2-14"^^xsd:date ;
+	dbo:deathDate	"1960-02-14"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1891-12-6"^^xsd:date ;
+	dbo:birthDate	"1891-12-06"^^xsd:date ;
 	foaf:gender	"male"@en .
 <http://dbpedia.org/resource/Keisuke_Ota_(footballer,_born_1979)>	rdf:type	schema:Person ;
 	rdfs:label	"Keisuke Ota (footballer, born 1979)"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1979-4-24"^^xsd:date ,
+	dbo:birthDate	"1979-04-24"^^xsd:date ,
 		"1979-04-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:V-Varen_Nagasaki ,
@@ -1294,20 +1294,20 @@ dbr:Hokuto_Matsumura	rdf:type	schema:MusicGroup ,
 	rdfs:label	"Hokuto Matsumura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1995-06-18"^^xsd:date ,
-		"1995-6-18"^^xsd:date ;
+		"1995-06-18"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kiichiro_Toyoda	rdf:type	schema:Person ;
 	rdfs:label	"Kiichiro Toyoda"@en ;
-	dbo:deathDate	"1952-3-27"^^xsd:date ,
+	dbo:deathDate	"1952-03-27"^^xsd:date ,
 		"1952-03-27"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1894-6-11"^^xsd:date ,
+	dbo:birthDate	"1894-06-11"^^xsd:date ,
 		"1894-06-11"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Takaaki_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Takaaki Suzuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1981-10-7"^^xsd:date ,
+	dbo:birthDate	"1981-10-07"^^xsd:date ,
 		"1981-10-07"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Mito_HollyHock ,
@@ -1319,7 +1319,7 @@ dbr:Masaki_Yamamoto	rdf:type	schema:Person ;
 	rdfs:label	"Masaki Yamamoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1987-08-24"^^xsd:date ,
-		"1987-8-24"^^xsd:date ;
+		"1987-08-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
 		dbr:Kawasaki_Frontale ,
@@ -1328,7 +1328,7 @@ dbr:Masaki_Yamamoto	rdf:type	schema:Person ;
 dbr:Hisashi_Aizawa	rdf:type	schema:Person ;
 	rdfs:label	"Hisashi Aizawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1986-3-8"^^xsd:date ,
+	dbo:birthDate	"1986-03-08"^^xsd:date ,
 		"1986-03-08"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:GNK_Dinamo_Zagreb	rdf:type	schema:Organization ,
@@ -1347,7 +1347,7 @@ dbr:Shigeo_Sawairi	rdf:type	schema:Person ;
 	rdfs:label	"Shigeo Sawairi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1963-05-08"^^xsd:date ,
-		"1963-5-8"^^xsd:date ;
+		"1963-05-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Hosei_University ,
 		dbr:Nagoya_Grampus .
@@ -1357,14 +1357,14 @@ dbr:Vegalta_Sendai	rdf:type	schema:Organization ,
 dbr:Satoru_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Satoru Suzuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1975-7-19"^^xsd:date ,
+	dbo:birthDate	"1975-07-19"^^xsd:date ,
 		"1975-07-19"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Cerezo_Osaka .
 dbr:Takeshi_Oki	rdf:type	schema:Person ;
 	rdfs:label	"Takeshi Oki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1961-7-16"^^xsd:date ,
+	dbo:birthDate	"1961-07-16"^^xsd:date ,
 		"1961-07-16"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kawasaki_Frontale .
@@ -1372,7 +1372,7 @@ dbr:Takumi_Morikawa	rdf:type	schema:Person ;
 	rdfs:label	"Takumi Morikawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1977-07-11"^^xsd:date ,
-		"1977-7-11"^^xsd:date ;
+		"1977-07-11"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Roasso_Kumamoto ,
 		dbr:Consadole_Sapporo ,
@@ -1382,7 +1382,7 @@ dbr:Takumi_Morikawa	rdf:type	schema:Person ;
 dbr:Toru_Irie	rdf:type	schema:Person ;
 	rdfs:label	"Toru Irie"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1977-7-8"^^xsd:date ,
+	dbo:birthDate	"1977-07-08"^^xsd:date ,
 		"1977-07-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
@@ -1435,22 +1435,22 @@ dbr:Shinya_Aoki	rdf:type	schema:Person ;
 	rdfs:label	"Shinya Aoki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1983-05-09"^^xsd:date ,
-		"1983-5-9"^^xsd:date ;
+		"1983-05-09"^^xsd:date ;
 	foaf:gender	"male"@en .
 <http://dbpedia.org/resource/Makoto_Watanabe_(footballer)>	rdf:type	schema:Person ;
 	rdfs:label	"Makoto Watanabe (footballer)"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1980-9-25"^^xsd:date ,
+	dbo:birthDate	"1980-09-25"^^xsd:date ,
 		"1980-09-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Ventforet_Kofu ,
 		dbr:Kataller_Toyama .
 dbr:Masanori_Sanada	rdf:type	schema:Person ;
 	rdfs:label	"Masanori Sanada"@en ;
-	dbo:deathDate	"2011-9-6"^^xsd:date ,
+	dbo:deathDate	"2011-09-06"^^xsd:date ,
 		"2011-09-06"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1968-3-6"^^xsd:date ,
+	dbo:birthDate	"1968-03-06"^^xsd:date ,
 		"1968-03-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Yokohama_Flügels ,
@@ -1460,7 +1460,7 @@ dbr:Masanori_Sanada	rdf:type	schema:Person ;
 dbr:Shigeyoshi_Mochizuki	rdf:type	schema:Person ;
 	rdfs:label	"Shigeyoshi Mochizuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1973-7-9"^^xsd:date ,
+	dbo:birthDate	"1973-07-09"^^xsd:date ,
 		"1973-07-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_Commercial_High_School ,
@@ -1472,7 +1472,7 @@ dbr:Shigeyoshi_Mochizuki	rdf:type	schema:Person ;
 dbr:Shun_Nagasawa	rdf:type	schema:Person ;
 	rdfs:label	"Shun Nagasawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1988-8-25"^^xsd:date ,
+	dbo:birthDate	"1988-08-25"^^xsd:date ,
 		"1988-08-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Gamba_Osaka_U-23 ,
@@ -1488,15 +1488,15 @@ dbr:Yoshihiro_Murakami	rdf:type	schema:Person ;
 dbr:Yoshito_Usui	rdf:type	schema:Person ;
 	rdfs:label	"Yoshito Usui"@en ;
 	dbo:deathDate	"2009-09-11"^^xsd:date ,
-		"2009-9-11"^^xsd:date ;
+		"2009-09-11"^^xsd:date ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1958-4-21"^^xsd:date ,
+	dbo:birthDate	"1958-04-21"^^xsd:date ,
 		"1958-04-21"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Akinori_Nishizawa	rdf:type	schema:Person ;
 	rdfs:label	"Akinori Nishizawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1976-6-18"^^xsd:date ,
+	dbo:birthDate	"1976-06-18"^^xsd:date ,
 		"1976-06-18"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:FC_Volendam ,
@@ -1519,7 +1519,7 @@ dbr:Taisuke_Muramatsu	rdf:type	schema:Person ;
 dbr:Yoshio_Kikugawa	rdf:type	schema:Person ;
 	rdfs:label	"Yoshio Kikugawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1944-9-12"^^xsd:date ,
+	dbo:birthDate	"1944-09-12"^^xsd:date ,
 		"1944-09-12"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Japan_national_football_team ,
@@ -1529,14 +1529,14 @@ dbr:Yoshio_Kikugawa	rdf:type	schema:Person ;
 <http://dbpedia.org/resource/Kiko,_Princess_Akishino>	rdf:type	schema:Person ;
 	rdfs:label	"Kiko, Princess Akishino"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1966-9-11"^^xsd:date ,
+	dbo:birthDate	"1966-09-11"^^xsd:date ,
 		"1966-09-11"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Hiroki_Kobayashi	rdf:type	schema:Person ;
 	rdfs:label	"Hiroki Kobayashi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1977-05-24"^^xsd:date ,
-		"1977-5-24"^^xsd:date ;
+		"1977-05-24"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Roasso_Kumamoto ,
 		dbr:Consadole_Sapporo ,
@@ -1546,7 +1546,7 @@ dbr:Hiroki_Kobayashi	rdf:type	schema:Person ;
 dbr:Kotetsu_Boku	rdf:type	schema:Person ;
 	rdfs:label	"Kotetsu Boku"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1977-5-27"^^xsd:date ,
+	dbo:birthDate	"1977-05-27"^^xsd:date ,
 		"1977-05-27"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Toru_Sano	rdf:type	schema:Person ;
@@ -1562,7 +1562,7 @@ dbr:Toyohito_Mochizuki	rdf:type	schema:Person ;
 	rdfs:label	"Toyohito Mochizuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1953-09-18"^^xsd:date ,
-		"1953-9-18"^^xsd:date ;
+		"1953-09-18"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kawasaki_Frontale ,
 		dbr:Japan_national_football_team .
@@ -1570,7 +1570,7 @@ dbr:Kota_Miyamoto	rdf:type	schema:Person ;
 	rdfs:label	"Kota Miyamoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1996-06-19"^^xsd:date ,
-		"1996-6-19"^^xsd:date ;
+		"1996-06-19"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	<http://dbpedia.org/resource/J.League_U-22_Selection> ,
 		dbr:Shimizu_S-Pulse ,
@@ -1580,7 +1580,7 @@ dbr:Shota_Kaneko	rdf:type	schema:Person ;
 	rdfs:label	"Shota Kaneko"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1995-05-02"^^xsd:date ,
-		"1995-5-2"^^xsd:date ;
+		"1995-05-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Tochigi_SC ,
 		dbr:Shimizu_S-Pulse ,
@@ -1589,14 +1589,14 @@ dbr:Yosuke_Matsumoto	rdf:type	schema:Person ;
 	rdfs:label	"Yosuke Matsumoto"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1990-03-27"^^xsd:date ,
-		"1990-3-27"^^xsd:date ;
+		"1990-03-27"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Giravanz_Kitakyushu .
 dbr:Tatsuya_Yazawa	rdf:type	schema:Person ;
 	rdfs:label	"Tatsuya Yazawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1984-10-03"^^xsd:date ,
-		"1984-10-3"^^xsd:date ;
+		"1984-10-03"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kashiwa_Reysol ,
 		dbr:FC_Tokyo ,
@@ -1616,7 +1616,7 @@ dbr:Minami_Kuribayashi	rdf:type	schema:Person ,
 		schema:MusicGroup ;
 	rdfs:label	"Minami Kuribayashi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1976-6-11"^^xsd:date ,
+	dbo:birthDate	"1976-06-11"^^xsd:date ,
 		"1976-06-11"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Mito_HollyHock	rdf:type	schema:SportsTeam ,
@@ -1654,7 +1654,7 @@ dbr:Japan_national_football_team	rdf:type	schema:SportsTeam ,
 dbr:Atsushi_Uchiyama	rdf:type	schema:Person ;
 	rdfs:label	"Atsushi Uchiyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1959-6-29"^^xsd:date ,
+	dbo:birthDate	"1959-06-29"^^xsd:date ,
 		"1959-06-29"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kokushikan_University ,
@@ -1665,7 +1665,7 @@ dbr:Hiroyuki_Shirai	rdf:type	schema:Person ;
 	rdfs:label	"Hiroyuki Shirai"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1974-06-17"^^xsd:date ,
-		"1974-6-17"^^xsd:date ;
+		"1974-06-17"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:FC_Ryukyu ,
 		dbr:Shimizu_S-Pulse ,
@@ -1678,7 +1678,7 @@ dbr:Hiroyuki_Shirai	rdf:type	schema:Person ;
 dbr:Takahiro_Yamanishi	rdf:type	schema:Person ;
 	rdfs:label	"Takahiro Yamanishi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1976-4-2"^^xsd:date ,
+	dbo:birthDate	"1976-04-02"^^xsd:date ,
 		"1976-04-02"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
@@ -1688,7 +1688,7 @@ dbr:Takahiro_Yamanishi	rdf:type	schema:Person ;
 dbr:Naoki_Naito	rdf:type	schema:Person ;
 	rdfs:label	"Naoki Naito"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1968-5-30"^^xsd:date ,
+	dbo:birthDate	"1968-05-30"^^xsd:date ,
 		"1968-05-30"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
@@ -1700,28 +1700,28 @@ dbr:Naoki_Naito	rdf:type	schema:Person ;
 dbr:Chikayuki_Mochizuki	rdf:type	schema:Person ;
 	rdfs:label	"Chikayuki Mochizuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1972-5-20"^^xsd:date ,
+	dbo:birthDate	"1972-05-20"^^xsd:date ,
 		"1972-05-20"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kazuo_Shimizu	rdf:type	schema:Person ;
 	rdfs:label	"Kazuo Shimizu"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1975-04-30"^^xsd:date ,
-		"1975-4-30"^^xsd:date ;
+		"1975-04-30"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Cerezo_Osaka .
 dbr:Masato_Otake	rdf:type	schema:Person ;
 	rdfs:label	"Masato Otake"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1971-08-31"^^xsd:date ,
-		"1971-8-31"^^xsd:date ;
+		"1971-08-31"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Cerezo_Osaka .
 dbr:Rikihiro_Sugiyama	rdf:type	schema:Person ;
 	rdfs:label	"Rikihiro Sugiyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1987-05-01"^^xsd:date ,
-		"1987-5-1"^^xsd:date ;
+		"1987-05-01"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Kawasaki_Frontale ,
 		dbr:Shizuoka_Gakuen_School ,
@@ -1729,14 +1729,14 @@ dbr:Rikihiro_Sugiyama	rdf:type	schema:Person ;
 dbr:Ryo_Oishi	rdf:type	schema:Person ;
 	rdfs:label	"Ryo Oishi"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1977-7-13"^^xsd:date ,
+	dbo:birthDate	"1977-07-13"^^xsd:date ,
 		"1977-07-13"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse .
 dbr:Takashi_Sakurai	rdf:type	schema:Person ;
 	rdfs:label	"Takashi Sakurai"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1977-5-4"^^xsd:date ,
+	dbo:birthDate	"1977-05-04"^^xsd:date ,
 		"1977-05-04"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Yokohama_Flügels ,
@@ -1745,7 +1745,7 @@ dbr:Takashi_Sakurai	rdf:type	schema:Person ;
 dbr:Hayato_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Hayato Suzuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1982-5-13"^^xsd:date ,
+	dbo:birthDate	"1982-05-13"^^xsd:date ,
 		"1982-05-13"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
@@ -1753,7 +1753,7 @@ dbr:Hayato_Suzuki	rdf:type	schema:Person ;
 dbr:Hiroki_Iizuka	rdf:type	schema:Person ;
 	rdfs:label	"Hiroki Iizuka"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1978-4-4"^^xsd:date ,
+	dbo:birthDate	"1978-04-04"^^xsd:date ,
 		"1978-04-04"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Montedio_Yamagata .
@@ -1761,7 +1761,7 @@ dbr:Kosuke_Suzuki	rdf:type	schema:Person ;
 	rdfs:label	"Kosuke Suzuki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1981-06-16"^^xsd:date ,
-		"1981-6-16"^^xsd:date ;
+		"1981-06-16"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
 		dbr:Ventforet_Kofu .
@@ -1769,7 +1769,7 @@ dbr:Tsuyoshi_Tanikawa	rdf:type	schema:Person ;
 	rdfs:label	"Tsuyoshi Tanikawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1980-04-25"^^xsd:date ,
-		"1980-4-25"^^xsd:date ;
+		"1980-04-25"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
 		dbr:Mito_HollyHock ,
@@ -1777,14 +1777,14 @@ dbr:Tsuyoshi_Tanikawa	rdf:type	schema:Person ;
 dbr:Yusuke_Nakamura	rdf:type	schema:Person ;
 	rdfs:label	"Yusuke Nakamura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1986-10-6"^^xsd:date ,
+	dbo:birthDate	"1986-10-06"^^xsd:date ,
 		"1986-10-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Vissel_Kobe .
 dbr:Yusuke_Yoshizaki	rdf:type	schema:Person ;
 	rdfs:label	"Yusuke Yoshizaki"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1981-6-12"^^xsd:date ,
+	dbo:birthDate	"1981-06-12"^^xsd:date ,
 		"1981-06-12"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ,
@@ -1795,7 +1795,7 @@ dbr:Yusuke_Yoshizaki	rdf:type	schema:Person ;
 dbr:Koya_Kitagawa	rdf:type	schema:Person ;
 	rdfs:label	"Koya Kitagawa"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1996-7-26"^^xsd:date ,
+	dbo:birthDate	"1996-07-26"^^xsd:date ,
 		"1996-07-26"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	<http://dbpedia.org/resource/J.League_U-22_Selection> ,
@@ -1804,34 +1804,34 @@ dbr:Miki_Nonaka	rdf:type	schema:MusicGroup ,
 		schema:Person ;
 	rdfs:label	"Miki Nonaka"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1999-10-7"^^xsd:date ,
+	dbo:birthDate	"1999-10-07"^^xsd:date ,
 		"1999-10-07"^^xsd:date ;
 	foaf:gender	"female"@en .
 dbr:Naoki_Kuriyama	rdf:type	schema:Person ;
 	rdfs:label	"Naoki Kuriyama"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1990-12-08"^^xsd:date ,
-		"1990-12-8"^^xsd:date ;
+		"1990-12-08"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Senshu_University ,
 		dbr:Montedio_Yamagata .
 dbr:Ryosuke_Nomura	rdf:type	schema:Person ;
 	rdfs:label	"Ryosuke Nomura"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1993-7-9"^^xsd:date ,
+	dbo:birthDate	"1993-07-09"^^xsd:date ,
 		"1993-07-09"^^xsd:date ;
 	foaf:gender	"male"@en .
 dbr:Kazushi_Uchida	rdf:type	schema:Person ;
 	rdfs:label	"Kazushi Uchida"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
 	dbo:birthDate	"1987-10-09"^^xsd:date ,
-		"1987-10-9"^^xsd:date ;
+		"1987-10-09"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Fujieda_MYFC .
 dbr:Ryuji_Okada	rdf:type	schema:Person ;
 	rdfs:label	"Ryuji Okada"@en ;
 	dbo:birthPlace	<http://dbpedia.org/resource/Shizuoka,_Shizuoka> ;
-	dbo:birthDate	"1974-9-6"^^xsd:date ,
+	dbo:birthDate	"1974-09-06"^^xsd:date ,
 		"1974-09-06"^^xsd:date ;
 	foaf:gender	"male"@en ;
 	dbo:team	dbr:Shimizu_S-Pulse ;
