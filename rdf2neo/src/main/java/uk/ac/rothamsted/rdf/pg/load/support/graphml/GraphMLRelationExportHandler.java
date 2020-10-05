@@ -14,6 +14,8 @@ import java.util.Set;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -37,30 +39,9 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 @Scope ( scopeName = "loadingSession" )
 public class GraphMLRelationExportHandler extends PGRelationHandler
 {
+	@Autowired
+	private GMLDataManager dataManager; 
 
-	// First version: in order to create the key values, we have to store the property names gathered
-	// for each of the nodes
-
-	private static HashSet<String> gatheredEdgeProperties = new HashSet<> ();
-	{
-		// in this case the iri is built using the md5
-		// we get then the type as well at the same point
-		addGatheredEdgeProperty ( GraphMLUtils.LABEL_EDGE_ATTR );
-	}
-
-	// for threading safety purposes
-	private static synchronized void addGatheredEdgeProperty ( String property )
-	{
-		gatheredEdgeProperties.add ( property );
-	}
-
-	public static synchronized HashSet<String> getGatheredEdgeProperties ()
-	{
-		return gatheredEdgeProperties;
-	}
-
-	// semaphore to write in the appropriate file
-	private static Object lock = new Object ();
 
 	public GraphMLRelationExportHandler ()
 	{
@@ -107,8 +88,9 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 
 				Object cyAttrVal = vals.size () > 1 ? vals.toArray ( new Object[ 0 ] ) : vals.iterator ().next ();
 				relProperties.put ( attre.getKey (), cyAttrVal );
-				// we add the property to the global keys
-				addGatheredEdgeProperty ( attre.getKey () );
+				
+				// and collect property types
+				dataManager.gatherEdgeProperty ( attre.getKey () );
 			}
 			cyparams.put ( "properties", relProperties );
 
@@ -124,7 +106,6 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 		graphMLRelData
 			.entrySet ()
 			.parallelStream ()
-			.parallel ()
 			.forEach ( entry -> 
 			{
 				// the relationships are grouped by type

@@ -1,4 +1,4 @@
-* Continue from MultiPGLoader
+* Continue from GraphMLNodeExportHandler (common node handler that has GraphMLDataManager)
 * (DONE) its getSimpleLoader factory needs a factory, which needs to be initialised
   with a generated class. 
 * (DONE) To be decided: where is the class set? In the MPGL?! Probably yes, and this
@@ -9,7 +9,7 @@
   * The output file used by that code is taken from the configuration. Obviously that's wrong, we
   need to pass the file as parameter and also to have the OutputStream option.
 * `GraphMLNodeExportHandler` changes
-	* `gatheredNodeProperties` should not be static. It's not coherent with the rest, the architecture 
+	* (Done) `gatheredNodeProperties` should not be static. It's not coherent with the rest, the architecture 
 	is such that handlers and simple loaders have the lifespan of a loading session's lifespan, and the rest of Spring 
 	components have the lifespan of a Spring context lifespan. Static stuff are bad because, for instance, one cannot 
 	run two GraphML converters of different RDF datasets in the same JVM. For example, this is something that could happen

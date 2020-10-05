@@ -62,16 +62,13 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 		for ( Resource nodeRes: nodeResources )
 		{
 			PGNode cyNode = rdfMgr.getPGNode ( nodeRes, this.getLabelsSparql (), this.getNodePropsSparql () );
-
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
-			
-			// We always need a default, to be able to fetch the nodes during relation creation stage
 			labels.add ( defaultLabel );
 			
-			List<Map<String, Object>> cyNodes = cyData.get ( labels );
-			if ( cyNodes == null ) cyData.put ( labels, cyNodes = new LinkedList<> () );
+			@SuppressWarnings ( "unchecked" )
+			List<Map<String, Object>> cyNodes = cyData.computeIfAbsent ( labels, LinkedList::new );
 
-			cyNodes.add ( neoMgr.getCypherProperties ( cyNode ) );
+			cyNodes.add ( neoMgr.flatPGProperties ( cyNode ) );
 		} 
 		
 		// OK, now we are ready to call Neo!
@@ -83,8 +80,9 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			"CREATE (n:%s)\n" +
 			"SET n = node";
 		
+		// and this is where it happens
+		//
 		long nodesCtr = 0;
-		// and this is where it happens 
 		for ( Entry<SortedSet<String>, List<Map<String, Object>>> cyDataE: cyData.entrySet () )
 		{
 			SortedSet<String> labels = cyDataE.getKey ();

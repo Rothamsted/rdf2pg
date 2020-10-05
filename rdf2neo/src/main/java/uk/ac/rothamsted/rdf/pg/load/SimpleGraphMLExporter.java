@@ -13,6 +13,5 @@ public class SimpleGraphMLExporter
   extends SimplePGLoader <GraphMLNodeExportHandler, GraphMLRelationExportHandler, 
   												GraphMLNodeLoadingProcessor, GraphMLRelationLoadingProcessor>
 {
-	// Nothing needed, this is just an extension to fix the generics.
-	
+	// Nothing needed, this is just an extension to fix the generics.	
 }

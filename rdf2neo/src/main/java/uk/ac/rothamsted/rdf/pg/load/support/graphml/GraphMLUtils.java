@@ -1,11 +1,11 @@
 package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.time.chrono.ChronoPeriod;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -78,8 +78,9 @@ public class GraphMLUtils
 	
 	
 	/**
-	 * Support method, which goes through all the parameter parents recursively, if the type isn't 
-	 * immediately available in {@link #ATTR_VALUE_CONVERTERS}
+	 * Returns a GraphML attribute value for the passed value and type. It works with
+	 * {@link #ATTR_VALUE_CONVERTERS}, by first searching the type in it and then, if not found, 
+	 * recursively calling itself over super-classes and super-interfaces. 
 	 */
 	private static String graphMLValue ( Object value, Class<?> type )
 	{
@@ -105,7 +106,13 @@ public class GraphMLUtils
 	}
 	
 	/** 
-	 * Modification of the the Value method in neo4j driver to map all the values to String
+	 * Returns a GraphML representation of the value.
+	 * 
+	 * If it's null, returns "NULL" (TODO: is this correct?!)
+	 * 
+	 * It uses {@link #graphMLValue(Object, Class)} with the value's class.
+	 * If a value isn't found by that method, ie, they type is not supported, it raises an 
+	 * {@link UnsupportedOperationException}.
 	 */
   public static String graphMLValue( Object value )
   {
@@ -121,7 +128,7 @@ public class GraphMLUtils
     return result;
   }
     
-  public static void writeXMLAttribs ( Map<String, Object> properties, PrintStream out )
+  public static void writeXMLAttribs ( Map<String, Object> properties, StringBuilder out )
   {
   	for ( String key: properties.keySet() ) 
   	{
@@ -130,37 +137,37 @@ public class GraphMLUtils
   		out.append ( " >" );
   		
   		// TODO: probably you actually wand a CDATA block without unreliable escaping
-  		out.append ( StringEscapeUtils.escapeXml11 ( graphMLValue ( properties.get ( key ) )).replace ( "\"", "\\\"" ) );
+  		out.append ( StringEscapeUtils.escapeXml11 ( graphMLValue ( properties.get ( key ) ) ).replace ( "\"", "\\\"" ) );
   		out.append ( GraphMLUtils.DATA_TAG_END ); 
   	}
   }
  
-  public static void writeXMLAttrib ( String attrName, String attrValue, PrintStream out )
+  public static void writeXMLAttrib ( String attrName, String attrValue, StringBuilder out )
   {
   	out.append ( attrName ).append ( "=\"" ).append ( attrValue ).append ( "\"" );
   }
 
-  public static void writeNodeAttribHeaders ( Set<String> attribIDs, PrintStream out ) {
+  public static void writeNodeAttribHeaders ( Set<String> attribIDs, StringBuilder out ) {
   	writeAttribHeaders ( attribIDs, NODE_FOR_VALUE, out );
   }
   
-  public static void writeEdgeAttribHeaders ( Set<String> attribIDs, PrintStream out ) {
+  public static void writeEdgeAttribHeaders ( Set<String> attribIDs, StringBuilder out ) {
   	writeAttribHeaders ( attribIDs, EDGE_FOR_VALUE, out );
   }
   
-  private static void writeAttribHeaders ( Set<String> attribIDs, String forAttrib, PrintStream out )
+  private static void writeAttribHeaders ( Set<String> attribIDs, String forAttrib, StringBuilder out )
   {
-		for (String attribID: GraphMLNodeExportHandler.getGatheredNodeProperties () ) 
+		for (String attribID: attribIDs ) 
 		{
 			out.append ( GraphMLUtils.KEY_TAG_START );
 			
-			writeXMLAttrib ( GraphMLUtils.ID_ATTR, attribID, out ); out.print ( ' ' );
-			writeXMLAttrib ( GraphMLUtils.FOR_ATTR, forAttrib , out ); out.print ( ' ' );
+			writeXMLAttrib ( GraphMLUtils.ID_ATTR, attribID, out ); out.append ( ' ' );
+			writeXMLAttrib ( GraphMLUtils.FOR_ATTR, forAttrib , out ); out.append ( ' ' );
 			
 			// TODO: for the time being, we don't support typing for the key / data 
 			writeXMLAttrib ( GraphMLUtils.ATTR_NAME_ATTR, attribID , out ); 
 			
-			out.println ( " />" );
+			out.append ( " />\n" );
 		}
   }
 }

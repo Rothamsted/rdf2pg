@@ -4,13 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.rothamsted.rdf.pg.load.support.AbstractPGDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
 
 /**
@@ -22,66 +27,51 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class Neo4jDataManager extends uk.ac.rothamsted.neo4j.utils.Neo4jDataManager
+public class Neo4jDataManager extends AbstractPGDataManager
 {
-	private String defaultLabel = "Resource";
+	private final uk.ac.rothamsted.neo4j.utils.Neo4jDataManager delegateMgr;
 	
 	public Neo4jDataManager ( Driver neo4jDriver ) {
-		super ( neo4jDriver );
+		delegateMgr = new uk.ac.rothamsted.neo4j.utils.Neo4jDataManager ( neo4jDriver );
 	}
 
-	/**
-	 * <p>Gets the properties in a {@link PGEntity} as a key/value structure.</p>
-	 * 
-	 * <p>This does some processing:
-	 *   <ul>
-	 *     <li>safeguards against empty values</li>
-	 *     <li>turns multiple values into an array object, which is what the Neo4j driver expects for them</li>
-	 *     <li>Adds a the {@link PGEntity#getIri() parameter IRI} as the 'iri' proerty to the result; this is because
-	 *     we want always to identify nodes/relations in Neo4j with their original IRI</li>
-	 *   </ul>
-	 * </p>
-	 * 
-	 */
-	public Map<String, Object> getCypherProperties ( PGEntity cyEnt )
-	{
-		Map<String, Object> cyProps = new HashMap<> ();
-		for ( Entry<String, Set<Object>> attre: cyEnt.getProperties ().entrySet () )
-		{
-			Set<Object> vals = attre.getValue ();
-			if ( vals.isEmpty () ) continue; // shouldn't happen, but just in case
-			
-			Object cyAttrVal = vals.size () > 1 ? vals.toArray ( new Object [ 0 ] ) : vals.iterator ().next ();
-			cyProps.put ( attre.getKey (), cyAttrVal );
-		}
-		
-		cyProps.put ( "iri", cyEnt.getIri () );
-		return cyProps;
-	}
-	
-	/**
-	 * <p>The node's default label. This has to be configured for both {@link CyNodeLoadingHandler} and
-	 * {@link CyRelationLoadingHandler} and it is a default Cypher label that is set for each node, in addition
-	 * to possible further labels, provided via {@link CyNodeLoadingHandler#getLabelsSparql()}.</p>
-	 * 
-	 * <p>A default label is a practical way to find nodes in components like {@link CyRelationLoadingHandler}.</p>
-	 */
-	public String getDefaultLabel ()
-	{
-		return defaultLabel;
-	}
-
-	@Autowired ( required = false )	@Qualifier ( "defaultNodeLabel" )
-	public void setDefaultLabel ( String defaultLabel )
-	{
-		this.defaultLabel = defaultLabel;
-	}
-
-	/**
-	 * Overridden just to add Spring annotations.
-	 */
-	@Autowired	 @Override
+	@Autowired
 	public void setNeo4jDriver ( Driver neo4jDriver ) {
-		super.setNeo4jDriver ( neo4jDriver );
+		delegateMgr.setNeo4jDriver ( neo4jDriver );
 	}
+
+	public <V> V runSession ( Function<Session, V> action )
+	{
+		return delegateMgr.runSession ( action );
+	}
+
+	public void runSessionVoid ( Consumer<Session> action )
+	{
+		delegateMgr.runSessionVoid ( action );
+	}
+
+	public void runCypher ( String cypher, Object... keyVals )
+	{
+		delegateMgr.runCypher ( cypher, keyVals );
+	}
+
+	public void processCypherMatches ( Consumer<Record> action, String cypher, Object... keyVals )
+	{
+		delegateMgr.processCypherMatches ( action, cypher, keyVals );
+	}
+
+	public Driver getNeo4jDriver ()
+	{
+		return delegateMgr.getNeo4jDriver ();
+	}
+
+	public int getMaxRetries ()
+	{
+		return delegateMgr.getMaxRetries ();
+	}
+
+	public void setMaxRetries ( int maxRetries )
+	{
+		delegateMgr.setMaxRetries ( maxRetries );
+	}	
 }

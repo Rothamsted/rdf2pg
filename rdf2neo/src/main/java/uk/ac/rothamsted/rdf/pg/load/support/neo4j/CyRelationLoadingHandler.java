@@ -63,7 +63,7 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
 			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
 			// And then we have an inner map containing the relation properties/attributes
-			cyparams.put ( "properties", neoMgr.getCypherProperties ( cyRelation ) );
+			cyparams.put ( "properties", neoMgr.flatPGProperties ( cyRelation ) );
 			cyRels.add ( cyparams );				
 		}
 		

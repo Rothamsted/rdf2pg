@@ -28,7 +28,6 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  */
 public abstract class PGEntityHandler<T> implements Consumer<Set<T>> 
 {
-	
 	protected RdfDataManager rdfDataManager;
 	
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
