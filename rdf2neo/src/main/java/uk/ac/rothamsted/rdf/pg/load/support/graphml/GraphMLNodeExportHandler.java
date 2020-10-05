@@ -1,5 +1,13 @@
 package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeXml11;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.ID_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.LABEL_VERTEX_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.NODE_TAG_END;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.NODE_TAG_START;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGMLProperties;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -29,7 +37,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
 public class GraphMLNodeExportHandler extends PGNodeHandler
 {
 	@Autowired
-	private GMLDataManager gmlDataMgr; 
+	private GraphMLDataManager gmlDataMgr; 
 	
 	@Override
 	public void accept ( Set<Resource> nodeResources )
@@ -37,14 +45,13 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 		// TODO: The node/relation preparation is common code, doesn't depend on
 		// the target, FACTORISE THE COPY-PASTE!!!
 		
-		this.renameThread ( "graphMLNodeLoad:" );
+		this.renameThread ( "gmlNodeX:" );
 		log.trace ( "Begin graphML export of {} node(s)", nodeResources.size () );
 					
 		var rdfMgr = this.getRdfDataManager ();
 		String defaultLabel = gmlDataMgr.getDefaultLabel ();
-		
-		nodeResources.parallelStream ()
-		.forEach ( nodeRes ->
+
+		for ( Resource nodeRes: nodeResources )
 		{
 			PGNode pgNode = rdfMgr.getPGNode ( nodeRes, this.getLabelsSparql (), this.getNodePropsSparql () );
 			Map<String, Object> nodeProps = gmlDataMgr.flatPGProperties ( pgNode );
@@ -66,24 +73,20 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 			//
 			// URI nodeIRI = URI.create((String)node.get("iri"));
 			var out = new StringBuilder ();
-			out.append ( GraphMLUtils.NODE_TAG_START );
-			out.append ( GraphMLUtils.ID_ATTR ).append ( "=\"" )
-				.append ( (String) nodeProps.get ( "iri" ) ).append ( "\" " );
-			// we write the labels
-			out.append ( GraphMLUtils.LABEL_VERTEX_ATTR ).append ( "=\"" )
-				.append ( StringEscapeUtils.escapeXml11 ( labelsStr ) ).append ( "\" >" );
-			// we include them as property of the node in the labels field (to use them in other indexes)
-			out.append ( GraphMLUtils.DATA_TAG_START );
-			out.append ( GraphMLUtils.KEY_ATTR ).append ( "=\"" ).append ( GraphMLUtils.LABEL_VERTEX_ATTR )
-					.append ( "\" >" );
-			out.append ( StringEscapeUtils.escapeXml11 ( labelsStr ) );
-			out.append ( GraphMLUtils.DATA_TAG_END );
-			// we write the rest of properties
-			GraphMLUtils.writeXMLAttribs ( nodeProps, out );
-			out.append ( GraphMLUtils.NODE_TAG_END ).append ( "\n" );
+			out.append ( NODE_TAG_START );
+			
+			writeXMLAttrib ( ID_ATTR, (String) nodeProps.get ( "iri" ), out );
+			writeXMLAttrib ( LABEL_VERTEX_ATTR, escapeXml11 ( labelsStr ), out );
+			out.append ( " >" );
+			
+			// we also include them as property of the node in the labels field (to use them in other indexes)
+			nodeProps.put ( LABEL_VERTEX_ATTR, labelsStr );
+			writeGMLProperties ( nodeProps, out );
+			
+			out.append ( NODE_TAG_END ).append ( "\n" );
 			
 			gmlDataMgr.appendNodeOutput ( out.toString () );			
-		});
+		}
 		
 		log.debug ( "{} node(s) sent to ML", nodeResources.size () );
 	}

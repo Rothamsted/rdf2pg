@@ -36,50 +36,11 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	private List<CI> configItems = new LinkedList<> ();
 	private ObjectFactory<SL> pgLoaderFactory;
 	
-	private OutputConfig outputConfig; 
-	private GraphMLConfiguration graphMLConfiguration; 
-	
 	private ApplicationContext springContext;
 	
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 	private static Logger slog = LoggerFactory.getLogger ( MultiConfigPGLoader.class );
-	
-		
-	/** 
-	 * Represents the propertyGraph format selector 
-	 * @author cbobed
-	 * <dl><dt>Date: </dt><dd> 15 Apr 2020</dd></dl>
-	 */
-	
-	public static class OutputConfig 
-	{
-		public enum GeneratorOutput{
-			Cypher, 
-			GraphML
-		} 
-		
-		private GeneratorOutput selectedOutput = null; 
-		
-		public OutputConfig() {
-			
-		}
-		
-		public OutputConfig(String config) {
-			this.selectedOutput = GeneratorOutput.valueOf(config); 
-		}
-		public OutputConfig(GeneratorOutput config) {
-			this.selectedOutput = config; 
-		}
 
-		public GeneratorOutput getSelectedOutput() {
-			return selectedOutput;
-		}
-
-		public void setSelectedOutput(GeneratorOutput selectedOutput) {
-			this.selectedOutput = selectedOutput;
-		}
-		
-	}
 	
 	/** 
 	 * Gets an instance from the Spring application context. The returned instance is bound to the context parameter,
@@ -90,12 +51,13 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	 * 
 	 */
 	@SuppressWarnings ( { "unchecked", "rawtypes" } )
-	public static <CI extends ConfigItem<SL>, SL extends SimplePGLoader> 
-	  MultiConfigPGLoader<CI, SL> getSpringInstance ( ApplicationContext beanCtx )
+	public static <ML extends MultiConfigPGLoader<?, ?>> ML getSpringInstance ( 
+		ApplicationContext beanCtx, Class<? extends ML> loaderClass
+	)
 	{
 		slog.info ( "Getting Loader configuration from Spring Context" );
-		MultiConfigPGLoader mloader = beanCtx.getBean ( MultiConfigPGLoader.class );
-		mloader.springContext = beanCtx;
+		ML mloader = beanCtx.getBean ( loaderClass );
+		mloader.setSpringContext ( beanCtx );
 		return mloader;
 	}
 
@@ -107,16 +69,25 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	 * method is invoked.
 	 *  
 	 */
-	@SuppressWarnings ( { "rawtypes" } )
-	public static <CI extends ConfigItem<SL>, SL extends SimplePGLoader> 
-		MultiConfigPGLoader<CI, SL> getSpringInstance ( String xmlConfigPath )
+	public static <ML extends MultiConfigPGLoader<?, ?>> ML getSpringInstance ( String xmlConfigPath, Class<? extends ML> loaderClass )
 	{
 		slog.info ( "Getting Loader configuration from Spring XML file '{}'", xmlConfigPath );		
 		ApplicationContext ctx = new FileSystemXmlApplicationContext ( xmlConfigPath );
-		return getSpringInstance ( ctx );
+		return getSpringInstance ( ctx, loaderClass );
 	}
 	
 	
+	
+	protected ApplicationContext getSpringContext ()
+	{
+		return springContext;
+	}
+
+	protected void setSpringContext ( ApplicationContext springContext )
+	{
+		this.springContext = springContext;
+	}
+
 	@Override
 	public void load ( String tdbPath, Object... opts )
 	{
@@ -155,36 +126,6 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	
 	
 	
-	/** 
-	 * Loops through {@link #getConfigItems() config items} and instantiates a {@link #getCypherLoaderFactory() new simple loader}
-	 * for each item, to load nodes/relations mapped by the config item.
-	 */
-	public void _load ( String tdbPath, Object... opts )
-	{
-		
-		log.info("Using {} exporter", outputConfig.getSelectedOutput());
-		if (OutputConfig.GeneratorOutput.GraphML.equals(outputConfig.getSelectedOutput())) {
-			log.info("GraphML configuration: {}", graphMLConfiguration.printableConfig()); 
-		}
-	}
-
-	
-	public OutputConfig getOutputConfig() {
-		return outputConfig;
-	}
-	@Resource (name="outputConfig")
-	public void setOutputConfig(OutputConfig output) {
-		this.outputConfig = output;
-	}
-
-	public GraphMLConfiguration getGraphMLConfiguration() {
-		return graphMLConfiguration;
-	}
-	@Resource (name="graphMLConfiguration")
-	public void setGraphMLConfiguration(GraphMLConfiguration graphMLConfiguration) {
-		this.graphMLConfiguration = graphMLConfiguration;
-	}
-
 	/**
 	 * A single configuration defines how Cypher nodes and relations are mapped from RDF.
 	 * 

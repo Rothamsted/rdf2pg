@@ -22,6 +22,8 @@ import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
+import uk.ac.rothamsted.rdf.pg.load.neo4j.MultiConfigNeo4jLoader;
+import uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
@@ -112,7 +114,7 @@ public class CypherLoaderIT
 	@Test
 	public void testMultiConfigLoading () throws Exception
 	{
-		try ( MultiConfigPGLoader cymloader = new MultiConfigPGLoader (); )
+		try ( var cymloader = new MultiConfigNeo4jLoader (); )
 		{
 			cymloader.setPGLoaderFactory ( () -> 
 			{
@@ -146,9 +148,9 @@ public class CypherLoaderIT
 			});
 	
 			
-			List<ConfigItem> config = new LinkedList<> ();
+			List<Neo4jConfigItem> config = new LinkedList<> ();
 			{
-				ConfigItem cfgi = new ConfigItem ();
+				var cfgi = new Neo4jConfigItem ();
 				cfgi.setName ( "places" );
 				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_node_iris.sparql" ) );
 				cfgi.setLabelsSparql ( readResource ( "dbpedia_node_labels.sparql" ) );
@@ -159,7 +161,7 @@ public class CypherLoaderIT
 			}
 
 			{
-				ConfigItem cfgi = new ConfigItem ();
+				var cfgi = new Neo4jConfigItem ();
 				cfgi.setName ( "people" );
 				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_people_iris.sparql" ) );
 				cfgi.setLabelsSparql ( readResource ( "dbpedia_people_labels.sparql" ) );
@@ -195,7 +197,7 @@ public class CypherLoaderIT
 	{
 		try ( 
 			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config.xml" );
-			MultiConfigPGLoader mloader = MultiConfigPGLoader.getSpringInstance ( beanCtx );				
+			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
 			mloader.load ( RdfDataManagerTest.TDB_PATH );
@@ -209,7 +211,7 @@ public class CypherLoaderIT
 	{
 		try ( 
 			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config_indexing.xml" );
-			MultiConfigPGLoader mloader = MultiConfigPGLoader.getSpringInstance ( beanCtx );				
+			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
 			mloader.load ( RdfDataManagerTest.TDB_PATH );

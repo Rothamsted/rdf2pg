@@ -158,7 +158,7 @@ public class CypherHandlersIT
 
 			// Verify
 			
-			CypherTester tester = new CypherTester ( neoMgr );
+			CypherTester tester = new CypherTester ( neoMgr.getDelegateMgr () );
 			
 			Assert.assertTrue (
 				"Wrong count for relations",

@@ -1,7 +1,19 @@
 package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeEdgeAttribHeaders;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeNodeAttribHeaders;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -12,9 +24,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.exceptions.ExceptionUtils;
+import uk.ac.ebi.utils.exceptions.UncheckedFileNotFoundException;
 import uk.ac.rothamsted.rdf.pg.load.support.AbstractPGDataManager;
 
 /**
@@ -25,7 +39,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.AbstractPGDataManager;
  *
  */
 @Component
-public class GMLDataManager extends AbstractPGDataManager
+public class GraphMLDataManager extends AbstractPGDataManager
 {
 	public static final String NODE_FILE_EXTENSION = "-Nodes-tmp.graphml"; 
 	public static final String EDGE_FILE_EXTENSION = "-Edges-tmp.graphml"; 
@@ -114,8 +128,70 @@ public class GMLDataManager extends AbstractPGDataManager
 	{
 		this.gmlOutputPath = gmlOutputPath;
 
-		Stream.of ( NODE_FILE_EXTENSION, EDGE_FILE_EXTENSION )
+		Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
 		.map ( postFix -> gmlOutputPath + postFix )
 		.forEach ( outPath -> outLocks.put ( outPath, outPath ) );
 	}
+	
+	private String getNodeTmpPath ()
+	{
+		return this.gmlOutputPath + NODE_FILE_EXTENSION;
+	}
+
+	private String getEdgeTmpPath ()
+	{
+		return this.gmlOutputPath + EDGE_FILE_EXTENSION;
+	}
+	
+	
+	public void writeGML ()
+	{
+		try ( PrintStream out = new PrintStream (
+			new BufferedOutputStream ( 
+				new FileOutputStream ( this.gmlOutputPath ),
+				2<<19
+			)
+		))
+		{
+			// Schema headers
+			out.println ( GraphMLUtils.GRAPHML_TAG_HEADER );
+			
+			var sb = new StringBuilder ();
+			writeNodeAttribHeaders ( this.getGatheredNodeProperties (), sb );
+			writeEdgeAttribHeaders ( this.getGatheredEdgeProperties (), sb );
+						
+			out.append ( GraphMLUtils.GRAPH_TAG_START );
+			writeXMLAttrib ( GraphMLUtils.DEFAULT_DIRECTED_ATTR, GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE , sb );
+			out.println ( "\" >" ); 
+	
+			
+			Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
+			.forEach ( tempPath -> 
+			{
+				try ( Reader in = 
+					new BufferedReader ( new FileReader ( tempPath, StandardCharsets.UTF_8 ), 2<<19 )
+				) 
+				{
+					// TODO: we don't need two temp files, one would be enough
+					IOUtils.copy ( in, out, StandardCharsets.UTF_8 );
+				}
+				catch ( IOException ex ) {
+					throw new UncheckedIOException ( String.format ( 
+						"I/O error while copying '%s' to '%s': %s", tempPath, gmlOutputPath ), 
+						ex
+					);
+				}
+			});
+	
+			out.println ( GraphMLUtils.GRAPH_TAG_END );
+			out.println ( GraphMLUtils.GRAPHML_TAG_END );
+		}
+		catch ( FileNotFoundException ex )
+		{
+			ExceptionUtils.throwEx ( 
+				UncheckedFileNotFoundException.class, ex, 
+				"Error while writing to GML file '%s': %s", this.gmlOutputPath, ex.getMessage () 
+			);
+		}
+	}	
 }

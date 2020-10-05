@@ -1,33 +1,15 @@
 package uk.ac.rothamsted.rdf.pg.load.graphml;
 
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeEdgeAttribHeaders;
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeNodeAttribHeaders;
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
-
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.utils.exceptions.UncheckedFileNotFoundException;
 import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimpleGraphMLExporter;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
 
 /**
  * TODO: comment me!
@@ -42,9 +24,10 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils;
 public class MultiConfigGraphMLLoader 
 	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLExporter>, SimpleGraphMLExporter>
 {
-	public static final String NODE_FILE_EXTENSION = "-Nodes-tmp.graphml"; 
-	public static final String EDGE_FILE_EXTENSION = "-Edges-tmp.graphml";
-		
+	@Autowired
+	GraphMLDataManager gmlDataMgr;
+	
+	
 	@Resource ( type = SimpleGraphMLExporter.class ) @Override
 	public void setPGLoaderFactory ( ObjectFactory<SimpleGraphMLExporter> loaderFactory )
 	{
@@ -59,6 +42,9 @@ public class MultiConfigGraphMLLoader
 		if ( opts == null || opts.length != 1 ) throw new IllegalArgumentException ( String.format (
 			"%s needs the output file parameter", this.getClass ().getSimpleName ()
 		));
+		
+		String outPath = (String) opts [ 0 ];
+		this.gmlDataMgr.setGmlOutputPath ( outPath );
 	}
 
 	@Override
@@ -71,72 +57,12 @@ public class MultiConfigGraphMLLoader
 			cfg.configureLoader ( graphMLExporter );
 			graphMLExporter.load ( tdbPath, mode == 0, mode == 1, outPath );
 		}
-
-		writeGraphML ( outPath );
 	}
 
-
-	private void writeGraphML ( String outPath )
+	@Override
+	protected void loadEnd ( String tdbPath, Object... opts )
 	{
-		writeGraphML ( new File ( outPath ) );
-	}
-
-	private void writeGraphML ( File outFile )
-	{
-		try
-		{
-			writeGraphML ( outFile.getAbsolutePath (), new PrintStream ( new FileOutputStream ( outFile ) ) );
-		}
-		catch ( FileNotFoundException ex ) {
-			throw new UncheckedFileNotFoundException ( 
-				"Error while writing to '" + outFile.getAbsolutePath () + "': file not found" 
-			);
-		}
+		gmlDataMgr.writeGML ();
 	}
 	
-	private void writeGraphML ( String tmpFilesBasePath, PrintStream gmlOut )
-	{
-		// Schema headers
-		gmlOut.println ( GraphMLUtils.GRAPHML_TAG_HEADER );
-		
-		writeNodeAttribHeaders ( GraphMLNodeExportHandler.getGatheredNodeProperties(), gmlOut );
-		writeEdgeAttribHeaders ( GraphMLNodeExportHandler.getGatheredNodeProperties(), gmlOut );
-					
-		gmlOut.append ( GraphMLUtils.GRAPH_TAG_START );
-		writeXMLAttrib ( GraphMLUtils.DEFAULT_DIRECTED_ATTR, GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE , gmlOut );
-		gmlOut.println ( "\" >" ); 
-
-		
-		Stream.of ( getTempNodesPath ( tmpFilesBasePath ), getTempEdgesPath ( tmpFilesBasePath ) )
-		.forEach ( tempPath -> 
-		{
-			try ( Reader in = 
-				new BufferedReader ( new FileReader ( tempPath, StandardCharsets.UTF_8 ), 2<<19 )
-			) 
-			{
-				// TODO: we don't need two temp files, one would be enough
-				IOUtils.copy ( in, gmlOut, StandardCharsets.UTF_8 );
-			}
-			catch ( IOException ex ) {
-				throw new UncheckedIOException ( String.format ( 
-					"I/O error while copying '%s' to '%s': %s", tempPath, tmpFilesBasePath ), 
-					ex
-				);
-			}
-		});
-
-		gmlOut.println ( GraphMLUtils.GRAPH_TAG_END );
-		gmlOut.println ( GraphMLUtils.GRAPHML_TAG_END ); 
-
-	}
-
-	public static String getTempNodesPath ( String tmpFilesBasePath )
-	{
-		return tmpFilesBasePath + NODE_FILE_EXTENSION;
-	}
-
-	public static String getTempEdgesPath ( String tmpFilesBasePath )
-	{
-		return tmpFilesBasePath + EDGE_FILE_EXTENSION;
-	}
 }

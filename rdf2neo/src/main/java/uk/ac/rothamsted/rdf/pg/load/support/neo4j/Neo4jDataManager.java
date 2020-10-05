@@ -73,5 +73,14 @@ public class Neo4jDataManager extends AbstractPGDataManager
 	public void setMaxRetries ( int maxRetries )
 	{
 		delegateMgr.setMaxRetries ( maxRetries );
-	}	
+	}
+
+	/**
+	 * TODO: requires refactoring with interface extraction 
+	 */
+	public uk.ac.rothamsted.neo4j.utils.Neo4jDataManager getDelegateMgr ()
+	{
+		return delegateMgr;
+	}
+	
 }

@@ -128,7 +128,7 @@ public class GraphMLUtils
     return result;
   }
     
-  public static void writeXMLAttribs ( Map<String, Object> properties, StringBuilder out )
+  public static void writeGMLProperties ( Map<String, Object> properties, StringBuilder out )
   {
   	for ( String key: properties.keySet() ) 
   	{

@@ -1,5 +1,15 @@
 package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeXml11;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.EDGE_TAG_END;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.EDGE_TAG_START;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.ID_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.LABEL_EDGE_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.SOURCE_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.TARGET_ATTR;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGMLProperties;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,7 +50,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 public class GraphMLRelationExportHandler extends PGRelationHandler
 {
 	@Autowired
-	private GMLDataManager dataManager; 
+	private GraphMLDataManager gmlDataMgr; 
 
 
 	public GraphMLRelationExportHandler ()
@@ -51,123 +61,50 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 	@Override
 	public void accept ( Set<QuerySolution> relRecords )
 	{
-		this.renameThread ( "graphMLRelLoad:" );
+		this.renameThread ( "gmlRelX:" );
 		log.trace ( "Begin of {} relations", relRecords.size () );
 
-		Map<String, List<Map<String, Object>>> graphMLRelData = new HashMap<> ();
-
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
-
-		// Pre-process relation data in a form suitable for Cypher processing, i.e., group relation data on a
-		// per-relation type basis and arrange each relation as a map of key/value properties.
-		//
 		for ( QuerySolution row : relRecords )
 		{
 			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
 
 			String type = cyRelation.getType ();
-			List<Map<String, Object>> cyRels = graphMLRelData.get ( type );
-			if ( cyRels == null )
-				graphMLRelData.put ( type, cyRels = new LinkedList<> () );
 
-			Map<String, Object> cyparams = new HashMap<> ();
-			
+			Map<String, Object> relParams = gmlDataMgr.flatPGProperties ( cyRelation );
+
 			// We have a top map containing basic relation elements (from, to, properties)
-			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
-			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
-			cyparams.put ( "iri", String.valueOf ( cyRelation.getIri () ) );
-			// And then we have an inner map containing the relation properties/attributes
+			relParams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
+			relParams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
+			relParams.put ( "iri", String.valueOf ( cyRelation.getIri () ) );
+			
+			// We need to gather property types, which go to the GraphML header
+			relParams
+			.keySet ()
+			.forEach ( gmlDataMgr::gatherEdgeProperty );
 
-			HashMap<String, Object> relProperties = new HashMap<> ();
-			for ( Entry<String, Set<Object>> attre : cyRelation.getProperties ().entrySet () )
-			{
-				Set<Object> vals = attre.getValue ();
-				if ( vals.isEmpty () )
-					continue; // shouldn't happen, but just in case
+			// Let's write it
+			//
+			var out = new StringBuilder ();
+						
+			out.append ( EDGE_TAG_START );
+			writeXMLAttrib ( ID_ATTR, (String) relParams.get ( "iri" ), out );
+			writeXMLAttrib ( SOURCE_ATTR, (String) relParams.get ( "fromIri" ), out );
+			writeXMLAttrib ( TARGET_ATTR, (String) relParams.get ( "toIri" ), out );
+			writeXMLAttrib ( LABEL_EDGE_ATTR, (String) escapeXml11 ( type ), out );
+			out.append ( " >" );
 
-				Object cyAttrVal = vals.size () > 1 ? vals.toArray ( new Object[ 0 ] ) : vals.iterator ().next ();
-				relProperties.put ( attre.getKey (), cyAttrVal );
-				
-				// and collect property types
-				dataManager.gatherEdgeProperty ( attre.getKey () );
-			}
-			cyparams.put ( "properties", relProperties );
+			// we also include the type as a property of the edge
+			relParams.put ( LABEL_EDGE_ATTR, type );
+			writeGMLProperties ( relParams, out );
 
-			cyRels.add ( cyparams );
+			out.append ( EDGE_TAG_END ).append ( "\n" );
+
+			gmlDataMgr.appendEdgeOutput ( out.toString () );
 		}
 
-		log.trace ( 
-			"Exporting {} relation(s) to ", 
-			relRecords.size (),	
-			GraphMLConfiguration.getOutputFile () + GraphMLConfiguration.EDGE_FILE_EXTENSION 
-		);
-
-		graphMLRelData
-			.entrySet ()
-			.parallelStream ()
-			.forEach ( entry -> 
-			{
-				// the relationships are grouped by type
-
-				// we don't filter any property in the first version
-				String type = entry.getKey ();
-				List<Map<String, Object>> relPropertiesList = entry.getValue ();
-				relPropertiesList
-				.parallelStream ()
-				.parallel ()
-				.forEach ( rel ->
-				{
-					// URI fromIRI = URI.create((String)rel.get("fromIri"));
-					// URI toIRI = URI.create((String)rel.get("toIri"));
-					// warning: it's not the IRI of the property, but a generated one for the
-					// actual instance of the relationship
-					// URI relIRI = URI.create((String)rel.get("iri"));
-					StringBuilder strB = new StringBuilder ();
-					strB.append ( GraphMLUtils.EDGE_TAG_START );
-					strB.append ( GraphMLUtils.ID_ATTR )
-						.append ( "=\"" ).append ( (String) rel.get ( "iri" ) ).append ( "\" " );
-					// we now establish the oriented edge
-					strB.append ( GraphMLUtils.SOURCE_ATTR )
-						.append ( "=\"" ).append ( (String) rel.get ( "fromIri" ) ).append ( "\" " );
-					strB.append ( GraphMLUtils.TARGET_ATTR )
-						.append ( "=\"" ).append ( (String) rel.get ( "toIri" ) ).append ( "\" " );
-					// apparently gremlin/janusgraph takes into account the labels for the edges (not for the vertex)
-					strB.append ( GraphMLUtils.LABEL_EDGE_ATTR )
-						.append ( "=\"" ).append ( StringEscapeUtils.escapeXml11 ( type ) ).append ( "\" >" );
-
-					// we include the type as a property of the edge
-					strB.append ( GraphMLUtils.DATA_TAG_START );
-					strB.append ( GraphMLUtils.KEY_ATTR )
-						.append ( "=\"" ).append ( GraphMLUtils.LABEL_EDGE_ATTR )
-						.append ( "\">" ).append ( StringEscapeUtils.escapeXml11 ( type ) );
-					strB.append ( GraphMLUtils.DATA_TAG_END );
-
-					// now the possible properties
-					strB.append ( GraphMLUtils.dataValues ( (Map<String, Object>) rel.get ( "properties" ) ) );
-					strB.append ( GraphMLUtils.EDGE_TAG_END ).append ( "\n" );
-					String relString = strB.toString ();
-					synchronized ( lock )
-					{
-						try
-						{
-							Files.writeString (
-								Paths.get ( GraphMLConfiguration.getOutputFile () + GraphMLConfiguration.EDGE_FILE_EXTENSION ),
-								relString,
-								StandardOpenOption.CREATE, StandardOpenOption.APPEND
-							);
-						}
-						catch ( IOException e )
-						{
-							log.error ( "Problems writing the relation {}", relString );
-							e.printStackTrace ();
-						}
-					}
-
-				});
-			});
-
-		log.debug ( "Rel export process finished" );
+		log.trace ( "ML {} relation(s) exported", relRecords.size () );
 	}
 
 }

@@ -46,4 +46,6 @@ public class MultiConfigNeo4jLoader extends MultiConfigPGLoader<Neo4jConfigItem,
 	{
 		super.setPGLoaderFactory ( loaderFactory );
 	}
+	
+	
 }
