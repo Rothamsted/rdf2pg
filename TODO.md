@@ -1,15 +1,21 @@
-* Continue from GraphMLNodeExportHandler (common node handler that has GraphMLDataManager)
+* Review all
+* Split generic/Neo4j/graphML into Maven modules
+* Rerun tests for Neo4j
+* Write tests for GraphML
+* Review the CLI
+
+
 * (DONE) its getSimpleLoader factory needs a factory, which needs to be initialised
   with a generated class. 
 * (DONE) To be decided: where is the class set? In the MPGL?! Probably yes, and this
   requires that MPGL becomes abstract.
-* MPGL needs a method to load config items and orchestrate base exec over them.
+* (DONE) MPGL needs a method to load config items and orchestrate base exec over them.
   * Started
   * We need to move the old hardwired code about GML export to its own MultiConfigPGLoader
   * The output file used by that code is taken from the configuration. Obviously that's wrong, we
   need to pass the file as parameter and also to have the OutputStream option.
-* `GraphMLNodeExportHandler` changes
-	* (Done) `gatheredNodeProperties` should not be static. It's not coherent with the rest, the architecture 
+* (DONE) `GraphMLNodeExportHandler` changes
+	* `gatheredNodeProperties` should not be static. It's not coherent with the rest, the architecture 
 	is such that handlers and simple loaders have the lifespan of a loading session's lifespan, and the rest of Spring 
 	components have the lifespan of a Spring context lifespan. Static stuff are bad because, for instance, one cannot 
 	run two GraphML converters of different RDF datasets in the same JVM. For example, this is something that could happen
@@ -26,7 +32,7 @@
 	just the same code we have on the Neo4j side => WE NEED TO factorise it on a generic abstract handler.
 	* The same happens for the relation handler.
 	* Multiple labels are collected, joined in a string and used as node labelV attribute. Is it correct in GraphML?
-* `defaultNodeLabel` in `GraphMLConfiguration`:
+* (DONE, moved to data manager)`defaultNodeLabel` in `GraphMLConfiguration`:
   * is it needed? It doesn't seem the case 
   * If yes, Neo4j needs too, maybe it's worth to factorise. Moreover, let's move this
 to a new component, `GraphMLDataManager`, which will have a role similar to Neo4DataManager, ie, managing the data writing
