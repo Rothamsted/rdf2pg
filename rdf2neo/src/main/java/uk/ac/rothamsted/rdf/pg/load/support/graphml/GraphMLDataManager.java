@@ -158,8 +158,11 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			
 			var sb = new StringBuilder ();
 			writeNodeAttribHeaders ( this.getGatheredNodeProperties (), sb );
+			out.println ( sb.toString () );
+
+			sb = new StringBuilder ();
 			writeEdgeAttribHeaders ( this.getGatheredEdgeProperties (), sb );
-						
+			
 			out.append ( GraphMLUtils.GRAPH_TAG_START );
 			writeXMLAttrib ( GraphMLUtils.DEFAULT_DIRECTED_ATTR, GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE , sb );
 			out.println ( "\" >" ); 
@@ -172,7 +175,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 					new BufferedReader ( new FileReader ( tempPath, StandardCharsets.UTF_8 ), 2<<19 )
 				) 
 				{
-					// TODO: we don't need two temp files, one would be enough
+					// TODO: regain some space by removing the temp at this point
 					IOUtils.copy ( in, out, StandardCharsets.UTF_8 );
 				}
 				catch ( IOException ex ) {
