@@ -12,9 +12,9 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 /**
  * <H1>The Relation Loading processor</H1>
  * 
- * <p>Similarly to the {@link CyNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
- * tuples of relation basic properties () and then send them to a 
- * {@link PGRelationHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
+ * <p>Similarly to the {@link PGNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
+ * tuples of relation basic properties () and then sends them to a 
+ * {@link PGRelationHandler}, for generating target PG relations. As for the node processor, 
  * this processor does things in multi-thread fashion.</p>
  *
  * @author brandizi
@@ -22,10 +22,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public abstract class PGRelationLoadingProcessor<T extends PGRelationHandler>  
-extends PGLoadingProcessor<QuerySolution, T>
-
-
+public abstract class PGRelationLoadingProcessor<T extends PGRelationHandler> extends PGLoadingProcessor<QuerySolution, T>
 {	
 	/**
 	 * This takes the relations mapped via {@link PGRelationHandler#getRelationTypesSparql()} and creates

@@ -16,9 +16,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CypherIndexer;
  * <h1>The simple Cypher/Neo4j loader</h1> 
  * 
  * <p>
- * 	This works with a single set of SPARQL queries mapping to Cypher node and relation entities.
- * 	The final applications are based on {@link MultiConfigPGLoader}, which allows for defining multiple
- *  queries and deal with different node/relation types separately.
+ * 	This maps to Cypher queries that create node and relation entities.
  * </p>  
  *
  * <p><b>WARNING</b>: we assume the target graph database is initially empty. For instance, we send CREATE

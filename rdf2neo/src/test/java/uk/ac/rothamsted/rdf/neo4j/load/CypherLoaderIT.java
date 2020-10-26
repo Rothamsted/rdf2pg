@@ -155,7 +155,7 @@ public class CypherLoaderIT
 				cfgi.setLabelsSparql ( readResource ( "dbpedia_node_labels.sparql" ) );
 				cfgi.setNodePropsSparql ( readResource ( "dbpedia_node_props.sparql" ) );
 				cfgi.setRelationTypesSparql ( readResource ( "dbpedia_rel_types.sparql" ) );
-				cfgi.setRelationPropsSparql ( "dbpedia_rel_props.sparql" );
+				cfgi.setRelationPropsSparql ( readResource ( "dbpedia_rel_props.sparql" ) );
 				config.add ( cfgi );
 			}
 

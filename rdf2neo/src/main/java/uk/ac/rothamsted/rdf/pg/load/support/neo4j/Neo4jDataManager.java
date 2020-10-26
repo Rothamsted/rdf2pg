@@ -19,7 +19,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.AbstractPGDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
 
 /**
- * An extension of {@link uk.ac.rothamsted.neo4j.utils.Neo4jDataManager} that adds some RDF import-related
+ * A conceptual extension of {@link uk.ac.rothamsted.neo4j.utils.Neo4jDataManager} that adds some RDF import-related
  * utility and Spring annotations. 
  *
  * @author brandizi

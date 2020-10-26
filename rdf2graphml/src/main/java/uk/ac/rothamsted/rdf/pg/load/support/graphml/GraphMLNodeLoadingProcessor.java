@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
 
 /**
  * <H1>The Node Loading processor</H1>
@@ -21,5 +20,5 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
 @Component @Scope ( scopeName = "loadingSession" )
 public class GraphMLNodeLoadingProcessor extends PGNodeLoadingProcessor<GraphMLNodeExportHandler>
 {
-
+	// It's like the base class, it just needs generics instantiation and Spring annotations.
 }

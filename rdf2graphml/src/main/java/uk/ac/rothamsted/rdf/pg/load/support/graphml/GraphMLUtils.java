@@ -15,6 +15,14 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
+/**
+ * 
+ * TODO: comment me!
+ *
+ * @author brandizi
+ * <dl><dt>Date:</dt><dd>26 Oct 2020</dd></dl>
+ *
+ */
 public class GraphMLUtils 
 {	
 	/** Some constants related to GraphML **/ 
@@ -114,7 +122,7 @@ public class GraphMLUtils
 	 * If a value isn't found by that method, ie, they type is not supported, it raises an 
 	 * {@link UnsupportedOperationException}.
 	 */
-  public static String graphMLValue( Object value )
+  public static String graphMLValue ( Object value )
   {
     if ( value == null ) return "NULL";
     String result = graphMLValue ( value, value.getClass () );
@@ -128,7 +136,10 @@ public class GraphMLUtils
     return result;
   }
     
-  public static void writeGMLProperties ( Map<String, Object> properties, StringBuilder out )
+  /**
+   * Writes a set of properties the GraphML way.
+   */
+  public static void writeGraphMLProperties ( Map<String, Object> properties, StringBuilder out )
   {
   	for ( String key: properties.keySet() ) 
   	{
@@ -142,19 +153,31 @@ public class GraphMLUtils
   	}
   }
  
+  /**
+   * Writes an XML attribute
+   */
   public static void writeXMLAttrib ( String attrName, String attrValue, StringBuilder out )
   {
   	out.append ( attrName ).append ( "=\"" ).append ( attrValue ).append ( "\"" );
   }
 
+  /**
+   * Writes the starting node needing to write node attributes. 
+   */
   public static void writeNodeAttribHeaders ( Set<String> attribIDs, StringBuilder out ) {
   	writeAttribHeaders ( attribIDs, NODE_FOR_VALUE, out );
   }
   
+  /**
+   * Writes the starting node needing to write edge attributes. 
+   */
   public static void writeEdgeAttribHeaders ( Set<String> attribIDs, StringBuilder out ) {
   	writeAttribHeaders ( attribIDs, EDGE_FOR_VALUE, out );
   }
   
+  /**
+   * Generic body of the functions above.
+   */
   private static void writeAttribHeaders ( Set<String> attribIDs, String forAttrib, StringBuilder out )
   {
 		for (String attribID: attribIDs ) 

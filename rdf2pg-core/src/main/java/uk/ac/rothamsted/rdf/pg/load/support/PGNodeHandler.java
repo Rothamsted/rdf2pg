@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- * A generic {@link PGEntityHandler} to manage the creation of a property graph node.
+ * <h1>The Generic Node Loading handler.</h1>
  *
- * @author cbobed
- *         <dl>
- *         <dt>Date:</dt>
- *         <dd>11 May 2020</dd>
- *         </dl>
+ * <p>This is used by {@link PGNodeLoadingProcessor} and corresponds to the tasks that are run to generate 
+ * sets of nodes for the target PG graph.</p>
+ *
+ * @author cbobed, brandizi
+ * <dl><dt>Date:</dt><dd>11 May 2020</dd></dl>
  *
  */
 public abstract class PGNodeHandler extends PGEntityHandler<Resource>

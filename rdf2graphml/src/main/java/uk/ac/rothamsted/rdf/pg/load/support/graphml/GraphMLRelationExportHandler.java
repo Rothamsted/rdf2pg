@@ -7,24 +7,13 @@ import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.ID_ATTR;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.LABEL_EDGE_ATTR;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.SOURCE_ATTR;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.TARGET_ATTR;
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGMLProperties;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGraphMLProperties;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -97,7 +86,7 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 
 			// we also include the type as a property of the edge
 			relParams.put ( LABEL_EDGE_ATTR, type );
-			writeGMLProperties ( relParams, out );
+			writeGraphMLProperties ( relParams, out );
 
 			out.append ( EDGE_TAG_END ).append ( "\n" );
 

@@ -13,7 +13,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGEntity;
 import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
 
 /**
- * TODO: comment me!
+ * Manages a few common aspects about PG graphs and their generation.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>5 Oct 2020</dd></dl>

@@ -17,7 +17,7 @@ import uk.ac.rothamsted.rdf.pg.load.spring.SimplePGLoaderFactory;
 
 
 /**
- * <H1>The multi-configuration property graph loader.</H1>
+ * <H1>The multi-configuration property graph generator.</H1>
  *
  * <p>This uses multiple {@link ConfigItem SPARQL query configurations} to run {@link AbstractSimplePGLoader} multiple times.
  * This allows for logically separate items in an RDF data set to be mapped separately, each with its own set of SPARQL
@@ -51,7 +51,6 @@ public abstract class MultiConfigPGLoader<CI extends ConfigItem<SL>, SL extends 
 	 * beans for this.
 	 * 
 	 */
-	@SuppressWarnings ( { "unchecked", "rawtypes" } )
 	public static <ML extends MultiConfigPGLoader<?, ?>> ML getSpringInstance ( 
 		ApplicationContext beanCtx, Class<? extends ML> loaderClass
 	)

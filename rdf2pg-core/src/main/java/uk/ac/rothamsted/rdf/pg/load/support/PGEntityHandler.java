@@ -22,7 +22,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  * @author brandizi
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  * 
- * Modifified by cbobed for refactoring purposes  
+ * Modified by cbobed for refactoring purposes  
  * <dl><dt>Date:</dt><dd>28 Apr 2020</dd></dl>
  */
 public abstract class PGEntityHandler<T> implements Consumer<Set<T>> 

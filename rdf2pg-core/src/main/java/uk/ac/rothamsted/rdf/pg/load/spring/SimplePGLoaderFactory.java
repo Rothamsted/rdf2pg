@@ -11,13 +11,10 @@ import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimplePGLoader;
 
 /**
- * This is a simple {@link SimpleCyLoader} factory which of {@link #getObject()} invokes a 
- * {@link LoadingSessionScope#startSession() new loading session}. This factory is autowired in 
- * {@link MultiConfigPGLoader#setCypherLoaderFactory(ObjectFactory)}, where a new simple loader is
+ * This is a simple {@link SimplePGLoader} factory which of {@link #getObject()} invokes a 
+ * {@link LoadingSessionScope#startSession() new loading session}. This factory is auto-wired in 
+ * {@link MultiConfigPGLoader#setPGLoaderFactory(ObjectFactory)}, where a new simple loader is
  * invoked per every new {@link ConfigItem} query type to be processed.
- *
- * TODO: no longer autowired as component in order to have it configured via the .xml file
- *
  *  
  * @author brandizi
  * <dl><dt>Date:</dt><dd>1 Feb 2018</dd></dl>

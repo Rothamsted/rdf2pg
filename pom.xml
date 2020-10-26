@@ -187,6 +187,13 @@
 		      <version>3.0.0-M4</version>
 		      <configuration>
 		      	<trimStackTrace>false</trimStackTrace>
+			      <properties>
+			        <property>
+			        	<!-- As above -->
+			          <name>listener</name>
+			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
+			        </property>
+			       </properties>
 		      </configuration>
 					<executions>
 	          <execution>

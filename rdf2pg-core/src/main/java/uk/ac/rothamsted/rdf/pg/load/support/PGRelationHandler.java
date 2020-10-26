@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
+ * Similarly to {@link PGNodeHandler}, this is used by {@link PGLoadingProcessor} to process
+ * relation mappings from RDF and generate property graph relations on the target side.
  * 
- * A generic {@link PGEntityHandler} to manage the creation of a property graph relation.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>11 May 2020</dd></dl>
@@ -22,8 +23,8 @@ public abstract class PGRelationHandler extends PGEntityHandler<QuerySolution>
 	 * <p>A SPARQL that must return the variables: ?iri ?type ?fromIri ?toIri and distinct result rows (whether you use 
 	 * DISTINCT or not).</p>
 	 * 
-	 * <p>This maps to Cypher relations. fromIri and toIri must correspond to nodes defined by 
-	 * {@link PGNodeLoadingProcessor#getNodeIrisSparql()}, so that such nodes, previously inserted in the Neo4J), can be 
+	 * <p>This maps to PG relations. fromIri and toIri must correspond to nodes defined by 
+	 * {@link PGNodeLoadingProcessor#getNodeIrisSparql()}, so that such nodes, previously inserted in the target PG, can be 
 	 * matched and linked by the relation.</p>
 	 * 
 	 * <p>Each relation has an ?iri identifier.

@@ -3,6 +3,7 @@ package uk.ac.rothamsted.rdf.pg.load.graphml.spring;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.pg.load.graphml.SimpleGraphMLExporter;
+import uk.ac.rothamsted.rdf.pg.load.spring.SimplePGLoaderFactory;
 
 /**
  * TODO: comment me!

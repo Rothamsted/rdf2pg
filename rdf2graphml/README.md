@@ -1,6 +1,5 @@
-# The RDF-to-Neo4j exporter, Core Library
+# The RDF-to-GraphML Export Library
 
 Please have a look at the [main README](../README.md) for details. 
 
-This is the core package, providing with the API and machinery to perform the mappings and conversions.
-
+This is the library providing the GraphML implementation.

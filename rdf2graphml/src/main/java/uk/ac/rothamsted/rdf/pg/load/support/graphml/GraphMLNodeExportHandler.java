@@ -5,7 +5,7 @@ import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.ID_ATTR;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.LABEL_VERTEX_ATTR;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.NODE_TAG_END;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.NODE_TAG_START;
-import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGMLProperties;
+import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeGraphMLProperties;
 import static uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLUtils.writeXMLAttrib;
 
 import java.util.Map;
@@ -14,7 +14,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -26,9 +25,9 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
 /**
  * <h1>The GraphML Node Loading handler.</h1>
  *
- * <p>This is used by {@link GraphMLNodeLoadingProcessor} and corresponds to the tasks that are run to load 
- * sets of nodes in GraphML.</p>
- *
+ * This generates GraphML output corresponding to sets of {@link PGNode property graph nodes} mapped from RDF.
+ * Neo4j DB.
+ * 
  * @author cbobed
  * <dl><dt>Date:</dt><dd>16 Apr 2020</dd></dl>
  *
@@ -81,7 +80,7 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 			
 			// we also include them as property of the node in the labels field (to use them in other indexes)
 			nodeProps.put ( LABEL_VERTEX_ATTR, labelsStr );
-			writeGMLProperties ( nodeProps, out );
+			writeGraphMLProperties ( nodeProps, out );
 			
 			out.append ( NODE_TAG_END ).append ( "\n" );
 			

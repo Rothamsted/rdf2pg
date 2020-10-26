@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.pg.load.support.PGLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.PGRelationLoadingProcessor;
+import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
- * <H1>The Relation Loading processor</H1>
+ * <H1>The Relation Loading processor for Neo4j</H1>
  * 
- * <p>Similarly to the {@link CyNodeLoadingProcessor}, this gets SPARQL bindings (i.e., rows) corresponding to 
- * tuples of relation basic properties () and then send them to a 
- * {@link CyRelationLoadingHandler}, for issuing Cypher creation commands about relations. As for the node processor, 
- * this processor does things in multi-thread fashion.</p>
+ * As per {@link PGRelationLoadingProcessor} contract, gather {@link PGRelation PG relations} from RDF and 
+ * uses a {@link CyRelationLoadingHandler} to issue corresponding Cypher instructions that create the 
+ * relations on the target Neo4j. 
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>

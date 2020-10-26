@@ -16,6 +16,19 @@ import uk.ac.rothamsted.rdf.pg.load.support.PGRelationHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.PGRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
+/**
+ * <h1>The single-config Property Graph Generator</h1>
+ * 
+ * <p>
+ * 	This works with a single set of SPARQL queries mapping to PG node and relation entities.
+ * 	The final applications are based on {@link MultiConfigPGLoader}, which allows for defining multiple
+ *  queries and deal with different node/relation types separately.
+ * </p>  
+ *
+ * @author Marco Brandizi
+ * <dl><dt>Date:</dt><dd>26 Oct 2020</dd></dl>
+ *
+ */
 @Component @Scope ( scopeName = "loadingSession" )
 public abstract class SimplePGLoader
   <NH extends PGNodeHandler, RH extends PGRelationHandler, 

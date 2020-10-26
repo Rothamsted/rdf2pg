@@ -23,9 +23,9 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
  * <h1>The Cypher Node Loading handler.</h1>
- *
- * <p>This is used by {@link PGNodeLoadingProcessor} and corresponds to the tasks that are run to load 
- * sets of nodes in Cypher/Neo4j.</p>
+ * 
+ * This generates Cypher instructions to create sets of {@link PGNode property graph nodes} into the target
+ * Neo4j DB.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
