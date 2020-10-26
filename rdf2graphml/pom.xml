@@ -8,9 +8,10 @@
     <version>4.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>rdf2neo</artifactId>
+  <groupId>uk.ac.rothamsted.kg.graphml</groupId>
+  <artifactId>rdf2graphml</artifactId>
   
-  <name>rdf2neo - RDF/Neo4j Conversion Library</name>
+  <name>rdf2graphml - RDF/graphML Conversion Library</name>
   <url>http://maven.apache.org</url>
     
 	<dependencies>
@@ -22,16 +23,24 @@
 		</dependency>
 
 		<dependency>
-	    <groupId>uk.ac.rothamsted.kg</groupId>
-  		<artifactId>rdf2pg-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>uk.ac.ebi</groupId>
+			<artifactId>jutils-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>info.marcobrandizi</groupId>
+			<artifactId>rdfutils-jena</artifactId>
 		</dependency>
 		
 		<dependency>
-			<groupId>uk.ac.ebi</groupId>
-			<artifactId>jutils-io</artifactId>
-			<scope>test</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 		</dependency>		
+		
+		<dependency>
+	    <groupId>javax.annotation</groupId>
+	    <artifactId>javax.annotation-api</artifactId>
+		</dependency>
 		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -59,33 +68,19 @@
 	      <artifactId>maven-failsafe-plugin</artifactId>
 	    </plugin>
 
-			<!-- 
-			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
-			 	final distro zip.
-			 -->
-  		<plugin>
-  			<artifactId>maven-dependency-plugin</artifactId>
-  			<executions>
-  				<execution>
-  					<phase>process-test-resources</phase>
-  					<goals>
-  						<goal>unpack</goal>
-  					</goals>
-  					<configuration>
-	          	<artifactItems>
-	            	<artifactItem>
-							    <groupId>uk.ac.rothamsted.kg</groupId>
-						  		<artifactId>rdf2pg-core</artifactId>
-									<version>${project.version}</version>
-	               	<type>test-jar</type>
-									<outputDirectory>target/test-classes</outputDirectory>	               	
-	             	</artifactItem>
-	          	</artifactItems>  						
-  					</configuration>
-  				</execution>
-  			</executions>
-  		</plugin>
-  						
+			<!-- These are needed in other modules -->				
+			<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-jar-plugin</artifactId>
+		    <executions>
+		    		<execution>
+		        <goals>
+		          <goal>test-jar</goal>
+		        </goals>
+		      </execution>
+		    </executions>
+		  </plugin>				
+				
 		</plugins>	
 		
 	</build> 

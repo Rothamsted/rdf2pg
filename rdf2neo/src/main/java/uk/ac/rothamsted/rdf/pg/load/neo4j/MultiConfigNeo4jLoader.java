@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import jdk.management.jfr.ConfigurationInfo;
 import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
-import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 
 /**
  * TODO: comment me!
@@ -24,10 +23,6 @@ public class MultiConfigNeo4jLoader extends MultiConfigPGLoader<Neo4jConfigItem,
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
 		super.loadBegin ( tdbPath, opts );
-		
-		if ( opts == null || opts.length < 3 ) throw new IllegalArgumentException ( String.format (
-			"%s needs at least 3 parameters", this.getClass ().getSimpleName ()
-		));
 	}
 
 	@Override
@@ -39,13 +34,5 @@ public class MultiConfigNeo4jLoader extends MultiConfigPGLoader<Neo4jConfigItem,
 			cyLoader.load ( tdbPath, mode == 0, mode == 1, mode == 2 );
 		}
 	}
-	
-	
-	@Resource ( type = SimpleCyLoader.class ) @Override
-	public void setPGLoaderFactory ( ObjectFactory<SimpleCyLoader> loaderFactory )
-	{
-		super.setPGLoaderFactory ( loaderFactory );
-	}
-	
 	
 }

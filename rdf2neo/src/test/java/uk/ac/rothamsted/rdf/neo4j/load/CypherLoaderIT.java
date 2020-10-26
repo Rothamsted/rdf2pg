@@ -18,19 +18,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.rothamsted.rdf.neo4j.load.support.CypherHandlersIT;
-import uk.ac.rothamsted.rdf.neo4j.load.support.RdfDataManagerTest;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.rdf.pg.load.PropertyGraphLoader;
-import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.neo4j.MultiConfigNeo4jLoader;
 import uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem;
-import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
+import uk.ac.rothamsted.rdf.pg.load.neo4j.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
@@ -48,7 +47,7 @@ public class CypherLoaderIT
 	public static void initTDB ()
 	{
 		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
 	  )
 		{
 			Dataset ds = rdfMgr.getDataSet ();
@@ -73,7 +72,7 @@ public class CypherLoaderIT
 	{
 		try (
 			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTest.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
 			SimpleCyLoader cyloader = new SimpleCyLoader ();
 		)
 		{
@@ -104,7 +103,7 @@ public class CypherLoaderIT
 			cyloader.setPGNodeLoader ( cyNodeProc );
 			cyloader.setPGRelationLoader ( cyRelProc );
 			
-			cyloader.load ( RdfDataManagerTest.TDB_PATH );
+			cyloader.load ( RdfDataManagerTestBase.TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -172,7 +171,7 @@ public class CypherLoaderIT
 			
 			cymloader.setConfigItems ( config );
 	
-			cymloader.load ( RdfDataManagerTest.TDB_PATH );
+			cymloader.load ( RdfDataManagerTestBase.TDB_PATH );
 		}
 		// TODO: test!
 	}	
@@ -186,7 +185,7 @@ public class CypherLoaderIT
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
 			PropertyGraphLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
-			cyloader.load ( RdfDataManagerTest.TDB_PATH );
+			cyloader.load ( RdfDataManagerTestBase.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -200,7 +199,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( RdfDataManagerTest.TDB_PATH );
+			mloader.load ( RdfDataManagerTestBase.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -214,7 +213,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( RdfDataManagerTest.TDB_PATH );
+			mloader.load ( RdfDataManagerTestBase.TDB_PATH );
 			// TODO: test
 		}
 	}		

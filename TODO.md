@@ -1,5 +1,6 @@
 * Review all
 * Split generic/Neo4j/graphML into Maven modules
+  * ====> Doing this, continue with reviewing rdf2neo (tests need fixes on test data paths)
 * Rerun tests for Neo4j
 * Write tests for GraphML
 * Review the CLI

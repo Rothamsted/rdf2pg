@@ -5,7 +5,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
-    <context:component-scan base-package = "uk.ac.rothamsted.rdf.neo4j" />
+    <context:component-scan base-package = "uk.ac.rothamsted.rdf.pg" />
 
 		<!-- 
 		  Each ConfigItem is a mapping query set.
@@ -16,7 +16,7 @@
 		-->
 
 		<!-- Queries to map places -->
-		<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
+		<bean class = "uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem">
 			
 			<!--
 			  This is the name of this config item/subset of data. It is used only for communication purposes, such as 
@@ -59,7 +59,7 @@
 
 		<!-- Queries to map people -->
 
-		<bean class = "uk.ac.rothamsted.rdf.neo4j.load.MultiConfigCyLoader.ConfigItem">
+		<bean class = "uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem">
 		
 			<property name = "name" value = "people" />
 

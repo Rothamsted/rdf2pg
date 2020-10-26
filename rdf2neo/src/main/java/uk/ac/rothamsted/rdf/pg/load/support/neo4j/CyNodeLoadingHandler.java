@@ -66,7 +66,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			labels.add ( defaultLabel );
 			
 			@SuppressWarnings ( "unchecked" )
-			List<Map<String, Object>> cyNodes = cyData.computeIfAbsent ( labels, LinkedList::new );
+			List<Map<String, Object>> cyNodes = cyData.computeIfAbsent ( labels, l -> new LinkedList<> () );
 
 			cyNodes.add ( neoMgr.flatPGProperties ( cyNode ) );
 		} 

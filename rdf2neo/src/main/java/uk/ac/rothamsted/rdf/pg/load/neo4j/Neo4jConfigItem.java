@@ -1,7 +1,6 @@
 package uk.ac.rothamsted.rdf.pg.load.neo4j;
 
 import uk.ac.rothamsted.rdf.pg.load.ConfigItem;
-import uk.ac.rothamsted.rdf.pg.load.SimpleCyLoader;
 import uk.ac.rothamsted.rdf.pg.load.SimplePGLoader;
 
 /**
