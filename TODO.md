@@ -1,8 +1,25 @@
 * Review all
-* Split generic/Neo4j/graphML into Maven modules
-  * ====> Doing this, continue with reviewing rdf2neo (tests need fixes on test data paths)
-* Rerun tests for Neo4j
+* (DONE) Split generic/Neo4j/graphML into Maven modules
+* (DONE) Rerun tests for Neo4j
 * Write tests for GraphML
+  * `CypherHandlersIT`, similar test class needed: 
+    * `initData`/`closeData`, same wrappers
+    * `initNeoData` => `initGraphMLData`, which sets the same handlers. `initNeo` not needed
+    * `testXXX`, equivalent GraphML needed (output has to be reloaded and XPath can be used to verify, see
+      `XPathReader` in jutils),
+  * `CypherLoaderIT`, similar test class needed:
+    * `initTDB` should be moved to a new common method in `RdfDataManagerTestBase`, to be mamed something like 
+      `initDBPediaDataSet`
+    * `initNeo` not needed
+    * `testLoading` equivalent GraphML needed to test the simple (single-config) exporter
+      * Results verification is not implemented yet in these methods, it would be shared between Neo4j/GraphML
+        versions (ie, this class and the GraphML equivalent need a common abstract parent, like LoaderTestBase)
+    * `testMultiConfigLoading` not so needed, we already know that manual wiring works
+    * `testSpring`, equivalent needed, just to be sure the simple exporter is instantiated
+    * `testSpringMultiConfig`, equivalent needed, with the specific GraphML config for Spring (already in place in 
+      test/resources).
+    * `testNeoIndexing` not applcable to GrapgML export, it doesn't do the indexing.
+    
 * Review the CLI
 
 
