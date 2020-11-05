@@ -33,7 +33,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLNodeExportHandler extends PGNodeHandler
+public class GraphMLNodeLoadingHandler extends PGNodeHandler
 {
 	@Autowired
 	private GraphMLDataManager gmlDataMgr; 
@@ -89,5 +89,14 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 		
 		log.debug ( "{} node(s) sent to ML", nodeResources.size () );
 	}
-		
+	
+	
+	/** 
+	 * @TODO Review this
+	 * Required to be able to access the configuration filename - which is taken from the 
+	 * Spring configuration file 
+	 */
+	public GraphMLDataManager getGraphMLDataManager() {
+		return gmlDataMgr; 
+	}
 }

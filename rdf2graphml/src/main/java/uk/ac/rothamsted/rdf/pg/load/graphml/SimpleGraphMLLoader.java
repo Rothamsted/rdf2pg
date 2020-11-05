@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.rdf.pg.load.SimplePGLoader;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeExportHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingProcessor;
-import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationExportHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingProcessor;
 
 /**
@@ -20,8 +20,8 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingProces
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class SimpleGraphMLExporter
-  extends SimplePGLoader <GraphMLNodeExportHandler, GraphMLRelationExportHandler, 
+public class SimpleGraphMLLoader
+  extends SimplePGLoader <GraphMLNodeLoadingHandler, GraphMLRelationLoadingHandler, 
   												GraphMLNodeLoadingProcessor, GraphMLRelationLoadingProcessor>
 {
 	// As said above, nothing special is needed

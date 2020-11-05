@@ -6,6 +6,8 @@ import java.io.UncheckedIOException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.system.Txn;
+
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
@@ -70,6 +72,28 @@ public class RdfDataManagerTestBase
 		finally { 
 			ds.end ();
 		}
+	}
+	
+	/** 
+	 * Initialize a test dataset based on DBpedia 
+	 * Brought here from test classes used for loader testing (*LoaderIT)
+	 */
+	
+	public static void initDBpediaDataSet ()
+	{
+		try (
+			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
+	  )
+		{
+			Dataset ds = rdfMgr.getDataSet ();
+			for ( String ttlPath: new String [] { "dbpedia_places.ttl", "dbpedia_people.ttl" } )
+			Txn.executeWrite ( ds, () -> 
+				ds.getDefaultModel ().read ( 
+					"file:target/test-classes/" + ttlPath, 
+					null, 
+					"TURTLE" 
+			));
+		}	
 	}
 	
 	public static void closeDataMgr ()

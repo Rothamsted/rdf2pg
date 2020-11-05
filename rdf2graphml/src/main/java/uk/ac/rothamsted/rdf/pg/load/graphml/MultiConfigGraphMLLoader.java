@@ -21,14 +21,14 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
  */
 @Component
 public class MultiConfigGraphMLLoader 
-	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLExporter>, SimpleGraphMLExporter>
+	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLLoader>, SimpleGraphMLLoader>
 {
 	@Autowired
 	GraphMLDataManager gmlDataMgr;
 	
 	
-	@Resource ( type = SimpleGraphMLExporter.class ) @Override
-	public void setPGLoaderFactory ( ObjectFactory<SimpleGraphMLExporter> loaderFactory )
+	@Resource ( type = SimpleGraphMLLoader.class ) @Override
+	public void setPGLoaderFactory ( ObjectFactory<SimpleGraphMLLoader> loaderFactory )
 	{
 		super.setPGLoaderFactory ( loaderFactory );
 	}
@@ -47,7 +47,7 @@ public class MultiConfigGraphMLLoader
 	}
 
 	@Override
-	protected void loadIteration ( int mode, ConfigItem<SimpleGraphMLExporter> cfg, String tdbPath, Object... opts )
+	protected void loadIteration ( int mode, ConfigItem<SimpleGraphMLLoader> cfg, String tdbPath, Object... opts )
 	{
 		String outPath = (String) opts [ 0 ];
 

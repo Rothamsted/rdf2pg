@@ -36,13 +36,13 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  */
 @Component
 @Scope ( scopeName = "loadingSession" )
-public class GraphMLRelationExportHandler extends PGRelationHandler
+public class GraphMLRelationLoadingHandler extends PGRelationHandler
 {
 	@Autowired
 	private GraphMLDataManager gmlDataMgr; 
 
 
-	public GraphMLRelationExportHandler ()
+	public GraphMLRelationLoadingHandler ()
 	{
 		super ();
 	}
@@ -94,6 +94,15 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 		}
 
 		log.trace ( "ML {} relation(s) exported", relRecords.size () );
+	}
+	
+	/** 
+	 * @TODO Review this
+	 * Required to be able to access the configuration filename - which is taken from the 
+	 * Spring configuration file 
+	 */
+	public GraphMLDataManager getGraphMLDataManager() {
+		return gmlDataMgr; 
 	}
 
 }
