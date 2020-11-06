@@ -43,7 +43,7 @@ public class MultiConfigGraphMLLoader
 		));
 		
 		String outPath = (String) opts [ 0 ];
-		this.gmlDataMgr.setGmlOutputPath ( outPath );
+		this.gmlDataMgr.setGraphmlOutputPathOutputPath ( outPath );
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class MultiConfigGraphMLLoader
 	@Override
 	protected void loadEnd ( String tdbPath, Object... opts )
 	{
-		gmlDataMgr.writeGML ();
+		gmlDataMgr.writeGraphML ();
 	}
 	
 }

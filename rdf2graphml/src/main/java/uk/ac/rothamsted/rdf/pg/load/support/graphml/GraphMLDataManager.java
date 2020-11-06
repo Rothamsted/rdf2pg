@@ -47,7 +47,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	private Set<String> gatheredNodeProperties = Collections.synchronizedSet ( new HashSet<>() );
 	private Set<String> gatheredEdgeProperties = Collections.synchronizedSet ( new HashSet<>() );
 	
-	private String gmlOutputPath = null; 
+	private String graphmlOutputPath = null; 
 
 	/**
 	 * Used to synch file writing operations over file path, see {@link #appendOutput(String, String)}.
@@ -64,10 +64,8 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	}
 
 	
-	private void appendOutput ( String graphML, String postFix )
-	{
-		String outPath = this.getGmlOutputPath () + postFix;
-		
+	private void appendOutput ( String graphML, String outPath )
+	{		
 		synchronized ( outLocks.get ( outPath ) )
 		{
 			try {
@@ -86,12 +84,12 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 	public void appendNodeOutput ( String graphML )
 	{
-		appendOutput ( graphML, NODE_FILE_EXTENSION );
+		appendOutput ( graphML, getNodeTmpPath () );
 	}
 	
 	public void appendEdgeOutput ( String graphML )
 	{
-		appendOutput ( graphML, EDGE_FILE_EXTENSION );
+		appendOutput ( graphML, getEdgeTmpPath () );
 	}
 	
 	/**
@@ -119,36 +117,38 @@ public class GraphMLDataManager extends AbstractPGDataManager
 		return gatheredEdgeProperties;
 	}
 
-	public String getGmlOutputPath ()
+	/**
+	 * The path to the final output .graphml file
+	 */
+	public String getGraphmlOutputPath ()
 	{
-		return gmlOutputPath;
+		return graphmlOutputPath;
 	}
 
-	public void setGmlOutputPath ( String gmlOutputPath )
+	public void setGraphmlOutputPathOutputPath ( String graphmlOutputPath )
 	{
-		this.gmlOutputPath = gmlOutputPath;
+		this.graphmlOutputPath = graphmlOutputPath;
 
 		Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
-		.map ( postFix -> gmlOutputPath + postFix )
 		.forEach ( outPath -> outLocks.put ( outPath, outPath ) );
 	}
 	
 	private String getNodeTmpPath ()
 	{
-		return this.gmlOutputPath + NODE_FILE_EXTENSION;
+		return this.graphmlOutputPath + NODE_FILE_EXTENSION;
 	}
 
 	private String getEdgeTmpPath ()
 	{
-		return this.gmlOutputPath + EDGE_FILE_EXTENSION;
+		return this.graphmlOutputPath + EDGE_FILE_EXTENSION;
 	}
 	
 	
-	public void writeGML ()
+	public void writeGraphML ()
 	{
 		try ( PrintStream out = new PrintStream (
 			new BufferedOutputStream ( 
-				new FileOutputStream ( this.gmlOutputPath ),
+				new FileOutputStream ( this.graphmlOutputPath ),
 				2<<19
 			)
 		))
@@ -180,7 +180,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 				}
 				catch ( IOException ex ) {
 					throw new UncheckedIOException ( String.format ( 
-						"I/O error while copying '%s' to '%s': %s", tempPath, gmlOutputPath ), 
+						"I/O error while copying '%s' to '%s': %s", tempPath, graphmlOutputPath ), 
 						ex
 					);
 				}
@@ -193,7 +193,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 		{
 			ExceptionUtils.throwEx ( 
 				UncheckedFileNotFoundException.class, ex, 
-				"Error while writing to GML file '%s': %s", this.gmlOutputPath, ex.getMessage () 
+				"Error while writing to GML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
 			);
 		}
 	}	
