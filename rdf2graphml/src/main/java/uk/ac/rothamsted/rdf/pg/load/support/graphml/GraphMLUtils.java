@@ -143,10 +143,15 @@ public class GraphMLUtils
   {
   	for ( String key: properties.keySet() ) 
   	{
+  		
   		out.append ( GraphMLUtils.DATA_TAG_START );
   		writeXMLAttrib ( KEY_ATTR, key, out );
   		out.append ( " >" );
   		
+  		
+  		System.out.println(KEY_ATTR + " : "+key);
+  		System.out.println("VALUE :" + properties.get(key) ); 
+  		System.out.println("VALUE :" + properties.get(key).getClass() ); 
   		// TODO: probably you actually wand a CDATA block without unreliable escaping
   		out.append ( StringEscapeUtils.escapeXml11 ( graphMLValue ( properties.get ( key ) ) ).replace ( "\"", "\\\"" ) );
   		out.append ( GraphMLUtils.DATA_TAG_END ); 

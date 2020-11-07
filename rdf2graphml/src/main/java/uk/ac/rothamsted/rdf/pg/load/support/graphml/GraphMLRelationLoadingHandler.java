@@ -56,13 +56,14 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
 		{
+			log.info("processing "+row.toString()); 
 			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
 
 			String type = cyRelation.getType ();
 
 			Map<String, Object> relParams = gmlDataMgr.flatPGProperties ( cyRelation );
-
+			
 			// We have a top map containing basic relation elements (from, to, properties)
 			relParams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
 			relParams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
@@ -72,25 +73,32 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 			relParams
 			.keySet ()
 			.forEach ( gmlDataMgr::gatherEdgeProperty );
-
+			
 			// Let's write it
 			//
 			var out = new StringBuilder ();
-						
+			
+			
 			out.append ( EDGE_TAG_START );
 			writeXMLAttrib ( ID_ATTR, (String) relParams.get ( "iri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( SOURCE_ATTR, (String) relParams.get ( "fromIri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( TARGET_ATTR, (String) relParams.get ( "toIri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( LABEL_EDGE_ATTR, (String) escapeXml11 ( type ), out );
 			out.append ( " >" );
 
 			// we also include the type as a property of the edge
 			relParams.put ( LABEL_EDGE_ATTR, type );
-			writeGraphMLProperties ( relParams, out );
-
+			
+			writeGraphMLProperties ( relParams, out ); 
+			
 			out.append ( EDGE_TAG_END ).append ( "\n" );
 
 			gmlDataMgr.appendEdgeOutput ( out.toString () );
+			
+			log.info("I've reached this "); 
 		}
 
 		log.trace ( "ML {} relation(s) exported", relRecords.size () );
