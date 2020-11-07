@@ -15,11 +15,15 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -125,7 +129,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 		return graphmlOutputPath;
 	}
 
-	public void setGraphmlOutputPathOutputPath ( String graphmlOutputPath )
+	public void setGraphmlOutputPath ( String graphmlOutputPath )
 	{
 		this.graphmlOutputPath = graphmlOutputPath;
 
@@ -162,13 +166,24 @@ public class GraphMLDataManager extends AbstractPGDataManager
 
 			sb = new StringBuilder ();
 			writeEdgeAttribHeaders ( this.getGatheredEdgeProperties (), sb );
+			out.println( sb.toString()); 
 			
+			sb = new StringBuilder(); 
 			out.append ( GraphMLUtils.GRAPH_TAG_START );
 			writeXMLAttrib ( GraphMLUtils.DEFAULT_DIRECTED_ATTR, GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE , sb );
-			out.println ( "\" >" ); 
+			sb.append(" >");
+			out.println( sb.toString()); 
 	
+			var l = new ArrayList<String> (); 
 			
-			Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
+			if (Files.exists(Paths.get(getNodeTmpPath()))) {
+				l.add(getNodeTmpPath()); 
+			}
+			if (Files.exists(Paths.get(getEdgeTmpPath()))) {
+				l.add(getEdgeTmpPath()); 
+			}
+			
+			l.stream()
 			.forEach ( tempPath -> 
 			{
 				try ( Reader in = 

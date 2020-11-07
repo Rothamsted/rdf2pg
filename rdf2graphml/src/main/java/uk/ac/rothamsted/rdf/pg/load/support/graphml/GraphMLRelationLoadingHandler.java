@@ -104,5 +104,9 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 	public GraphMLDataManager getGraphMLDataManager() {
 		return gmlDataMgr; 
 	}
+	
+	public void setGraphMLDataManager(GraphMLDataManager gmlDataMgr) {
+		this.gmlDataMgr = gmlDataMgr; 
+	}
 
 }

@@ -5,8 +5,10 @@ import static info.marcobrandizi.rdfutils.namespaces.NamespaceUtils.iri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,12 @@ import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
@@ -30,14 +37,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
+import uk.ac.ebi.utils.io.IOUtils;
 import uk.ac.ebi.utils.xml.XPathReader;
+import uk.ac.rothamsted.rdf.pg.load.graphml.SimpleGraphMLLoader;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingHandler;
+import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
 
@@ -71,15 +83,19 @@ public class GraphMLHandlersIT
 	{
 		try (	
 			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
+			SimpleGraphMLLoader gmlLoader = new SimpleGraphMLLoader(); 
 		)
 		{
 			
 			GraphMLNodeLoadingHandler handler = new GraphMLNodeLoadingHandler ();
-			
+			GraphMLDataManager gmlMgr = new GraphMLDataManager(); 
+			gmlMgr.setGraphmlOutputPath("testNodes.gml");
+			log.info("gmlMgr outputPath: "+gmlMgr.getGraphmlOutputPath()); 
 			// We need the same nodes in all tests
 			handler.setRdfDataManager ( rdfMgr );
 			handler.setLabelsSparql ( RdfDataManagerTestBase.SPARQL_NODE_LABELS );
 			handler.setNodePropsSparql ( RdfDataManagerTestBase.SPARQL_NODE_PROPS );
+			handler.setGraphMLDataManager(gmlMgr);
 			
 			Set<Resource> rdfNodes = 
 				Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
@@ -87,13 +103,23 @@ public class GraphMLHandlersIT
 				.collect ( Collectors.toSet () );
 
 			handler.accept ( rdfNodes );
+			gmlMgr.writeGraphML();
 			
 			// we now have to read the GraphML file to check that everything has gone right 
-			XPathReader xPathGML = new XPathReader (handler.getGraphMLDataManager().getGmlOutputPath()); 
+			log.info("outputPath: "+handler.getGraphMLDataManager().getGraphmlOutputPath());
+			
+			DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance(); 
+			DocumentBuilder builder = fact.newDocumentBuilder(); 
+			Document doc = builder.parse(new File(handler.getGraphMLDataManager().getGraphmlOutputPath())); 
+			XPath xPath = XPathFactory.newInstance ().newXPath ();
+			XPathExpression xPathExpression = xPath.compile ( "node" );
+			log.info("Result: ", xPathExpression.evaluate ( doc, XPathConstants.NODESET));
+			
+			XPathReader xPathGML = new XPathReader (handler.getGraphMLDataManager().getGraphmlOutputPath()); 
 			// XPathConstants maps to double - rounding it via conversion
 			assertEquals ( "Wrong count for TestNode", 
 									2, 
-									Long.valueOf(xPathGML.read("count(node[@labelV='TestNode'])", XPathConstants.NUMBER)).longValue());
+									Long.valueOf(xPathGML.read("count(node[contains(@labelV,'TestNode')])", XPathConstants.NUMBER)).longValue());
 			
 			assertTrue ( "ex:2 not found!", ((NodeList) xPathGML.read("node[@iri='ex:2']", XPathConstants.NODESET)).getLength() == 0 ); 
 		
@@ -129,7 +155,7 @@ public class GraphMLHandlersIT
 			handler.accept ( relSparqlRows );
 
 			// we now have to read the GraphML file to check that everything has gone right 
-			XPathReader xPathGML = new XPathReader (handler.getGraphMLDataManager().getGmlOutputPath()); 
+			XPathReader xPathGML = new XPathReader (handler.getGraphMLDataManager().getGraphmlOutputPath()); 
 			
 			// We convert the tests to XPath expressions
 			

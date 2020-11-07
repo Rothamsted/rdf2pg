@@ -75,6 +75,7 @@ public class GraphMLNodeLoadingHandler extends PGNodeHandler
 			out.append ( NODE_TAG_START );
 			
 			writeXMLAttrib ( ID_ATTR, (String) nodeProps.get ( "iri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( LABEL_VERTEX_ATTR, escapeXml11 ( labelsStr ), out );
 			out.append ( " >" );
 			
@@ -98,5 +99,8 @@ public class GraphMLNodeLoadingHandler extends PGNodeHandler
 	 */
 	public GraphMLDataManager getGraphMLDataManager() {
 		return gmlDataMgr; 
+	}
+	public void setGraphMLDataManager(GraphMLDataManager gmlDataMgr) {
+		this.gmlDataMgr = gmlDataMgr; 
 	}
 }

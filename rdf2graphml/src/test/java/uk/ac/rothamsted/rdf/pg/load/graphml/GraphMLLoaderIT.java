@@ -75,10 +75,13 @@ public class GraphMLLoaderIT
 			gmlNodeHandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
 			gmlNodeHandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
 			gmlNodeHandler.setRdfDataManager ( rdfMgr );
+			gmlNodeHandler.setGraphMLDataManager(gmlMgr);
+			
 			
 			gmlRelHandler.setRelationTypesSparql ( IOUtils.readResource ( "dbpedia_rel_types.sparql" ) );
 			gmlRelHandler.setRelationPropsSparql ( IOUtils.readResource ( "dbpedia_rel_props.sparql" ) );
 			gmlRelHandler.setRdfDataManager ( rdfMgr );
+			gmlRelHandler.setGraphMLDataManager(gmlMgr);
 			
 			GraphMLNodeLoadingProcessor gmlNodeProc = new  GraphMLNodeLoadingProcessor();
 			gmlNodeProc.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
@@ -90,7 +93,7 @@ public class GraphMLLoaderIT
 			gmlLoader.setPGNodeLoader ( gmlNodeProc );
 			gmlLoader.setPGRelationLoader ( gmlRelProc );
 			
-			gmlLoader.load ( RdfDataManagerTestBase.TDB_PATH );
+			gmlLoader.load ( RdfDataManagerTestBase.TDB_PATH, "test-graphml.gml");
 			// TODO: test!
 			
 		} // try neoDriver
@@ -102,19 +105,24 @@ public class GraphMLLoaderIT
 	{
 		try ( var gmlMultiLoader = new MultiConfigGraphMLLoader (); )
 		{
+			
+			GraphMLDataManager gmlMgr = new GraphMLDataManager ();
+			gmlMultiLoader.setGmlDataMgr(gmlMgr);
+			
 			gmlMultiLoader.setPGLoaderFactory ( () -> 
 			{
 				// You don't want to do this, see #testSpring()
 				
 				RdfDataManager rdfMgr = new RdfDataManager ();
-				GraphMLDataManager gmlMgr = new GraphMLDataManager();			
 				
 				GraphMLNodeLoadingHandler gmlNodeHandler = new GraphMLNodeLoadingHandler ();
 				GraphMLRelationLoadingHandler gmlRelHandler = new GraphMLRelationLoadingHandler ();
 				
 				gmlNodeHandler.setRdfDataManager ( rdfMgr );
+				gmlNodeHandler.setGraphMLDataManager(gmlMultiLoader.getGmlDataMgr());
 				
 				gmlRelHandler.setRdfDataManager ( rdfMgr );
+				gmlRelHandler.setGraphMLDataManager(gmlMultiLoader.getGmlDataMgr()); 
 				
 				GraphMLNodeLoadingProcessor gmlNodeProc = new GraphMLNodeLoadingProcessor ();
 				gmlNodeProc.setBatchJob ( gmlNodeHandler );
@@ -155,7 +163,7 @@ public class GraphMLLoaderIT
 			
 			gmlMultiLoader.setConfigItems ( config );
 	
-			gmlMultiLoader.load ( RdfDataManagerTestBase.TDB_PATH );
+			gmlMultiLoader.load ( RdfDataManagerTestBase.TDB_PATH, "test-multiconfig-graphml.gml");
 		}
 		// TODO: test!
 	}	
@@ -166,7 +174,7 @@ public class GraphMLLoaderIT
 	{
 		// Use ConfigurableApplicationContext to show the try() block that it's a Closeable and let Java to clean up
 	  // automatically 
-		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
+		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config_gml.xml" ); )
 		{			
 			PropertyGraphLoader gmlLoader = beanCtx.getBean ( SimpleGraphMLLoader.class );
 			gmlLoader.load ( RdfDataManagerTestBase.TDB_PATH );
@@ -179,7 +187,7 @@ public class GraphMLLoaderIT
 	public void testSpringMultiConfig ()
 	{
 		try ( 
-			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config.xml" );
+			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config_gml.xml" );
 			MultiConfigGraphMLLoader mloader = MultiConfigGraphMLLoader.getSpringInstance ( beanCtx, MultiConfigGraphMLLoader.class );				
 		)
 		{			

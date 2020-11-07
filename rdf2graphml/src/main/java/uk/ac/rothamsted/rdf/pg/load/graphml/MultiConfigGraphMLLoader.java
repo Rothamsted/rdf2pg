@@ -23,6 +23,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
 public class MultiConfigGraphMLLoader 
 	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLLoader>, SimpleGraphMLLoader>
 {
+
 	@Autowired
 	GraphMLDataManager gmlDataMgr;
 	
@@ -43,7 +44,7 @@ public class MultiConfigGraphMLLoader
 		));
 		
 		String outPath = (String) opts [ 0 ];
-		this.gmlDataMgr.setGraphmlOutputPathOutputPath ( outPath );
+		this.gmlDataMgr.setGraphmlOutputPath ( outPath );
 	}
 
 	@Override
@@ -62,6 +63,18 @@ public class MultiConfigGraphMLLoader
 	protected void loadEnd ( String tdbPath, Object... opts )
 	{
 		gmlDataMgr.writeGraphML ();
+	}
+	
+	/** 
+	 * @TODO revise it, needed to access directly in the tests without relying on the springs wiring 
+	 */
+	
+	public GraphMLDataManager getGmlDataMgr() {
+		return gmlDataMgr;
+	}
+
+	public void setGmlDataMgr(GraphMLDataManager gmlDataMgr) {
+		this.gmlDataMgr = gmlDataMgr;
 	}
 	
 }
