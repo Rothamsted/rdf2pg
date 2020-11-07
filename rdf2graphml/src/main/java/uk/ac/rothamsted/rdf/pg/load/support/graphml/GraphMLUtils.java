@@ -92,6 +92,9 @@ public class GraphMLUtils
 	 */
 	private static String graphMLValue ( Object value, Class<?> type )
 	{
+		// Arrays need special treatment, else their type will be Object
+		if ( type.isArray () ) return ATTR_VALUE_CONVERTERS.get ( Array.class ).apply ( value );
+			
 		String result = Optional.ofNullable ( ATTR_VALUE_CONVERTERS.get ( type ) )
 			.map ( cvt -> cvt.apply ( value ) )
 			.orElse ( null );
