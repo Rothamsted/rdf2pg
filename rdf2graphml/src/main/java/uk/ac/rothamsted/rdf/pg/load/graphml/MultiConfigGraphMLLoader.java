@@ -24,15 +24,8 @@ public class MultiConfigGraphMLLoader
 	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLExporter>, SimpleGraphMLExporter>
 {
 	@Autowired
-	GraphMLDataManager gmlDataMgr;
+	private GraphMLDataManager graphmlDataMgr;
 	
-	
-	@Resource ( type = SimpleGraphMLExporter.class ) @Override
-	public void setPGLoaderFactory ( ObjectFactory<SimpleGraphMLExporter> loaderFactory )
-	{
-		super.setPGLoaderFactory ( loaderFactory );
-	}
-
 	@Override
 	protected void loadBegin ( String tdbPath, Object... opts )
 	{
@@ -43,7 +36,7 @@ public class MultiConfigGraphMLLoader
 		));
 		
 		String outPath = (String) opts [ 0 ];
-		this.gmlDataMgr.setGraphmlOutputPathOutputPath ( outPath );
+		this.graphmlDataMgr.setGraphmlOutputPathOutputPath ( outPath );
 	}
 
 	@Override
@@ -61,7 +54,7 @@ public class MultiConfigGraphMLLoader
 	@Override
 	protected void loadEnd ( String tdbPath, Object... opts )
 	{
-		gmlDataMgr.writeGraphML ();
+		graphmlDataMgr.writeGraphML ();
 	}
 	
 }
