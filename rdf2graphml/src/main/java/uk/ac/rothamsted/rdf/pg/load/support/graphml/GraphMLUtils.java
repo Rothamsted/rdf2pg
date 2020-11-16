@@ -92,6 +92,10 @@ public class GraphMLUtils
 	 */
 	private static String graphMLValue ( Object value, Class<?> type )
 	{
+		
+		// Arrays need special treatment, else their type will be Object
+		if ( type.isArray () ) return ATTR_VALUE_CONVERTERS.get ( Array.class ).apply ( value );
+		
 		String result = Optional.ofNullable ( ATTR_VALUE_CONVERTERS.get ( type ) )
 			.map ( cvt -> cvt.apply ( value ) )
 			.orElse ( null );
@@ -147,11 +151,7 @@ public class GraphMLUtils
   		out.append ( GraphMLUtils.DATA_TAG_START );
   		writeXMLAttrib ( KEY_ATTR, key, out );
   		out.append ( " >" );
-  		
-  		
-  		System.out.println(KEY_ATTR + " : "+key);
-  		System.out.println("VALUE :" + properties.get(key) ); 
-  		System.out.println("VALUE :" + properties.get(key).getClass() ); 
+ 
   		// TODO: probably you actually wand a CDATA block without unreliable escaping
   		out.append ( StringEscapeUtils.escapeXml11 ( graphMLValue ( properties.get ( key ) ) ).replace ( "\"", "\\\"" ) );
   		out.append ( GraphMLUtils.DATA_TAG_END ); 

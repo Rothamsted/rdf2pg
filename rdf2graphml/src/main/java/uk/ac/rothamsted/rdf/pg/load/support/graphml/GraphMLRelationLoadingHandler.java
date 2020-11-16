@@ -56,7 +56,6 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
 		{
-			log.info("processing "+row.toString()); 
 			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
 
@@ -98,7 +97,6 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 
 			gmlDataMgr.appendEdgeOutput ( out.toString () );
 			
-			log.info("I've reached this "); 
 		}
 
 		log.trace ( "ML {} relation(s) exported", relRecords.size () );

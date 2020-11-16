@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.load.graphml.support;
+package uk.ac.rothamsted.rdf.pg.load.support.graphml;
 
 
 import static info.marcobrandizi.rdfutils.namespaces.NamespaceUtils.iri;
@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -89,7 +91,7 @@ public class GraphMLHandlersIT
 		)
 		{
 			
-			String testFilePath = "testNodes.gml"; 
+			String testFilePath = "target/testNodes.gml"; 
 			
 			Files.deleteIfExists(Paths.get(testFilePath));
 			Files.deleteIfExists(Paths.get(testFilePath+GraphMLDataManager.NODE_FILE_EXTENSION));
@@ -114,31 +116,6 @@ public class GraphMLHandlersIT
 			gmlMgr.writeGraphML();
 						
 			XPathReader xPathGML = new XPathReader (Files.newInputStream(Paths.get(handler.getGraphMLDataManager().getGraphmlOutputPath()))); 
-			// XPathConstants maps to double - rounding it via conversion
-			
-//			NodeList auxList = xPathGML.read("node", XPathConstants.NODESET);
-//			log.info("Node iris:"); 
-//			for (int i=0; i<auxList.getLength(); i++) {
-//				log.info("id: "+auxList.item(i).getAttributes().getNamedItem("id").getNodeValue() + 
-//							" iri: "+auxList.item(i).getAttributes().getNamedItem("labelV").getNodeValue()); 
-//			}
-//			
-//			auxList = xPathGML.read("//node[@labelV='Resource:TestNode']", XPathConstants.NODESET);
-//			log.info("Node iris:"+auxList.getLength()); 
-//			for (int i=0; i<auxList.getLength(); i++) {
-//				log.info("id: "+auxList.item(i).getAttributes().getNamedItem("id").getNodeValue() + 
-//							" iri: "+auxList.item(i).getAttributes().getNamedItem("labelV").getNodeValue()); 
-//			}
-//			
-//			log.info("count(//node[@labelV='Resource:TestNode']): "+xPathGML.read("count(//node[@labelV='Resource:TestNode'])", XPathConstants.NUMBER));
-//			log.info("count(//node[contains(@labelV,'TestNode')]): "
-//					+xPathGML.read("count(//node[contains(@labelV,'TestNode')])", XPathConstants.NUMBER));
-//			log.info("count(//node[contains(@labelV,':TestNode')]): "
-//					+xPathGML.read("count(//node[contains(@labelV,':TestNode')])", XPathConstants.NUMBER));
-//			log.info("count(//node[contains(translate(@labelV, ':', ' '),'TestNode')]): "
-//					+xPathGML.read("count(//node[contains(translate(@labelV, ':', ' '),'TestNode')])", XPathConstants.NUMBER));
-//			
-			
 			
 			//NEO tests 
 //			StatementResult cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
@@ -177,7 +154,7 @@ public class GraphMLHandlersIT
 		{
 			
 			
-			String testFilePath = "testRelations.gml"; 
+			String testFilePath = "target/testRelations.gml"; 
 			
 			Files.deleteIfExists(Paths.get(testFilePath));
 			Files.deleteIfExists(Paths.get(testFilePath+GraphMLDataManager.NODE_FILE_EXTENSION));
@@ -202,46 +179,30 @@ public class GraphMLHandlersIT
 					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
 			);
 
-			for (QuerySolution qs: relSparqlRows) {
-				log.info(qs.toString()); 
-			}
-			log.info("I reach this "); 
 			handler.accept ( relSparqlRows );
-			
-			log.info("Here I go ..."); 
-			gmlMgr.writeGraphML();
-			log.info("Not ready ..."); 
+			gmlMgr.writeGraphML(); 
 
 			// we now have to read the GraphML file to check that everything has gone right 
 			XPathReader xPathGML = new XPathReader (Files.newInputStream(Paths.get(handler.getGraphMLDataManager().getGraphmlOutputPath()))); 
 			
 			// We convert the tests to XPath expressions
-			
-//			Assert.assertTrue (
-//				"Wrong count for relations",
-//				tester.ask ( "MATCH ()-[r]->() RETURN COUNT ( r ) = 3" )
-//			);
-			
-			assertTrue ("Wrong count for relations", 
-					Long.valueOf(xPathGML.read("count(//edge)", XPathConstants.NUMBER)) == 3); 
-			
 
-//			Assert.assertTrue (
-//				"Wrong count for {1 relatedTo 2}!",
-//				tester.ask ( 
-//					"MATCH p = (:TestNode{ iri:$iri1 })-[:relatedTo]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
-//					"iri1", iri ( "ex:1" ), "iri2", iri ( "ex:2" )
-//				)
-//			);
+			assertEquals ("Wrong count for relations",
+					3,
+					((Double)(xPathGML.read("count(//edge)", XPathConstants.NUMBER))).longValue()); 
 			
-			assertTrue("Wrong label for {ex:1}!", 
-					xPathGML.read("edge[@iri='ex:1']/@labelV", XPathConstants.STRING).equals("TestNode")); 
+			// we checked the edge's label as well, but currently only the relations part is generated
+//			log.info("ex1:labelV :: "+xPathGML.read("//node[@id='http://www.example.com/res/1']/@labelV", XPathConstants.STRING)); 
+//			log.info("ex2:labelV :: "+xPathGML.read("//node[@id='http://www.example.com/res/2']/@labelV", XPathConstants.STRING)); 
+//			assertTrue("Wrong label for {ex:1}!", 
+//					xPathGML.read("//node[@id='http://www.example.com/res/1']/@labelV", XPathConstants.STRING).equals("TestNode")); 
+//			
+//			assertTrue("Wrong label for {ex:2}!", 
+//					xPathGML.read("//node[@id='http://www.example.com/res/2']/@labelV", XPathConstants.STRING).equals("TestNode"));
 			
-			assertTrue("Wrong label for {ex:2}!", 
-					xPathGML.read("edge[@iri='ex:2']/@labelV", XPathConstants.STRING).equals("TestNode"));
-			
-			assertTrue("Wrong count for {1 relatedTo 2}!",
-					Long.valueOf(xPathGML.read("count(edge[@labelE='relatedTo'][@source='ex:1'][@target='ex:2'])", XPathConstants.NUMBER)) == 1); 
+			assertEquals("Wrong count for {1 relatedTo 2}!",
+					1, 
+					((Double)(xPathGML.read("count(//edge[@labelE='relatedTo'][@source='http://www.example.com/res/1'][@target='http://www.example.com/res/2'])", XPathConstants.NUMBER))).longValue()); 
 			
 			
 //			Assert.assertTrue (
@@ -252,11 +213,9 @@ public class GraphMLHandlersIT
 //				)
 //			);
 			
-			assertTrue("Wrong label for {ex:3}!", 
-					xPathGML.read("edge[@iri='ex:3']/@labelV", XPathConstants.STRING).equals("SuperTestNode")); 
-			
-			assertTrue("Wrong count for {3 derivedFrom 1}!", 
-					Long.valueOf(xPathGML.read("count(edge[@labelE='derivedFrom'][@source='ex:3'][@target='ex:1']",XPathConstants.NUMBER)) == 1); 
+			assertEquals("Wrong count for {3 derivedFrom 1}!",
+					1,
+					((Double)(xPathGML.read("count(//edge[@labelE='derivedFrom'][@source='http://www.example.com/res/3'][@target='http://www.example.com/res/1'])",XPathConstants.NUMBER))).longValue()); 
 			
 			
 			
@@ -288,14 +247,18 @@ public class GraphMLHandlersIT
 //					)
 //				);
 			
-			NodeList edges = xPathGML.read("edge[@label='relatedTo'][@source='ex:2'][@target='ex:3']/data", XPathConstants.NODESET);
-			List<String> notesGML =  IntStream.range(0, edges.getLength())
-										.mapToObj( i -> edges.item(i).getAttributes().getNamedItem("note").getNodeValue())
-										.sorted()
-										.collect(Collectors.toList()); 
+			String valueList= xPathGML.read("//edge[@labelE='relatedTo'][@source='http://www.example.com/res/2'][@target='http://www.example.com/res/3']/data[@key='note']/text()", XPathConstants.STRING);
+			
+			List<String> notesGML = new ArrayList<String>(); 
+			if (valueList.trim().startsWith("[")) {
+				valueList = valueList.replace("[", "").replace("]",""); 
+				StringTokenizer tokenizer = new StringTokenizer(valueList, ",");
+				tokenizer.asIterator().forEachRemaining(st -> notesGML.add(((String)st).trim()));
+			}
+			Collections.sort(notesGML);
 			
 			assertTrue("reified relation, wrong property value for 'note'!", 
-					edges.getLength()!=0 && notesGML.equals(Arrays.asList(new String[] {"Another Note", "Reified Relation"}))
+					!"".equals(valueList) && notesGML.equals(Arrays.asList(new String[] {"Another Note", "Reified Relation"}))
 					); 
 			
 			
