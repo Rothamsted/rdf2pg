@@ -39,8 +39,8 @@ public class GraphMLUtilsTest
 	{
 		doGraphMlValueTest ( new Integer[] { 1, 2, 3, 4, 5, 6 }, x -> Arrays.asList ( x ).toString (), "array" );
 	}
-
-
+	
+	
 	private <T> void doGraphMlValueTest ( T value, Function<T, String> expectedConversion, String type )
 	{
 		assertEquals (
