@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
-import uk.ac.rothamsted.rdf.pg.load.neo4j.MultiConfigNeo4jLoader;
 
 /**
  * A skeleton for a typical Command Line entry point.

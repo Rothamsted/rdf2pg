@@ -78,8 +78,12 @@
 						  		<artifactId>rdf2pg-core</artifactId>
 									<version>${project.version}</version>
 	               	<type>test-jar</type>
+	               	
 	               	<excludes>**/*.class</excludes>
+	               	
+	               	<!--  We've our own version of this -->
 	               	<excludes>multi_config.xml</excludes>
+	               	
 									<outputDirectory>target/test-classes</outputDirectory>	               	
 	             	</artifactItem>
 	          	</artifactItems>  						
