@@ -13,15 +13,23 @@ import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
 
 /**
- * A base for testing {@link RdfDataManager}, which is also an initialiser of RDF data for many
+ * A base for testing rdf2pg, which is initialiases RDF data for many
  * RDF2PG tests (that's why this is here and not in the test subtree).
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
  *
  */
-public class RdfDataManagerTestBase
+public class DataTestBase
 {
+	public final static String SPARQL_NODE_LABELS;
+	public final static String SPARQL_NODE_PROPS;
+	
+	public final static String SPARQL_REL_TYPES;
+	public final static String SPARQL_REL_PROPS;
+			
+	public static final String TDB_PATH = "target/rdf2pg_tdb";
+	
 	static 
 	{
 		try
@@ -38,39 +46,33 @@ public class RdfDataManagerTestBase
 		catch ( IOException ex ) {
 			throw new UncheckedIOException ( "Internal error: " + ex.getMessage (), ex );
 		} 
-	}
-
-	public final static String SPARQL_NODE_LABELS;
-	public final static String SPARQL_NODE_PROPS;
+	}	
 	
-	public final static String SPARQL_REL_TYPES;
-	public final static String SPARQL_REL_PROPS;
-	
-	protected static RdfDataManager rdfMgr = new RdfDataManager ();
-		
-	public static final String TDB_PATH = "target/NeoDataManagerTest_tdb";
 	
 	/**
-	 * Loads the test TDB used in this class with a bounch of RDF data.
+	 * Loads the test TDB used in this class with a bunch of RDF data.
 	 */
 	public static void initData ()
 	{
-		rdfMgr.open ( TDB_PATH );
-		Dataset ds = rdfMgr.getDataSet ();
-		Model m = ds.getDefaultModel ();
-		ds.begin ( ReadWrite.WRITE );
-		try 
+		Dataset ds = null;
+		
+		try ( RdfDataManager rdfMgr = new RdfDataManager () )
 		{
+			rdfMgr.open ( TDB_PATH );
+			ds = rdfMgr.getDataSet ();
+			Model m = ds.getDefaultModel ();
+			ds.begin ( ReadWrite.WRITE );
+			
 			//if ( m.size () > 0 ) return;
 			m.read ( IOUtils.openResourceReader ( "test_data.ttl" ), null, "TURTLE" );
 			ds.commit ();
 		}
 		catch ( Exception ex ) {
-			ds.abort ();
+			if ( ds != null ) ds.abort ();
 			throw new RuntimeException ( "Test error: " + ex.getMessage (), ex );
 		}
 		finally { 
-			ds.end ();
+			if ( ds != null ) ds.end ();
 		}
 	}
 	
@@ -82,9 +84,10 @@ public class RdfDataManagerTestBase
 	public static void initDBpediaDataSet ()
 	{
 		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
 	  )
 		{
+			rdfMgr.open ( TDB_PATH );
 			Dataset ds = rdfMgr.getDataSet ();
 			for ( String ttlPath: new String [] { "dbpedia_places.ttl", "dbpedia_people.ttl" } )
 			Txn.executeWrite ( ds, () -> 
@@ -95,10 +98,5 @@ public class RdfDataManagerTestBase
 			));
 		}	
 	}
-	
-	public static void closeDataMgr ()
-	{
-		rdfMgr.close ();
-	}	
-	
+		
 }

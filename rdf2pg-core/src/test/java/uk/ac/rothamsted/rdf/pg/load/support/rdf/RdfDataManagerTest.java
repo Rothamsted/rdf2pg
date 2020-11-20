@@ -31,23 +31,25 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
  * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
  *
  */
-public class RdfDataManagerTest extends RdfDataManagerTestBase
+public class RdfDataManagerTest extends DataTestBase
 {
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
+	private static RdfDataManager rdfMgr = new RdfDataManager ( TDB_PATH );
+	
 	/**
 	 * Loads the test TDB used in this class with a bounch of RDF data.
 	 */
 	@BeforeClass
 	public static void initData ()
 	{
-		RdfDataManagerTestBase.initData ();
+		DataTestBase.initData ();
 	}
 	
 	@AfterClass
 	public static void closeDataMgr ()
 	{
-		RdfDataManagerTestBase.closeDataMgr ();
+		rdfMgr.close ();
 	}
 	
 	

@@ -5,8 +5,6 @@ import static uk.ac.ebi.utils.io.IOUtils.readResource;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.jena.query.Dataset;
-import org.apache.jena.system.Txn;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +27,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
@@ -41,26 +39,13 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
  * <dl><dt>Date:</dt><dd>14 Dec 2017</dd></dl>
  *
  */
-public class CypherLoaderIT
+public class CypherLoaderIT extends DataTestBase
 {
 	@BeforeClass
 	public static void initTDB ()
 	{
-		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
-	  )
-		{
-			Dataset ds = rdfMgr.getDataSet ();
-			for ( String ttlPath: new String [] { "dbpedia_places.ttl", "dbpedia_people.ttl" } )
-			Txn.executeWrite ( ds, () -> 
-				ds.getDefaultModel ().read ( 
-					"file:target/test-classes/" + ttlPath, 
-					null, 
-					"TURTLE" 
-			));
-		}	
+		DataTestBase.initDBpediaDataSet ();
 	}
-	
 	
 	@Before
 	public void initNeo () {
@@ -71,9 +56,9 @@ public class CypherLoaderIT
 	public void testLoading () throws Exception
 	{
 		try (
-			Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
-			SimpleCyLoader cyloader = new SimpleCyLoader ();
+			var neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var cyloader = new SimpleCyLoader ();
+			var rdfMgr = new RdfDataManager ( TDB_PATH );
 		)
 		{
 			// You don't want to do this, see #testSpring()
@@ -103,7 +88,7 @@ public class CypherLoaderIT
 			cyloader.setPGNodeLoader ( cyNodeProc );
 			cyloader.setPGRelationLoader ( cyRelProc );
 			
-			cyloader.load ( RdfDataManagerTestBase.TDB_PATH );
+			cyloader.load ( TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -171,7 +156,7 @@ public class CypherLoaderIT
 			
 			cymloader.setConfigItems ( config );
 	
-			cymloader.load ( RdfDataManagerTestBase.TDB_PATH );
+			cymloader.load ( TDB_PATH );
 		}
 		// TODO: test!
 	}	
@@ -185,7 +170,7 @@ public class CypherLoaderIT
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
 			PropertyGraphLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
-			cyloader.load ( RdfDataManagerTestBase.TDB_PATH );
+			cyloader.load ( TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -199,7 +184,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( RdfDataManagerTestBase.TDB_PATH );
+			mloader.load ( TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -213,7 +198,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( RdfDataManagerTestBase.TDB_PATH );
+			mloader.load ( TDB_PATH );
 			// TODO: test
 		}
 	}		

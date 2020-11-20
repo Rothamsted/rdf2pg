@@ -37,7 +37,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyNodeLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
 
 /**
  * Runs {@link CypherLoadingHandler}-related tests.
@@ -46,20 +46,15 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManagerTestBase;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-public class CypherHandlersIT
+public class CypherHandlersIT extends DataTestBase
 {
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	@BeforeClass
-	public static void initData () throws IOException {
-		RdfDataManagerTestBase.initData ();
+	public static void initData () {
+		DataTestBase.initData ();
 	}
 	
-	@AfterClass
-	public static void closeData () throws IOException {
-		RdfDataManagerTestBase.closeDataMgr ();
-	}
-
 	/**
 	 * Loads some basic test RDF data into RDF.
 	 */
@@ -69,9 +64,9 @@ public class CypherHandlersIT
 		initNeo ();
 
 		try (	
-				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-				RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
-			)
+			var neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var rdfMgr = new RdfDataManager ( TDB_PATH );
+		)
 		{
 			CyNodeLoadingHandler handler = new CyNodeLoadingHandler ();
 			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
@@ -79,8 +74,8 @@ public class CypherHandlersIT
 			// We need the same nodes in all tests
 			handler.setRdfDataManager ( rdfMgr );
 			handler.setNeo4jDataManager ( neoMgr );
-			handler.setLabelsSparql ( RdfDataManagerTestBase.SPARQL_NODE_LABELS );
-			handler.setNodePropsSparql ( RdfDataManagerTestBase.SPARQL_NODE_PROPS );
+			handler.setLabelsSparql ( DataTestBase.SPARQL_NODE_LABELS );
+			handler.setNodePropsSparql ( DataTestBase.SPARQL_NODE_PROPS );
 			
 			Set<Resource> rdfNodes = 
 				Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
@@ -136,8 +131,8 @@ public class CypherHandlersIT
 	public void testRelations () throws Exception
 	{
 		try (	
-			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-			RdfDataManager rdfMgr = new RdfDataManager ( RdfDataManagerTestBase.TDB_PATH );
+			var neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
 		)
 		{
 			CyRelationLoadingHandler handler = new CyRelationLoadingHandler ();
@@ -145,13 +140,13 @@ public class CypherHandlersIT
 
 			handler.setRdfDataManager ( rdfMgr );
 			handler.setNeo4jDataManager ( neoMgr );
-			handler.setRelationTypesSparql ( RdfDataManagerTestBase.SPARQL_REL_TYPES );
-			handler.setRelationPropsSparql ( RdfDataManagerTestBase.SPARQL_REL_PROPS  );
+			handler.setRelationTypesSparql ( DataTestBase.SPARQL_REL_TYPES );
+			handler.setRelationPropsSparql ( DataTestBase.SPARQL_REL_PROPS  );
 
 			Set<QuerySolution> relSparqlRows = new HashSet<> ();
 			Dataset dataSet = rdfMgr.getDataSet ();
 			Txn.executeRead ( dataSet,  () ->
-				SparqlUtils.select ( RdfDataManagerTestBase.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
+				SparqlUtils.select ( DataTestBase.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
 					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
 			);
 

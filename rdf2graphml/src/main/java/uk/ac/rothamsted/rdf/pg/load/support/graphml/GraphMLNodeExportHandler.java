@@ -33,10 +33,10 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGNode;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLNodeLoadingHandler extends PGNodeHandler
+public class GraphMLNodeExportHandler extends PGNodeHandler
 {
 	@Autowired
-	private GraphMLDataManager gmlDataMgr; 
+	private GraphMLDataManager graphmlDataMgr; 
 	
 	@Override
 	public void accept ( Set<Resource> nodeResources )
@@ -48,12 +48,12 @@ public class GraphMLNodeLoadingHandler extends PGNodeHandler
 		log.trace ( "Begin graphML export of {} node(s)", nodeResources.size () );
 					
 		var rdfMgr = this.getRdfDataManager ();
-		String defaultLabel = gmlDataMgr.getDefaultLabel ();
+		String defaultLabel = graphmlDataMgr.getDefaultLabel ();
 
 		for ( Resource nodeRes: nodeResources )
 		{
 			PGNode pgNode = rdfMgr.getPGNode ( nodeRes, this.getLabelsSparql (), this.getNodePropsSparql () );
-			Map<String, Object> nodeProps = gmlDataMgr.flatPGProperties ( pgNode );
+			Map<String, Object> nodeProps = graphmlDataMgr.flatPGProperties ( pgNode );
 					
 			SortedSet<String> labels = new TreeSet<> ( pgNode.getLabels () );
 			labels.add ( defaultLabel );
@@ -66,7 +66,7 @@ public class GraphMLNodeLoadingHandler extends PGNodeHandler
 			// We need to gather property types, which go to the GraphML header
 			nodeProps
 			.keySet ()
-			.forEach ( gmlDataMgr::gatherNodeProperty );
+			.forEach ( graphmlDataMgr::gatherNodeProperty );
 			
 			// And now write it
 			//
@@ -85,22 +85,17 @@ public class GraphMLNodeLoadingHandler extends PGNodeHandler
 			
 			out.append ( NODE_TAG_END ).append ( "\n" );
 			
-			gmlDataMgr.appendNodeOutput ( out.toString () );			
+			graphmlDataMgr.appendNodeOutput ( out.toString () );			
 		}
 		
 		log.debug ( "{} node(s) sent to ML", nodeResources.size () );
 	}
-	
-	
-	/** 
-	 * @TODO Review this
-	 * Required to be able to access the configuration filename - which is taken from the 
-	 * Spring configuration file 
+
+	/**
+	 * This is usually set by Spring. This setter is for the tests running outside of Spring.
 	 */
-	public GraphMLDataManager getGraphMLDataManager() {
-		return gmlDataMgr; 
-	}
-	public void setGraphMLDataManager(GraphMLDataManager gmlDataMgr) {
-		this.gmlDataMgr = gmlDataMgr; 
+	public void setGraphmlDataMgr ( GraphMLDataManager graphmlDataMgr )
+	{
+		this.graphmlDataMgr = graphmlDataMgr;
 	}
 }

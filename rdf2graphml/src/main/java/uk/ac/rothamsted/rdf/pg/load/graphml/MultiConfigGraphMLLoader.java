@@ -21,7 +21,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
  */
 @Component
 public class MultiConfigGraphMLLoader 
-	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLLoader>, SimpleGraphMLLoader>
+	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLExporter>, SimpleGraphMLExporter>
 {
 
 	@Autowired
@@ -41,7 +41,7 @@ public class MultiConfigGraphMLLoader
 	}
 
 	@Override
-	protected void loadIteration ( int mode, ConfigItem<SimpleGraphMLLoader> cfg, String tdbPath, Object... opts )
+	protected void loadIteration ( int mode, ConfigItem<SimpleGraphMLExporter> cfg, String tdbPath, Object... opts )
 	{
 		String outPath = (String) opts [ 0 ];
 

@@ -37,7 +37,12 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.machinezoo.noexception</groupId>
+			<artifactId>noexception</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
  
 	<build>

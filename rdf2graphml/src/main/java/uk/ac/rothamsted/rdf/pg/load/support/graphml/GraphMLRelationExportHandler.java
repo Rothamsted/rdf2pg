@@ -23,7 +23,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 
 /**
- * Similarly to {@link GraphMLNodeLoadingHandler}, this is used to {@link GraphMLRelationLoadingProcessor} to process
+ * Similarly to {@link GraphMLNodeExportHandler}, this is used to {@link GraphMLRelationLoadingProcessor} to process
  * relation mappings from RDF and export them into GraphML.
  *
  * @author cbobed
@@ -36,13 +36,13 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  */
 @Component
 @Scope ( scopeName = "loadingSession" )
-public class GraphMLRelationLoadingHandler extends PGRelationHandler
+public class GraphMLRelationExportHandler extends PGRelationHandler
 {
 	@Autowired
-	private GraphMLDataManager gmlDataMgr; 
+	private GraphMLDataManager graphmlDataMgr; 
 
 
-	public GraphMLRelationLoadingHandler ()
+	public GraphMLRelationExportHandler ()
 	{
 		super ();
 	}
@@ -61,7 +61,7 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 
 			String type = cyRelation.getType ();
 
-			Map<String, Object> relParams = gmlDataMgr.flatPGProperties ( cyRelation );
+			Map<String, Object> relParams = graphmlDataMgr.flatPGProperties ( cyRelation );
 			
 			// We have a top map containing basic relation elements (from, to, properties)
 			relParams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
@@ -71,7 +71,7 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 			// We need to gather property types, which go to the GraphML header
 			relParams
 			.keySet ()
-			.forEach ( gmlDataMgr::gatherEdgeProperty );
+			.forEach ( graphmlDataMgr::gatherEdgeProperty );
 			
 			// Let's write it
 			//
@@ -95,24 +95,18 @@ public class GraphMLRelationLoadingHandler extends PGRelationHandler
 			
 			out.append ( EDGE_TAG_END ).append ( "\n" );
 
-			gmlDataMgr.appendEdgeOutput ( out.toString () );
+			graphmlDataMgr.appendEdgeOutput ( out.toString () );
 			
 		}
 
 		log.trace ( "ML {} relation(s) exported", relRecords.size () );
 	}
-	
-	/** 
-	 * @TODO Review this
-	 * Required to be able to access the configuration filename - which is taken from the 
-	 * Spring configuration file 
-	 */
-	public GraphMLDataManager getGraphMLDataManager() {
-		return gmlDataMgr; 
-	}
-	
-	public void setGraphMLDataManager(GraphMLDataManager gmlDataMgr) {
-		this.gmlDataMgr = gmlDataMgr; 
-	}
 
+	/**
+	 * This is usually set by Spring. This setter is for the tests running outside of Spring.
+	 */
+	public void setGraphmlDataMgr ( GraphMLDataManager graphmlDataMgr )
+	{
+		this.graphmlDataMgr = graphmlDataMgr;
+	}
 }

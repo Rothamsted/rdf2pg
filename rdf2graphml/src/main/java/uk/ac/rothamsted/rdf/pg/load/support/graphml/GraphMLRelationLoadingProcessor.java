@@ -10,7 +10,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
  * <H1>The Relation Loading processor</H1>
  * 
  * As per {@link PGRelationLoadingProcessor} contract, gather {@link PGRelation PG relations} from RDF and 
- * uses a {@link GraphMLRelationLoadingHandler} to output corresponding GraphML code that defines the same
+ * uses a {@link GraphMLRelationExportHandler} to output corresponding GraphML code that defines the same
  * relations. 
  *
  * @author cbobed
@@ -18,7 +18,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLRelationLoadingProcessor extends PGRelationLoadingProcessor<GraphMLRelationLoadingHandler>
+public class GraphMLRelationLoadingProcessor extends PGRelationLoadingProcessor<GraphMLRelationExportHandler>
 {	
 
 }
