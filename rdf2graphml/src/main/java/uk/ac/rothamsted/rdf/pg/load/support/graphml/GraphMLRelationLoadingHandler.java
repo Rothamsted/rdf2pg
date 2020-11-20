@@ -36,13 +36,13 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
  */
 @Component
 @Scope ( scopeName = "loadingSession" )
-public class GraphMLRelationExportHandler extends PGRelationHandler
+public class GraphMLRelationLoadingHandler extends PGRelationHandler
 {
 	@Autowired
 	private GraphMLDataManager gmlDataMgr; 
 
 
-	public GraphMLRelationExportHandler ()
+	public GraphMLRelationLoadingHandler ()
 	{
 		super ();
 	}
@@ -62,7 +62,7 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 			String type = cyRelation.getType ();
 
 			Map<String, Object> relParams = gmlDataMgr.flatPGProperties ( cyRelation );
-
+			
 			// We have a top map containing basic relation elements (from, to, properties)
 			relParams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
 			relParams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
@@ -72,28 +72,47 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 			relParams
 			.keySet ()
 			.forEach ( gmlDataMgr::gatherEdgeProperty );
-
+			
 			// Let's write it
 			//
 			var out = new StringBuilder ();
-						
+			
+			
 			out.append ( EDGE_TAG_START );
 			writeXMLAttrib ( ID_ATTR, (String) relParams.get ( "iri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( SOURCE_ATTR, (String) relParams.get ( "fromIri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( TARGET_ATTR, (String) relParams.get ( "toIri" ), out );
+			out.append(" "); 
 			writeXMLAttrib ( LABEL_EDGE_ATTR, (String) escapeXml11 ( type ), out );
 			out.append ( " >" );
 
 			// we also include the type as a property of the edge
 			relParams.put ( LABEL_EDGE_ATTR, type );
-			writeGraphMLProperties ( relParams, out );
-
+			
+			writeGraphMLProperties ( relParams, out ); 
+			
 			out.append ( EDGE_TAG_END ).append ( "\n" );
 
 			gmlDataMgr.appendEdgeOutput ( out.toString () );
+			
 		}
 
 		log.trace ( "ML {} relation(s) exported", relRecords.size () );
+	}
+	
+	/** 
+	 * @TODO Review this
+	 * Required to be able to access the configuration filename - which is taken from the 
+	 * Spring configuration file 
+	 */
+	public GraphMLDataManager getGraphMLDataManager() {
+		return gmlDataMgr; 
+	}
+	
+	public void setGraphMLDataManager(GraphMLDataManager gmlDataMgr) {
+		this.gmlDataMgr = gmlDataMgr; 
 	}
 
 }

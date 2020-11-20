@@ -10,7 +10,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
  * <H1>The Node Loading processor</H1>
  * 
  * <p>This gets node IRIs from a SPARQL query and then send them to a 
- * {@link GraphMLNodeExportHandler}, for issuing Cypher creation commands. Being a subclass of {@link BatchProcessor}, 
+ * {@link GraphMLNodeLoadingHandler}, for issuing Cypher creation commands. Being a subclass of {@link BatchProcessor}, 
  * this processor manages the Cypher loading in a multi-thread mode.</p>
  *
  * @author brandizi
@@ -18,7 +18,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.PGNodeLoadingProcessor;
  *
  */
 @Component @Scope ( scopeName = "loadingSession" )
-public class GraphMLNodeLoadingProcessor extends PGNodeLoadingProcessor<GraphMLNodeExportHandler>
+public class GraphMLNodeLoadingProcessor extends PGNodeLoadingProcessor<GraphMLNodeLoadingHandler>
 {
 	// It's like the base class, it just needs generics instantiation and Spring annotations.
 }

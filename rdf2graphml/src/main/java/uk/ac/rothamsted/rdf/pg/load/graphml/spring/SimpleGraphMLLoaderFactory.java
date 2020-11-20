@@ -2,7 +2,7 @@ package uk.ac.rothamsted.rdf.pg.load.graphml.spring;
 
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.rdf.pg.load.graphml.SimpleGraphMLExporter;
+import uk.ac.rothamsted.rdf.pg.load.graphml.SimpleGraphMLLoader;
 import uk.ac.rothamsted.rdf.pg.load.spring.SimplePGLoaderFactory;
 
 /**
@@ -13,9 +13,9 @@ import uk.ac.rothamsted.rdf.pg.load.spring.SimplePGLoaderFactory;
  *
  */
 @Component
-public class SimpleGraphMLLoaderFactory extends SimplePGLoaderFactory<SimpleGraphMLExporter>
+public class SimpleGraphMLLoaderFactory extends SimplePGLoaderFactory<SimpleGraphMLLoader>
 {
 	public SimpleGraphMLLoaderFactory () {
-		super ( SimpleGraphMLExporter.class );
+		super ( SimpleGraphMLLoader.class );
 	}
 }

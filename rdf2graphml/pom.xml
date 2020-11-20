@@ -26,6 +26,11 @@
 			<groupId>uk.ac.ebi</groupId>
 			<artifactId>jutils-io</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>uk.ac.ebi</groupId>
+			<artifactId>jutils</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
