@@ -1,25 +1,9 @@
-* Review all
+* Rename Node/Relation Loading -> Maker
+
 * (DONE) Split generic/Neo4j/graphML into Maven modules
 * (DONE) Rerun tests for Neo4j
 * Write tests for GraphML
-  * `CypherHandlersIT`, similar test class needed: 
-    * `initData`/`closeData`, same wrappers
-    * `initNeoData` => `initGraphMLData`, which sets the same handlers
-    * `initNeo` not needed
-    * `testXXX`, equivalent GraphML needed (output has to be reloaded and XPath can be used to verify, see
-      `XPathReader` in jutils)
-  * `CypherLoaderIT`, similar test class needed:
-    * `initTDB` should be moved to a new common method in `RdfDataManagerTestBase`, to be mamed something like 
-      `initDBPediaDataSet`
-    * `initNeo` not needed
-    * `testLoading` equivalent GraphML needed to test the simple (single-config) exporter
-      * Results verification is not implemented yet in these methods, would be good to have this in both
-        flavours of this test
-    * `testMultiConfigLoading` not so needed, we already know that manual wiring works
-    * `testSpring`, equivalent needed, just to be sure the simple exporter is instantiated
-    * `testSpringMultiConfig`, equivalent needed, with the specific GraphML config for Spring (already in place in 
-      test/resources).
-    * `testNeoIndexing` not applcable to GrapgML export, it doesn't do the indexing.
+  * GraphMLLoaderTest, CypherLoaderIT, assertions to be added
     
 * Review the CLI
 

@@ -2,7 +2,7 @@ language: java
 
 jdk:
   - openjdk11
-env:
+#env:
   # Use this to release. See: 
   #   https://github.com/Rothamsted/knetminer-common/blob/master/.travis.yml
   #   https://github.com/Rothamsted/knetminer-common
