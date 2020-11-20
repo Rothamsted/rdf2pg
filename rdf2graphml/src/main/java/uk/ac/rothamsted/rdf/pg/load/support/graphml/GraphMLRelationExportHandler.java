@@ -50,7 +50,7 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 	@Override
 	public void accept ( Set<QuerySolution> relRecords )
 	{
-		this.renameThread ( "gmlRelX:" );
+		this.renameThread ( "graphmlRelX:" );
 		log.trace ( "Begin of {} relations", relRecords.size () );
 
 		RdfDataManager rdfMgr = this.getRdfDataManager ();

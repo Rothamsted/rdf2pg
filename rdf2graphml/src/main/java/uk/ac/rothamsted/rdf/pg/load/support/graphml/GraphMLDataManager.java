@@ -80,7 +80,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 				ExceptionUtils.throwEx ( 
 					UncheckedIOException.class,
 					ex,
-					"Error while writing to the GML file '%s': %s", outPath, ex.getMessage () 
+					"Error while writing to the graphML file '%s': %s", outPath, ex.getMessage () 
 				);
 			}
 		}
@@ -208,7 +208,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 		{
 			ExceptionUtils.throwEx ( 
 				UncheckedFileNotFoundException.class, ex, 
-				"Error while writing to GML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
+				"Error while writing to graphML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
 			);
 		}
 	}	

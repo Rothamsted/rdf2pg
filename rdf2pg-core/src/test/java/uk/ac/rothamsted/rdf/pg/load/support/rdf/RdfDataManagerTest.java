@@ -31,11 +31,11 @@ import uk.ac.rothamsted.rdf.pg.load.support.entities.PGRelation;
  * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
  *
  */
-public class RdfDataManagerTest extends DataTestBase
+public class RdfDataManagerTest
 {
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
-	private static RdfDataManager rdfMgr = new RdfDataManager ( TDB_PATH );
+	private static RdfDataManager rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 	
 	/**
 	 * Loads the test TDB used in this class with a bounch of RDF data.
@@ -43,7 +43,7 @@ public class RdfDataManagerTest extends DataTestBase
 	@BeforeClass
 	public static void initData ()
 	{
-		DataTestBase.initData ();
+		DataTestUtils.initData ();
 	}
 	
 	@AfterClass
@@ -61,7 +61,7 @@ public class RdfDataManagerTest extends DataTestBase
 		Dataset ds = rdfMgr.getDataSet ();
 		Model m = ds.getDefaultModel ();
 		
-		PGNode pgNode = rdfMgr.getPGNode ( m.getResource ( iri ( "ex:1" ) ), SPARQL_NODE_LABELS, SPARQL_NODE_PROPS );
+		PGNode pgNode = rdfMgr.getPGNode ( m.getResource ( iri ( "ex:1" ) ), DataTestUtils.SPARQL_NODE_LABELS, DataTestUtils.SPARQL_NODE_PROPS );
 		assertNotNull ( "PGNode 1 not found!", pgNode );
 		log.info ( "Got node 1" );
 
@@ -82,11 +82,11 @@ public class RdfDataManagerTest extends DataTestBase
 		log.info ( "Verifying Relations" );
 
 		List<PGRelation> pgRelations = new ArrayList<> ();
-		rdfMgr.processRelationIris ( SPARQL_REL_TYPES, 
+		rdfMgr.processRelationIris ( DataTestUtils.SPARQL_REL_TYPES, 
 			row -> 
 			{
 				PGRelation rel = rdfMgr.getPGRelation ( row );
-				rdfMgr.setPGRelationProps ( rel, SPARQL_REL_PROPS );
+				rdfMgr.setPGRelationProps ( rel, DataTestUtils.SPARQL_REL_PROPS );
 				pgRelations.add ( rel );
 		});
 		

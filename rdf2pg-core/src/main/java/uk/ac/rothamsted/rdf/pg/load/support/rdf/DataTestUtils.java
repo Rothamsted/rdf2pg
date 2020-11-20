@@ -13,14 +13,14 @@ import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
 
 /**
- * A base for testing rdf2pg, which is initialiases RDF data for many
- * RDF2PG tests (that's why this is here and not in the test subtree).
+ * A few utilities for running RDF2PG tests. This is here and not in a test folder, cause
+ * it is reused across different modules.
  *
  * @author brandizi
- * <dl><dt>Date:</dt><dd>8 Dec 2017</dd></dl>
+ * <dl><dt>Date:</dt><dd>20 Nov 2020</dd></dl>
  *
  */
-public class DataTestBase
+public class DataTestUtils
 {
 	public final static String SPARQL_NODE_LABELS;
 	public final static String SPARQL_NODE_PROPS;
@@ -50,7 +50,7 @@ public class DataTestBase
 	
 	
 	/**
-	 * Loads the test TDB used in this class with a bunch of RDF data.
+	 * Initialises {@link #TDB_PATH} with some dummy data.
 	 */
 	public static void initData ()
 	{
@@ -77,14 +77,14 @@ public class DataTestBase
 	}
 	
 	/** 
-	 * Initialize a test dataset based on DBpedia 
+	 * Initialises {@value #TDB_PATH} a test dataset based on DBpedia 
 	 * Brought here from test classes used for loader testing (*LoaderIT)
 	 */
 	
 	public static void initDBpediaDataSet ()
 	{
 		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 	  )
 		{
 			rdfMgr.open ( TDB_PATH );

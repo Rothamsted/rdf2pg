@@ -44,7 +44,7 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 		// TODO: The node/relation preparation is common code, doesn't depend on
 		// the target, FACTORISE THE COPY-PASTE!!!
 		
-		this.renameThread ( "gmlNodeX:" );
+		this.renameThread ( "graphmlNodeX:" );
 		log.trace ( "Begin graphML export of {} node(s)", nodeResources.size () );
 					
 		var rdfMgr = this.getRdfDataManager ();

@@ -27,7 +27,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.neo4j.Neo4jDataManager;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestUtils;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
@@ -39,12 +39,12 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
  * <dl><dt>Date:</dt><dd>14 Dec 2017</dd></dl>
  *
  */
-public class CypherLoaderIT extends DataTestBase
+public class CypherLoaderIT
 {
 	@BeforeClass
 	public static void initTDB ()
 	{
-		DataTestBase.initDBpediaDataSet ();
+		DataTestUtils.initDBpediaDataSet ();
 	}
 	
 	@Before
@@ -58,7 +58,7 @@ public class CypherLoaderIT extends DataTestBase
 		try (
 			var neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
 			var cyloader = new SimpleCyLoader ();
-			var rdfMgr = new RdfDataManager ( TDB_PATH );
+			var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 		)
 		{
 			// You don't want to do this, see #testSpring()
@@ -88,7 +88,7 @@ public class CypherLoaderIT extends DataTestBase
 			cyloader.setPGNodeLoader ( cyNodeProc );
 			cyloader.setPGRelationLoader ( cyRelProc );
 			
-			cyloader.load ( TDB_PATH );
+			cyloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -156,7 +156,7 @@ public class CypherLoaderIT extends DataTestBase
 			
 			cymloader.setConfigItems ( config );
 	
-			cymloader.load ( TDB_PATH );
+			cymloader.load ( DataTestUtils.TDB_PATH );
 		}
 		// TODO: test!
 	}	
@@ -170,7 +170,7 @@ public class CypherLoaderIT extends DataTestBase
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
 			PropertyGraphLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
-			cyloader.load ( TDB_PATH );
+			cyloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -184,7 +184,7 @@ public class CypherLoaderIT extends DataTestBase
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( TDB_PATH );
+			mloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -198,7 +198,7 @@ public class CypherLoaderIT extends DataTestBase
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( TDB_PATH );
+			mloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}		

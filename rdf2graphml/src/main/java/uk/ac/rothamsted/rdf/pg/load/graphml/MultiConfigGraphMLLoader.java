@@ -1,8 +1,5 @@
 package uk.ac.rothamsted.rdf.pg.load.graphml;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +20,6 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLDataManager;
 public class MultiConfigGraphMLLoader 
 	extends MultiConfigPGLoader<ConfigItem<SimpleGraphMLExporter>, SimpleGraphMLExporter>
 {
-
 	@Autowired
 	private GraphMLDataManager graphmlDataMgr;
 	
@@ -37,7 +33,7 @@ public class MultiConfigGraphMLLoader
 		));
 		
 		String outPath = (String) opts [ 0 ];
-		this.graphmlDataMgr.setGraphmlOutputPathOutputPath ( outPath );
+		this.graphmlDataMgr.setGraphmlOutputPath ( outPath );
 	}
 
 	@Override
@@ -56,18 +52,5 @@ public class MultiConfigGraphMLLoader
 	protected void loadEnd ( String tdbPath, Object... opts )
 	{
 		graphmlDataMgr.writeGraphML ();
-	}
-	
-	/** 
-	 * @TODO revise it, needed to access directly in the tests without relying on the springs wiring 
-	 */
-	
-	public GraphMLDataManager getGmlDataMgr() {
-		return gmlDataMgr;
-	}
-
-	public void setGmlDataMgr(GraphMLDataManager gmlDataMgr) {
-		this.gmlDataMgr = gmlDataMgr;
-	}
-	
+	}	
 }

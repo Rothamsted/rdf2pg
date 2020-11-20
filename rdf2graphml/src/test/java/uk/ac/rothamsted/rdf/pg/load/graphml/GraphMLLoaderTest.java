@@ -24,7 +24,7 @@ import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLNodeLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationExportHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.graphml.GraphMLRelationLoadingProcessor;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestUtils;
 
 /**
  * Basic tests for {@link SimpleGraphMLExporter} and {@link MultiConfigPGLoader}.
@@ -37,16 +37,16 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
  * <dl><dt>Date:</dt><dd>14 Dec 2017</dd></dl>
  * <dl><dt>Modified:</dt><dd>2 Nov 2020</dd></dl>
  */
-public class GraphMLLoaderIT
+public class GraphMLLoaderTest
 {
 	@BeforeClass
 	public static void initTDB ()
 	{
 		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 	  )
 		{
-			DataTestBase.initDBpediaDataSet ();
+			DataTestUtils.initDBpediaDataSet ();
 		}	
 	}
 	
@@ -54,13 +54,15 @@ public class GraphMLLoaderIT
 	public void testLoading () throws Exception
 	{
 		try (
-			RdfDataManager rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
+			RdfDataManager rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 			SimpleGraphMLExporter gmlExporter = new SimpleGraphMLExporter(); 
 		)
 		{
 			// You don't want to do this, see #testSpring()
 
+			var graphmlOutputPath = "target/test-simple-exporter.graphml";
 			GraphMLDataManager gmlMgr = new GraphMLDataManager ();
+			gmlMgr.setGraphmlOutputPath ( graphmlOutputPath );
 			
 			GraphMLNodeExportHandler gmlNodeHandler = new GraphMLNodeExportHandler ();
 			GraphMLRelationExportHandler gmlRelHandler = new GraphMLRelationExportHandler ();
@@ -86,7 +88,7 @@ public class GraphMLLoaderIT
 			gmlExporter.setPGNodeLoader ( gmlNodeProc );
 			gmlExporter.setPGRelationLoader ( gmlRelProc );
 			
-			gmlExporter.load ( DataTestBase.TDB_PATH, "target/test-simple-exporter.graphml");
+			gmlExporter.load ( DataTestUtils.TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -99,9 +101,11 @@ public class GraphMLLoaderIT
 		// Use ConfigurableApplicationContext to show the try() block that it's a Closeable and let Java to clean up
 	  // automatically 
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
-		{			
+		{	
+			var graphmlOutputPath = "target/test-simple-exporter-spring.graphml";
 			PropertyGraphLoader gmlLoader = beanCtx.getBean ( SimpleGraphMLExporter.class );
-			gmlLoader.load ( DataTestBase.TDB_PATH );
+			beanCtx.getBean ( GraphMLDataManager.class ).setGraphmlOutputPath ( graphmlOutputPath );
+			gmlLoader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -115,7 +119,7 @@ public class GraphMLLoaderIT
 			MultiConfigGraphMLLoader mloader = MultiConfigGraphMLLoader.getSpringInstance ( beanCtx, MultiConfigGraphMLLoader.class );				
 		)
 		{			
-			mloader.load ( DataTestBase.TDB_PATH );
+			mloader.load ( DataTestUtils.TDB_PATH, "target/test-mconfig-exporter.graphml" );
 			// TODO: test
 		}
 	}	

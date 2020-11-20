@@ -39,7 +39,7 @@ import uk.ac.ebi.utils.xml.XPathReader;
 import uk.ac.rothamsted.rdf.pg.load.graphml.SimpleGraphMLExporter;
 import uk.ac.rothamsted.rdf.pg.load.support.PGEntityHandler;
 import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
+import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestUtils;
 
 /**
  * Runs {@link GraphMLLoadingHandler}-related tests.
@@ -49,28 +49,15 @@ import uk.ac.rothamsted.rdf.pg.load.support.rdf.DataTestBase;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  * <dl><dt>Modified:</dt><dd>3 Nov 2020</dd></dl>
  */
-public class GraphMLHandlersIT
-{
-	private RdfDataManager rdfMgr = new RdfDataManager ( DataTestBase.TDB_PATH );
-	
+public class GraphMLHandlersTest
+{	
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	@BeforeClass
 	public static void initData () throws IOException {
-		DataTestBase.initData ();
+		DataTestUtils.initData ();
 	}
-	
-	@AfterClass
-	public static void closeData () throws IOException {
-		DataTestBase.closeDataMgr ();
-	}
-	
-	@After
-	public void closeRdfMgr ()
-	{
-		rdfMgr.close ();
-	}
-	
+		
 	/**
 	 *  Does the graphML export onto the parameter and returns an {@link XPathReader} on top of such
 	 *  file, ready to run verifications. 
@@ -96,25 +83,33 @@ public class GraphMLHandlersIT
 	@Test
 	public void testNodes () throws Exception
 	{
-		var graphmlOutPath = "target/test-nodes.graphml";
+		XPathReader gmlxpath = null;
 		
-		Set<Resource> rdfNodes = 
-			Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
-			.map ( iri -> rdfMgr.getDataSet ().getDefaultModel ().createResource ( iri ) )
-			.collect ( Collectors.toSet () );
-		
-		var graphmlMgr = createGraphMLDataMgr ( graphmlOutPath );
-		
-		GraphMLNodeExportHandler handler = new GraphMLNodeExportHandler ();
-		handler.setLabelsSparql ( DataTestBase.SPARQL_NODE_LABELS );
-		handler.setNodePropsSparql ( DataTestBase.SPARQL_NODE_PROPS );
-		handler.setRdfDataManager ( rdfMgr );
-		
-		handler.accept ( rdfNodes );
-		graphmlMgr.writeGraphML();
-					
-		var gmlxpath = new XPathReader ( Paths.get ( graphmlOutPath ) );
+		try ( var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH ) )
+		{
+			var graphmlOutPath = "target/test-nodes.graphml";
 
+			Set<Resource> rdfNodes = 
+				Stream.of ( iri ( "ex:1" ), iri ( "ex:2" ), iri ( "ex:3" ) )
+				.map ( iri -> rdfMgr.getDataSet ().getDefaultModel ().createResource ( iri ) )
+				.collect ( Collectors.toSet () );
+			
+			var graphmlMgr = createGraphMLDataMgr ( graphmlOutPath );
+			
+			GraphMLNodeExportHandler handler = new GraphMLNodeExportHandler ();
+			handler.setLabelsSparql ( DataTestUtils.SPARQL_NODE_LABELS );
+			handler.setNodePropsSparql ( DataTestUtils.SPARQL_NODE_PROPS );
+
+			handler.setRdfDataManager ( rdfMgr );
+			handler.setGraphmlDataMgr ( graphmlMgr );
+
+			
+			handler.accept ( rdfNodes );
+			graphmlMgr.writeGraphML();
+						
+			gmlxpath = new XPathReader ( Paths.get ( graphmlOutPath ) );
+		}
+	
 		assertEquals ( "Wrong count for TestNode", 
 			2, 
 			((Double)(gmlxpath.read("count(//node[contains(@labelV, ':TestNode')])", XPathConstants.NUMBER))).longValue()
@@ -127,7 +122,7 @@ public class GraphMLHandlersIT
 		
 		String value = gmlxpath.read ( "//node[@id='http://www.example.com/res/2']/data[@key='attrib3']/text()", XPathConstants.STRING );
 		log.info ( "Found {} for attrib3", value ); 
-		assertEquals ( "Wrong property!", "another string", value); 
+		assertEquals ( "Wrong property!", "another string", value);
 	}
 	
 	
@@ -137,36 +132,41 @@ public class GraphMLHandlersIT
 	@Test
 	public void testRelations () throws Exception
 	{
-		var graphmlOutPath = "target/test-relations.graphml";
-		var graphmlMgr = createGraphMLDataMgr ( graphmlOutPath );
+		XPathReader gmlxpath = null;
 		
-		GraphMLRelationExportHandler handler = new GraphMLRelationExportHandler ();
-		
-		handler.setRdfDataManager ( rdfMgr );
-		handler.setGraphmlDataMgr ( graphmlMgr );
-		
-		handler.setRelationTypesSparql ( DataTestBase.SPARQL_REL_TYPES );
-		handler.setRelationPropsSparql ( DataTestBase.SPARQL_REL_PROPS  );
-
-		Set<QuerySolution> relSparqlRows = new HashSet<> ();
-		
-		Dataset dataSet = rdfMgr.getDataSet ();
-		Txn.executeRead ( dataSet,  () ->
-			SparqlUtils.select ( DataTestBase.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
-				.forEachRemaining ( row -> relSparqlRows.add ( row ) )
-		);
-
-		handler.accept ( relSparqlRows );
-		graphmlMgr.writeGraphML(); 
-
-		// we now have to read the GraphML file to check that everything has gone right 
-		XPathReader xPathGML = new XPathReader ( Paths.get ( graphmlOutPath ) );
+		try ( var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH ) )
+		{
+			var graphmlOutPath = "target/test-relations.graphml";
+			var graphmlMgr = createGraphMLDataMgr ( graphmlOutPath );
+			
+			GraphMLRelationExportHandler handler = new GraphMLRelationExportHandler ();
+			
+			handler.setRdfDataManager ( rdfMgr );
+			handler.setGraphmlDataMgr ( graphmlMgr );
+			
+			handler.setRelationTypesSparql ( DataTestUtils.SPARQL_REL_TYPES );
+			handler.setRelationPropsSparql ( DataTestUtils.SPARQL_REL_PROPS  );
+	
+			Set<QuerySolution> relSparqlRows = new HashSet<> ();
+			
+			Dataset dataSet = rdfMgr.getDataSet ();
+			Txn.executeRead ( dataSet,  () ->
+				SparqlUtils.select ( DataTestUtils.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
+					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
+			);
+	
+			handler.accept ( relSparqlRows );
+			graphmlMgr.writeGraphML(); 
+	
+			// we now have to read the GraphML file to check that everything has gone right 
+			gmlxpath = new XPathReader ( Paths.get ( graphmlOutPath ) );
+		}
 		
 		// We convert the tests to XPath expressions
 
 		assertEquals ("Wrong count for relations",
 			3,
-			((Double)(xPathGML.read("count(//edge)", XPathConstants.NUMBER))).longValue()
+			((Double)(gmlxpath.read("count(//edge)", XPathConstants.NUMBER))).longValue()
 		); 
 		
 		// we checked the edge's label as well, but currently only the relations part is generated
@@ -180,7 +180,7 @@ public class GraphMLHandlersIT
 		
 		assertEquals ( "Wrong count for {1 relatedTo 2}!",
 			1, 
-			((Double)(xPathGML.read("count(//edge[@labelE='relatedTo'][@source='http://www.example.com/res/1'][@target='http://www.example.com/res/2'])", XPathConstants.NUMBER))).longValue()
+			((Double)(gmlxpath.read("count(//edge[@labelE='relatedTo'][@source='http://www.example.com/res/1'][@target='http://www.example.com/res/2'])", XPathConstants.NUMBER))).longValue()
 		); 
 		
 		
@@ -194,7 +194,7 @@ public class GraphMLHandlersIT
 		
 		assertEquals( "Wrong count for {3 derivedFrom 1}!",
 			1,
-			((Double)(xPathGML.read("count(//edge[@labelE='derivedFrom'][@source='http://www.example.com/res/3'][@target='http://www.example.com/res/1'])",XPathConstants.NUMBER))).longValue()
+			((Double)(gmlxpath.read("count(//edge[@labelE='derivedFrom'][@source='http://www.example.com/res/3'][@target='http://www.example.com/res/1'])",XPathConstants.NUMBER))).longValue()
 		); 
 		
 		
@@ -227,7 +227,7 @@ public class GraphMLHandlersIT
 //					)
 //				);
 		
-		String valueList= xPathGML.read("//edge[@labelE='relatedTo'][@source='http://www.example.com/res/2'][@target='http://www.example.com/res/3']/data[@key='note']/text()", XPathConstants.STRING);
+		String valueList= gmlxpath.read("//edge[@labelE='relatedTo'][@source='http://www.example.com/res/2'][@target='http://www.example.com/res/3']/data[@key='note']/text()", XPathConstants.STRING);
 		
 		List<String> notesGML = new ArrayList<>(); 
 		if (valueList.trim().startsWith("[")) {
