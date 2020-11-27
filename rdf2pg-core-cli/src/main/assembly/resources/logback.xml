@@ -39,6 +39,6 @@
   </root>
 
 	<!-- Define more Loggers this way if you want finer reports for selected components -->
-  <!-- logger name="uk.ac.rothamsted.rdf.neo4j" level="INFO"/ -->
+  <!-- logger name="uk.ac.rothamsted.rdf.pg.cli" level="INFO"/ -->
   
 </configuration>

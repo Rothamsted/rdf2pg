@@ -2,10 +2,13 @@
 
 * (DONE) Split generic/Neo4j/graphML into Maven modules
 * (DONE) Rerun tests for Neo4j
+
 * Write tests for GraphML
   * GraphMLLoaderTest, CypherLoaderIT, assertions to be added
+  
     
 * Review the CLI
+  * In progress
 
 
 * (DONE) its getSimpleLoader factory needs a factory, which needs to be initialised

@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-
 	<!-- 
 		Common Knetminer parent, defining stuff like our Nexus
 	-->  
@@ -26,8 +25,7 @@
 		<module>rdf2pg-core</module>
 		<module>rdf2neo</module>
 		<module>rdf2graphml</module>
-		<!-- TODO: temporarily disabled -->
-		<!-- module>rdf2pg-core-cli</module -->
+		<module>rdf2pg-core-cli</module>
 		<module>neo4j-utils</module>
   </modules>
   
@@ -39,6 +37,7 @@
 		<slf4j.version>1.7.25</slf4j.version>
 		<!-- Overrides the version defined in the parent POM -->
 		<jutils.version>10.0-SNAPSHOT</jutils.version>
+		<!-- springboot.version>2.4.0</springboot.version -->
   </properties>
   
   <dependencyManagement>
@@ -133,6 +132,27 @@
 				<version>${slf4j.version}</version>
 			</dependency>			
 
+			<dependency>
+				<groupId>info.picocli</groupId>
+				<artifactId>picocli</artifactId>
+				<version>4.5.2</version>
+			</dependency>
+
+<!--
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${springboot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter</artifactId>
+        <version>${springboot.version}</version>
+			</dependency>
+-->
   		</dependencies>
   		
   </dependencyManagement>

@@ -38,7 +38,7 @@ export CLASSPATH="$CLASSPATH:$RDF2NEO_HOME:$RDF2NEO_HOME/lib/*"
 # http://stackoverflow.com/questions/743454/space-in-java-command-line-arguments 
 
 java \
-	$OPTS uk.ac.rothamsted.rdf.neo4j.Rdf2NeoCli ${1+"$@"}
+	$OPTS uk.ac.rothamsted.rdf.pg.cli.Rdf2NeoCli ${1+"$@"}
 
 EXCODE=$?
 
