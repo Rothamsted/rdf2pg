@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Note that all the variables ${rdf2pg.xxx} are replaced by Maven filtering and they're not
-# Bash variables.
+# This file and tdb2pg.sh are templated in rdf2pg-core-cli.
+# They're poured on a specific PG command line interface with more proper names (eg rdf2neo.sh, rdf2graphml.sh).
+#
+# Moreover, the variables ${rdf2pg.xxx} are defined in the CLI POMs to define sensible values for these files
+# (via Maven interpolation). Hence, they're not Bash variables.
 #
 export WORK_DIR="$(pwd)"
 export MYNAME=`basename $0` # My name is changed in every specific package

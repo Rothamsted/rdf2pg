@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # This is the Bash Launcher.
+#
+# See rdf2pg.sh for details on how these files are used as templates for the 
+# CLI-specific implementations.  
 # 
 
 # These are passed to the JVM. they're appended, so that you can predefine it from the shell
