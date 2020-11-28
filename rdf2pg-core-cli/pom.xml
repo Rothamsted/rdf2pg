@@ -23,6 +23,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- 
@@ -43,8 +44,6 @@
 
 	<build>
 
-		<finalName>${project.artifactId}_${project.version}</finalName>
-
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
@@ -52,50 +51,12 @@
 			</testResource>
 		</testResources>
 
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-
 		<plugins>
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
-
-
-			<!-- The package for line commands is built through this -->
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archiverConfig>
-						<fileMode>0755</fileMode>
-						<directoryMode>0755</directoryMode>
-						<defaultDirectoryMode>0755</defaultDirectoryMode>
-					</archiverConfig>
-				</configuration>
-				<executions>
-					<execution>
-						<id>pkg</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}_${project.version}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<attach>true</attach>
-							<descriptors>
-								<descriptor>src/main/assembly/pkg.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-		    
+					    
 		</plugins>
 
 	</build>

@@ -57,8 +57,7 @@
 	    </plugin>
 
 			<!-- 
-				These are needed in other modules
-				TODO: probably to be removed from the core and left in specific impl. 
+				These are needed in other modules.
 			-->				
 			<plugin>
 		    <groupId>org.apache.maven.plugins</groupId>

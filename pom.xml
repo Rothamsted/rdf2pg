@@ -23,10 +23,11 @@
       
   <modules>
 		<module>rdf2pg-core</module>
-		<module>rdf2neo</module>
-		<module>rdf2graphml</module>
 		<module>rdf2pg-core-cli</module>
 		<module>neo4j-utils</module>
+		<module>rdf2neo</module>
+		<module>rdf2graphml</module>
+		<module>rdf2neo-cli</module>
   </modules>
   
   <properties>
@@ -226,7 +227,37 @@
 		      		<goals><goal>verify</goal></goals>
 	          </execution>
 	        </executions>	      
-		    </plugin>				
+		    </plugin>
+		    
+				<!-- The package for line commands is built through this -->
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<configuration>
+						<archiverConfig>
+							<fileMode>0755</fileMode>
+							<directoryMode>0755</directoryMode>
+							<defaultDirectoryMode>0755</defaultDirectoryMode>
+						</archiverConfig>
+					</configuration>
+					<executions>
+						<execution>
+							<id>pkg</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<!-- TODO: maybe you need to override this -->
+								<finalName>${project.artifactId}_${project.version}</finalName>
+								<appendAssemblyId>false</appendAssemblyId>
+								<attach>true</attach>
+								<descriptors>
+									<descriptor>${project.build.directory}/assembly/pkg.xml</descriptor>
+								</descriptors>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>					    				
 			</plugins>
 		</pluginManagement>		
 	</build>

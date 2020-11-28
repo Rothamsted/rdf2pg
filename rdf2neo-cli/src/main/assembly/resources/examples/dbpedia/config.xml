@@ -16,7 +16,7 @@
 		     have defined it somewhere else. -->
 		<bean id = "pwd" class = "java.lang.String">
 			<constructor-arg value = 
-			  "#{ systemEnvironment [ 'RDF2NEO_HOME' ] + '/examples/dbpedia/' }" 
+			  "#{ systemEnvironment [ 'RDF2PG_HOME' ] + '/examples/dbpedia/' }" 
 			/>		
 		</bean>
 		
@@ -29,7 +29,7 @@
 		-->
 
 		<!-- Queries to map places -->
-		<bean class = "uk.ac.rothamsted.rdf.pg.cli.load.MultiConfigCyLoader.ConfigItem">
+		<bean class = "uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem">
 			
 			<!--
 			  This is the name of this config item/subset of data. It is used only for communication purposes, 
@@ -38,7 +38,7 @@
 			<property name = "name" value = "places" />
 
 			<property name = "nodeIrisSparql">
-				<!-- Use this to read a SPARQ query from a file -->
+				<!-- Use this to read a SPARQL query from a file -->
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
         	 <!-- 
         	   You need the index param, cause there are a couple of variants for this methods and Spring needs
@@ -77,7 +77,7 @@
 
 		<!-- Queries to map people -->
 
-		<bean class = "uk.ac.rothamsted.rdf.pg.cli.load.MultiConfigCyLoader.ConfigItem">
+		<bean class = "uk.ac.rothamsted.rdf.pg.load.neo4j.Neo4jConfigItem">
 		
 			<property name = "name" value = "people" />
 

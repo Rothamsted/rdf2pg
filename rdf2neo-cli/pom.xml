@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+    <artifactId>rdf2pg-pom</artifactId>
+    <groupId>uk.ac.rothamsted.kg</groupId>
+    <version>4.0-SNAPSHOT</version>
+  </parent>
+  
+	<artifactId>rdf2neo-cli</artifactId>
+	<name>rdf2neo-cli - rdf2neo Command Line Interface</name>
+
+	<properties>
+		<rdf2pg.cli.rdf2pg>rdf2neo</rdf2pg.cli.rdf2pg>
+		<rdf2pg.cli.tdb2pg>tdb2neo</rdf2pg.cli.tdb2pg>
+		<rdf2pg.cli.title>The RDF/Neo4j Converter</rdf2pg.cli.title>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdf2pg-core-cli</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdf2neo</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Use Logback as concrete logger -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<finalName>${project.artifactId}_${project.version}</finalName>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+
+			<!-- 
+				The package for line commands is built through this and using the files
+				that the dependency plug-in gets from other packages.				 
+			 -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+		    
+		    
+			<!-- 
+			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
+			 	final distro zip.
+			 	
+			 	TODO: factorise the test res extraction.
+			 -->
+  		<plugin>
+  			<artifactId>maven-dependency-plugin</artifactId>
+  			<version>3.1.2</version>
+  			<executions>
+  				<execution>
+  					<phase>process-test-resources</phase>
+  					<goals>
+  						<goal>unpack</goal>
+  					</goals>
+  					<configuration>
+	          	<artifactItems>
+	            	<artifactItem>
+							    <groupId>uk.ac.rothamsted.kg</groupId>
+						  		<artifactId>rdf2pg-core</artifactId>
+									<version>${project.version}</version>
+									<classifier>tests</classifier>
+									<type>test-jar</type>
+      	          <excludes>**/*.class</excludes>
+									<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
+	             	</artifactItem>
+	             	
+	             	<!-- Base files to build the CLI -->
+	            	<artifactItem>
+							    <groupId>uk.ac.rothamsted.kg</groupId>
+						  		<artifactId>rdf2pg-core-cli</artifactId>
+									<version>${project.version}</version>
+	               	<includes>assembly/**/*</includes>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<fileMappers>
+		                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+											<pattern>\Qrdf2pg.sh\E</pattern>
+											<replacement>${rdf2pg.cli.rdf2pg}.sh</replacement>
+										</fileMapper>
+		                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+											<pattern>\Qtdb2pg.sh\E</pattern>
+											<replacement>${rdf2pg.cli.tdb2pg}.sh</replacement>
+										</fileMapper>
+									</fileMappers>										               	
+	             	</artifactItem>	             	
+	          	</artifactItems>
+  					</configuration>
+  				</execution>
+  			</executions>
+  		</plugin>	    
+		    
+		    
+		</plugins>
+
+	</build>
+
+</project>

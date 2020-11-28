@@ -24,15 +24,15 @@ OPTS="$OPTS -Dfile.encoding=UTF-8"
 ###
 
 export WORK_DIR="$(pwd)"
-if [ "$RDF2NEO_HOME" == "" ]; then
+if [ "$RDF2PG_HOME" == "" ]; then
 	cd "$(dirname $0)"
-	export RDF2NEO_HOME="$(pwd)"
+	export RDF2PG_HOME="$(pwd)"
 	cd "$WORK_DIR"
 fi
 
 # Additional .jar files or other CLASSPATH directories can be set with this.
 # (see http://kevinboone.net/classpath.html for details)  
-export CLASSPATH="$CLASSPATH:$RDF2NEO_HOME:$RDF2NEO_HOME/lib/*"
+export CLASSPATH="$CLASSPATH:$RDF2PG_HOME:$RDF2PG_HOME/lib/*"
 
 # See here for an explanation about ${1+"$@"} :
 # http://stackoverflow.com/questions/743454/space-in-java-command-line-arguments 

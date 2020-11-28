@@ -11,7 +11,7 @@
   <artifactId>rdf2neo</artifactId>
   
   <name>rdf2neo - RDF/Neo4j Conversion Library</name>
-  <url>http://maven.apache.org</url>
+  <url>http://maven.apache.org</url>    
     
 	<dependencies>
 
@@ -77,14 +77,9 @@
 							    <groupId>uk.ac.rothamsted.kg</groupId>
 						  		<artifactId>rdf2pg-core</artifactId>
 									<version>${project.version}</version>
-	               	<type>test-jar</type>
-	               	
-	               	<excludes>**/*.class</excludes>
-	               	
-	               	<!--  We've our own version of this -->
-	               	<excludes>multi_config.xml</excludes>
-	               	
-									<outputDirectory>target/test-classes</outputDirectory>	               	
+	               	<type>test-jar</type>	               
+	               	<excludes>**/*.class</excludes>	               	
+									<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
 	             	</artifactItem>
 	          	</artifactItems>  						
   					</configuration>
