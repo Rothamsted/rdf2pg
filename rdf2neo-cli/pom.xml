@@ -70,59 +70,15 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
 		    
-		    
-			<!-- 
-			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
-			 	final distro zip.
-			 	
-			 	TODO: factorise the test res extraction.
-			 -->
   		<plugin>
   			<artifactId>maven-dependency-plugin</artifactId>
-  			<version>3.1.2</version>
-  			<executions>
+  			<executions>		    
   				<execution>
-  					<phase>process-test-resources</phase>
-  					<goals>
-  						<goal>unpack</goal>
-  					</goals>
-  					<configuration>
-	          	<artifactItems>
-	            	<artifactItem>
-							    <groupId>uk.ac.rothamsted.kg</groupId>
-						  		<artifactId>rdf2pg-core</artifactId>
-									<version>${project.version}</version>
-									<classifier>tests</classifier>
-									<type>test-jar</type>
-      	          <excludes>**/*.class</excludes>
-									<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
-	             	</artifactItem>
-	             	
-	             	<!-- Base files to build the CLI -->
-	            	<artifactItem>
-							    <groupId>uk.ac.rothamsted.kg</groupId>
-						  		<artifactId>rdf2pg-core-cli</artifactId>
-									<version>${project.version}</version>
-	               	<includes>assembly/**/*</includes>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<fileMappers>
-		                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-											<pattern>\Qrdf2pg.sh\E</pattern>
-											<replacement>${rdf2pg.cli.rdf2pg}.sh</replacement>
-										</fileMapper>
-		                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-											<pattern>\Qtdb2pg.sh\E</pattern>
-											<replacement>${rdf2pg.cli.tdb2pg}.sh</replacement>
-										</fileMapper>
-									</fileMappers>										               	
-	             	</artifactItem>	             	
-	          	</artifactItems>
-  					</configuration>
-  				</execution>
-  			</executions>
-  		</plugin>	    
-		    
-		    
+  					<id>get-cli-resources</id>
+  					<phase>prepare-package</phase>
+					</execution>
+				</executions>
+			</plugin>		    
 		</plugins>
 
 	</build>

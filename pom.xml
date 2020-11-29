@@ -241,13 +241,12 @@
 					</configuration>
 					<executions>
 						<execution>
-							<id>pkg</id>
+							<id>cli-pkg</id>
 							<phase>package</phase>
 							<goals>
 								<goal>single</goal>
 							</goals>
 							<configuration>
-								<!-- TODO: maybe you need to override this -->
 								<finalName>${project.artifactId}_${project.version}</finalName>
 								<appendAssemblyId>false</appendAssemblyId>
 								<attach>true</attach>
@@ -257,7 +256,68 @@
 							</configuration>
 						</execution>
 					</executions>
-				</plugin>					    				
+				</plugin>	
+				
+				<!--
+					TODO: comment me 
+				 -->
+	  		<plugin>
+	  			<artifactId>maven-dependency-plugin</artifactId>
+	  			<version>3.1.2</version>
+	  			<executions>
+	  				<execution>
+	  					<id>get-test-resources</id>
+	  					<phase>process-test-resources</phase>
+	  					<goals>
+	  						<goal>unpack</goal>
+	  					</goals>
+	  					<configuration>
+		          	<artifactItems>
+		            	<artifactItem>
+								    <groupId>uk.ac.rothamsted.kg</groupId>
+							  		<artifactId>rdf2pg-core</artifactId>
+										<version>${project.version}</version>
+										<classifier>tests</classifier>
+										<type>test-jar</type>
+	      	          <excludes>**/*.class</excludes>
+										<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
+		             	</artifactItem>
+		          	</artifactItems>
+	  					</configuration>
+	  				</execution>
+	  				<execution>
+	  					<id>get-cli-resources</id>
+	  					<!-- <phase>prepare-package</phase> -->
+	  					<phase>none</phase>
+	  					<goals>
+	  						<goal>unpack</goal>
+	  					</goals>
+	  					<configuration>
+		          	<artifactItems>
+		             	<!-- Base files to build the CLI -->
+		            	<artifactItem>
+								    <groupId>uk.ac.rothamsted.kg</groupId>
+							  		<artifactId>rdf2pg-core-cli</artifactId>
+										<version>${project.version}</version>
+		               	<includes>assembly/**/*</includes>
+										<outputDirectory>${project.build.directory}</outputDirectory>
+										<fileMappers>
+			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+												<pattern>\Qrdf2pg.sh\E</pattern>
+												<replacement>${rdf2pg.cli.rdf2pg}.sh</replacement>
+											</fileMapper>
+			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+												<pattern>\Qtdb2pg.sh\E</pattern>
+												<replacement>${rdf2pg.cli.tdb2pg}.sh</replacement>
+											</fileMapper>
+										</fileMappers>										               	
+		             	</artifactItem>	             	
+		          	</artifactItems>
+	  					</configuration>
+	  				</execution>	  				
+	  			</executions>
+	  		</plugin>
+	  										    				
 			</plugins>
 		</pluginManagement>		
 	</build>
