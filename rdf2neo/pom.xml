@@ -59,32 +59,11 @@
 	      <artifactId>maven-failsafe-plugin</artifactId>
 	    </plugin>
 
-			<!-- 
-			 	Test files from the core lib are reused here, both for further tests and as examples to be included in the
-			 	final distro zip.
+			<!--
+				See the main POM. 
 			 -->
   		<plugin>
   			<artifactId>maven-dependency-plugin</artifactId>
-  			<executions>
-  				<execution>
-  					<phase>process-test-resources</phase>
-  					<goals>
-  						<goal>unpack</goal>
-  					</goals>
-  					<configuration>
-	          	<artifactItems>
-	            	<artifactItem>
-							    <groupId>uk.ac.rothamsted.kg</groupId>
-						  		<artifactId>rdf2pg-core</artifactId>
-									<version>${project.version}</version>
-	               	<type>test-jar</type>	               
-	               	<excludes>**/*.class</excludes>	               	
-									<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
-	             	</artifactItem>
-	          	</artifactItems>  						
-  					</configuration>
-  				</execution>
-  			</executions>
   		</plugin>
   						
 		</plugins>	

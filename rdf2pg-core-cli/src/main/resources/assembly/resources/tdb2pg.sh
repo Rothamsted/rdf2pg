@@ -41,13 +41,12 @@ export CLASSPATH="$CLASSPATH:$RDF2PG_HOME:$RDF2PG_HOME/lib/*"
 # http://stackoverflow.com/questions/743454/space-in-java-command-line-arguments 
 
 java \
-	$OPTS uk.ac.rothamsted.rdf.pg.cli.Rdf2NeoCli ${1+"$@"}
+	$OPTS uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli ${1+"$@"}
 
 EXCODE=$?
 
 # We assume stdout is for actual output, that might be pipelined to some other command, the rest (including logging)
 # goes to stderr.
 # 
-echo Java Finished. Quitting the Shell Too. >&2
-echo >&2
+echo -e "\nJava Finished, quitting the shell too.\n" >&2
 exit $EXCODE

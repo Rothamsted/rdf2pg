@@ -59,5 +59,5 @@ echo -e "\n\n  Invoking ${rdf2pg.cli.tdb2pg}.sh"
 "$RDF2PG_HOME/${rdf2pg.cli.tdb2pg}.sh" -c "$config_path" "$RDF2PG_TDB"
 
 excode=$?
-echo -e "\n\n $MYNAME finished"
+echo -e "\n\n $MYNAME finished\n"
 exit $excode

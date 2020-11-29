@@ -1,4 +1,5 @@
-//package uk.ac.rothamsted.rdf.pg.cli;
+package uk.ac.rothamsted.kg.rdf2pg.cli;
+//package uk.ac.rothamsted.kg.rdf2pg.cli;
 //
 //import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertTrue;
@@ -13,7 +14,7 @@
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //
-//import uk.ac.rothamsted.rdf.pg.cli.Rdf2PGCli;
+//import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli;
 //import uk.ac.rothamsted.rdf.pg.load.support.rdf.RdfDataManager;
 //
 ///**

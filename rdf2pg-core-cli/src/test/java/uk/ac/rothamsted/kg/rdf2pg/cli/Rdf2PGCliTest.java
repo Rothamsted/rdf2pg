@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.cli;
+package uk.ac.rothamsted.kg.rdf2pg.cli;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -79,7 +79,7 @@ public class Rdf2PGCliTest
 		assertTrue ( "Can't find CLI usage output (--config)!", outBuf.toString ().contains ( "--config" ) );
 		assertTrue ( "Can't find CLI usage output (description)!", outBuf.toString ().contains ( TEST_CMD_DESCRIPTION ) );
 		
-		Assert.assertEquals ( "Wrong exit code from --help invocation!", ExitCode.USAGE, Rdf2PGCli.getExitCode () );
+		assertEquals ( "Wrong exit code from --help invocation!", ExitCode.USAGE, Rdf2PGCli.getExitCode () );
 	}	
 
 }

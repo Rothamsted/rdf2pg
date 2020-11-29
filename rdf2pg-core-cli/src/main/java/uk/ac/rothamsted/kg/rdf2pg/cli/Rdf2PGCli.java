@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.cli;
+package uk.ac.rothamsted.kg.rdf2pg.cli;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * 
  */
 @Configuration
-@ComponentScan ( basePackages = "uk.ac.rothamsted.rdf.pg.cli" )
+@ComponentScan ( basePackages = "uk.ac.rothamsted.kg.rdf2**.cli" )
 public abstract class Rdf2PGCli
 {
 	/**

@@ -229,7 +229,10 @@
 	        </executions>	      
 		    </plugin>
 		    
-				<!-- The package for line commands is built through this -->
+				<!-- 
+					The package for line commands (*-cli modules) is built through this. Part of these files
+					come from the core package, downloaded from the Maven dependency plug-in (see below). 
+				-->
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<configuration>
@@ -259,12 +262,24 @@
 				</plugin>	
 				
 				<!--
-					TODO: comment me 
+					This has two common executions, both download different files from the core package to be used by 
+					the others. See below for details.
+					
+					Including this plug-in in your project by just telling its artifactId runs the first execution only 
+					(test file downloads) and that's typical of library modules.
+					
+					If you include the plugin and also override the get-cli-resources execution, then it additionally will download
+					files that are needed (by the Assembly plug-in above) to build the command line packages. Of course, that's
+					typical of *-cli modules (havea look at them for details on how to activate).
 				 -->
 	  		<plugin>
 	  			<artifactId>maven-dependency-plugin</artifactId>
 	  			<version>3.1.2</version>
 	  			<executions>
+	  				<!--
+	  					This downloads common test files from the core module.
+	  					This is active by default (via the <phase> default). 
+	  				-->
 	  				<execution>
 	  					<id>get-test-resources</id>
 	  					<phase>process-test-resources</phase>
@@ -285,8 +300,16 @@
 		          	</artifactItems>
 	  					</configuration>
 	  				</execution>
+	  				<!-- 
+	  					As said above, these files are typically used in command line modules. By default it's disabled 
+	  					(bound to to the none phase).
+	  				 -->
 	  				<execution>
 	  					<id>get-cli-resources</id>
+	  					<!-- 
+	  						Recommended phase to activate it (see *-cli modules). The Assembly plug-in usually comes straight 
+	  					  after this (the package phase). 
+	  					-->
 	  					<!-- <phase>prepare-package</phase> -->
 	  					<phase>none</phase>
 	  					<goals>
@@ -300,7 +323,14 @@
 							  		<artifactId>rdf2pg-core-cli</artifactId>
 										<version>${project.version}</version>
 		               	<includes>assembly/**/*</includes>
+		               	<!-- This is target/assembly, the assembly plug-in picks from here -->
 										<outputDirectory>${project.build.directory}</outputDirectory>
+										<!-- 
+										  The downloaded copy of this files is renamed.
+										  
+											The replacement variables below are defined by *-cli modules and assign proper names to the 
+											particular line command needed for a particular rdf2pg flavour (eg, rdf2neo.sh, rdf2graphml.sh)
+										-->
 										<fileMappers>
 			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
 												<pattern>\Qrdf2pg.sh\E</pattern>

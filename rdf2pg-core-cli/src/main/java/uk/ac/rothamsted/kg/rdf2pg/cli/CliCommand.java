@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.cli;
+package uk.ac.rothamsted.kg.rdf2pg.cli;
 
 import java.util.concurrent.Callable;
 
@@ -21,10 +21,12 @@ import picocli.CommandLine.ExitCode;
  */
 @Component
 @Command ( 
-	name = "abstractCmd", description = "Command Line Skeleton.", 
+	name = "abstractCmd", description = "\n\nCommand Line Skeleton.\n", 
 	exitCodeOnVersionHelp = ExitCode.USAGE, // else, it's 0 and you can't know about this event
 	exitCodeOnUsageHelp = ExitCode.USAGE, // ditto
-	mixinStandardHelpOptions = true
+	mixinStandardHelpOptions = true,
+	usageHelpAutoWidth = true,
+	usageHelpWidth = 120
 )
 public abstract class CliCommand implements Callable<Integer>
 {

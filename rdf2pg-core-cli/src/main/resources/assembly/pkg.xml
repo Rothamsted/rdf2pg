@@ -18,10 +18,6 @@
 		  <outputDirectory>/lib</outputDirectory>
 		  <unpack>false</unpack>
 		  <scope>runtime</scope>
-		  <excludes>
-		    <!--  This comes in due some indirect dependency. We want to use log4j and hence the exclusion  -->
-				<exclude>commons-logging:commons-logging</exclude> 
-		  </excludes>
 		</dependencySet>
 	</dependencySets> 
   

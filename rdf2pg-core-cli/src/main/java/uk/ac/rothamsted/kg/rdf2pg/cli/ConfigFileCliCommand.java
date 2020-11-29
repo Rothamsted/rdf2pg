@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.rdf.pg.cli;
+package uk.ac.rothamsted.kg.rdf2pg.cli;
 
 import picocli.CommandLine.Option;
 import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
