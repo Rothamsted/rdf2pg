@@ -104,7 +104,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			nodesCtr += props.size ();
 		}
 		
-		log.debug ( "{} actual node(s) sent to Cypher", nodesCtr );
+		log.info ( "{} actual node(s) sent to Cypher", nodesCtr );
 	}
 			
 	

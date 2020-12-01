@@ -65,13 +65,13 @@
 			them here.
 		 -->
 		<fileSet>
-			<directory>${project.build.directory}/test-classes</directory>
+			<directory>${project.build.directory}/test-classes/examples</directory>
+			<outputDirectory>examples</outputDirectory>
       <fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>
-			<includes>
-				<include>dbpedia_*.*</include>
-			</includes>      
-			<outputDirectory>examples/dbpedia</outputDirectory>
+			<excludes>
+				<exclude>dummy**/*</exclude>
+			</excludes>      
 			<filtered>false</filtered>			
 		</fileSet>
 
@@ -84,25 +84,6 @@
 			<source>README.md</source>
 		</file>
  
-<!-- TODO: remove -->   
-<!--     <file> -->
-<!--       <source>src/main/assembly/resources/rdf2pg.sh</source> -->
-<!--       <outputDirectory></outputDirectory> -->
-<!--       This is filtered by Maven, when downloading into the implementation project -->
-<!--       <destName>${rdf2pg.cli.rdf2pg}.sh</destName> -->
-<!--       <fileMode>0755</fileMode> -->
-<!--       The file is also filtered to adapt it to the local implementation -->
-<!--       <filtered>true</filtered> -->
-<!--     </file> -->
-<!--     <file> -->
-<!--       <source>src/main/assembly/resources/tdb2pg.sh</source> -->
-<!--       <outputDirectory></outputDirectory> -->
-<!--       Same as above -->
-<!--       <destName>${rdf2pg.cli.tdb2pg}.sh</destName> -->
-<!--       <fileMode>0755</fileMode> -->
-<!--       This doesn't need it -->
-<!--       <filtered>false</filtered> -->
-<!--     </file> -->
 	</files>
 
 </assembly>

@@ -97,7 +97,7 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 			relsCtr += props.size (); 
 		}
 		
-		log.debug ( "{} actual relations(s) sent to Cypher", relsCtr );		
+		log.info ( "{} actual relations(s) sent to Cypher", relsCtr );		
 	}
 		
 	

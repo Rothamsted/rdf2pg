@@ -174,7 +174,14 @@
 			          <name>listener</name>
 			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
 			        </property>
-			       </properties>
+			      </properties>
+				    <!--
+				      Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
+				      See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
+				    -->
+				    <systemPropertyVariables>
+				      <rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
+				    </systemPropertyVariables>
 			    </configuration>
 			  </plugin>
 			
@@ -215,7 +222,18 @@
 			          <name>listener</name>
 			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
 			        </property>
-			       </properties>
+			      </properties>
+			      <environmentVariables>
+			      	<!-- Just to align to production files which are used for tests too -->
+			       	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
+			      </environmentVariables>
+			      <!--
+			      	Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
+			      	See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
+			      -->
+			      <systemPropertyVariables>
+			      	<rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
+			      </systemPropertyVariables>
 		      </configuration>
 					<executions>
 	          <execution>
@@ -245,7 +263,8 @@
 					<executions>
 						<execution>
 							<id>cli-pkg</id>
-							<phase>package</phase>
+							<!-- Default is package, but I don't see much point with packaging before tests are passed -->
+							<phase>post-integration-test</phase>
 							<goals>
 								<goal>single</goal>
 							</goals>

@@ -62,24 +62,24 @@ public class CypherLoaderIT
 		)
 		{
 			// You don't want to do this, see #testSpring()
-
+			
 			Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );
 			
 			CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
 			CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
 			
-			cyNodeHandler.setLabelsSparql ( IOUtils.readResource ( "dbpedia_node_labels.sparql" ) );
-			cyNodeHandler.setNodePropsSparql ( IOUtils.readResource ( "dbpedia_node_props.sparql" ) );
+			cyNodeHandler.setLabelsSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_LABELS );
+			cyNodeHandler.setNodePropsSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_PROPS );
 			cyNodeHandler.setRdfDataManager ( rdfMgr );
 			cyNodeHandler.setNeo4jDataManager ( neoMgr );
 			
-			cyRelHandler.setRelationTypesSparql ( IOUtils.readResource ( "dbpedia_rel_types.sparql" ) );
-			cyRelHandler.setRelationPropsSparql ( IOUtils.readResource ( "dbpedia_rel_props.sparql" ) );
+			cyRelHandler.setRelationTypesSparql ( DataTestUtils.DBPEDIA_SPARQL_REL_TYPES );
+			cyRelHandler.setRelationPropsSparql ( DataTestUtils.DBPEDIA_SPARQL_REL_PROPS );
 			cyRelHandler.setRdfDataManager ( rdfMgr );
 			cyRelHandler.setNeo4jDataManager ( neoMgr );
 
 			CyNodeLoadingProcessor cyNodeProc = new  CyNodeLoadingProcessor();
-			cyNodeProc.setNodeIrisSparql ( IOUtils.readResource ( "dbpedia_node_iris.sparql" ) );
+			cyNodeProc.setNodeIrisSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_IRIS );
 			cyNodeProc.setBatchJob ( cyNodeHandler );
 			
 			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
@@ -136,21 +136,22 @@ public class CypherLoaderIT
 			{
 				var cfgi = new Neo4jConfigItem ();
 				cfgi.setName ( "places" );
-				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_node_iris.sparql" ) );
-				cfgi.setLabelsSparql ( readResource ( "dbpedia_node_labels.sparql" ) );
-				cfgi.setNodePropsSparql ( readResource ( "dbpedia_node_props.sparql" ) );
-				cfgi.setRelationTypesSparql ( readResource ( "dbpedia_rel_types.sparql" ) );
-				cfgi.setRelationPropsSparql ( readResource ( "dbpedia_rel_props.sparql" ) );
+				cfgi.setNodeIrisSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_IRIS );
+				cfgi.setLabelsSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_LABELS );
+				cfgi.setNodePropsSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_PROPS );
+				cfgi.setRelationTypesSparql ( DataTestUtils.DBPEDIA_SPARQL_REL_TYPES );
+				cfgi.setRelationPropsSparql ( DataTestUtils.DBPEDIA_SPARQL_REL_PROPS );
 				config.add ( cfgi );
 			}
 
 			{
 				var cfgi = new Neo4jConfigItem ();
 				cfgi.setName ( "people" );
-				cfgi.setNodeIrisSparql ( readResource ( "dbpedia_people_iris.sparql" ) );
-				cfgi.setLabelsSparql ( readResource ( "dbpedia_people_labels.sparql" ) );
-				cfgi.setNodePropsSparql ( readResource ( "dbpedia_people_props.sparql" ) );
-				cfgi.setRelationTypesSparql ( readResource ( "dbpedia_people_rel_types.sparql" ) );
+
+				cfgi.setNodeIrisSparql ( DataTestUtils.DBPEDIA_SPARQL_PEOPLE_IRIS );
+				cfgi.setLabelsSparql ( DataTestUtils.DBPEDIA_SPARQL_PEOPLE_LABELS );
+				cfgi.setNodePropsSparql ( DataTestUtils.DBPEDIA_SPARQL_PEOPLE_PROPS );
+				cfgi.setRelationTypesSparql ( DataTestUtils.DBPEDIA_SPARQL_PEOPLE_REL_TYPES );
 				config.add ( cfgi );
 			}
 			

@@ -8,7 +8,7 @@
   
     
 * Review the CLI
-  * In progress
+  * Make rdf2graphml-cli
 
 
 * (DONE) its getSimpleLoader factory needs a factory, which needs to be initialised

@@ -104,7 +104,7 @@ public abstract class Rdf2PGCli
 	 * The last exit code, returned by {@link #main(String...)} before exiting. It's used for testing purposes and it's 
 	 * usually accessible only if NO_EXIT_PROP is set.
 	 */
-	static int getExitCode ()
+	public static int getExitCode ()
 	{
 		return exitCode;
 	}	

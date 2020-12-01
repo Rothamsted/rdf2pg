@@ -101,7 +101,7 @@ public abstract class SimplePGLoader
 			final String namePrefx = this.getNamePrefix ();
 			
 			Txn.executeRead ( ds, () -> 
-				log.info ( "{}Sending {} RDF triples to PG", namePrefx, ds.getUnionModel().size () )
+				log.info ( "{}RDF source has about {} triple(s)", namePrefx, ds.getUnionModel().size () )
 			);
 			
 			// Nodes

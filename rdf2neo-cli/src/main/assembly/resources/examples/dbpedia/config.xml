@@ -9,14 +9,14 @@
 		  Just leave this here. It means some components are got from the Java source files, by means of
 		  Spring annotations. You do need this base (which the declarations below extend/override). 
 		-->
-    <context:component-scan base-package = "uk.ac.rothamsted.rdf.pg.cli" />
+    <context:component-scan base-package = "uk.ac.rothamsted.rdf.pg" />
 
 
 		<!-- This assumes that you started from rdf2neo.sh, which defines the environment variable below, or that you
 		     have defined it somewhere else. -->
 		<bean id = "pwd" class = "java.lang.String">
 			<constructor-arg value = 
-			  "#{ systemEnvironment [ 'RDF2PG_HOME' ] + '/examples/dbpedia/' }" 
+			  "#{ systemEnvironment [ 'RDF2PG_HOME' ] + '/examples/dbpedia' }" 
 			/>		
 		</bean>
 		
@@ -44,33 +44,45 @@
         	   You need the index param, cause there are a couple of variants for this methods and Spring needs
         	   some disambiguation
         	  -->
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_iris.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_node_iris.sparql' }" index = "0" />
 				</bean>
 			</property>
 			
 			<property name="labelsSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_labels.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_node_labels.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<property name="nodePropsSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_node_props.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_node_props.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<property name="relationTypesSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_rel_types.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_rel_types.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<property name="relationPropsSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_rel_props.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_rel_props.sparql' }" index = "0" />
 				</bean>
 			</property>
+			
+			<!-- 
+				This query defines those node labels and properties that need to be indexed.
+				The query can mention all the necessary index, even those about other datasets
+				in a multi-config.
+			-->			
+			<property name="indexesSparql">
+				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+					<constructor-arg value = "#{ pwd + '/dbpedia_node_indexes.sparql' }" index = "0" />
+				</bean>
+			</property>
+			
 
 		</bean>
 
@@ -83,30 +95,30 @@
 
 			<property name = "nodeIrisSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_people_iris.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_people_iris.sparql' }" index = "0" />
 				</bean>
 			</property>
 			
 			<property name="labelsSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_people_labels.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_people_labels.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<property name="nodePropsSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_people_props.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_people_props.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<property name="relationTypesSparql">
 				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
-					<constructor-arg value = "#{ pwd + 'mapping/dbpedia_people_rel_types.sparql' }" index = "0" />
+					<constructor-arg value = "#{ pwd + '/dbpedia_people_rel_types.sparql' }" index = "0" />
 				</bean>
 			</property>
 
 			<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
-						
+									
 		</bean>
 
 

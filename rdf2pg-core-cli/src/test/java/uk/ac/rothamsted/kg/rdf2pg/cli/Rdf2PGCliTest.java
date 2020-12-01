@@ -49,13 +49,6 @@ public class Rdf2PGCliTest
 		}
 	}
 	
-	@BeforeClass
-	public static void setNoExitOption ()
-	{
-		// Prevents the Rdf2PGCli from invoking System.exit()
-		System.setProperty ( Rdf2PGCli.NO_EXIT_PROP, "true" );
-	}
-
 	@Test
 	public void testCliInvocation ()
 	{
