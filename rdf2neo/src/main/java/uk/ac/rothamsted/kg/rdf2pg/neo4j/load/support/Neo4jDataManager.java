@@ -1,9 +1,5 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -11,12 +7,10 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.AbstractPGDataManager;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGEntity;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.AbstractPGDataManager;
 
 /**
  * A conceptual extension of {@link uk.ac.rothamsted.neo4j.utils.Neo4jDataManager} that adds some RDF import-related
@@ -26,7 +20,7 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGEntity;
  * <dl><dt>Date:</dt><dd>10 Apr 2018</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class Neo4jDataManager extends AbstractPGDataManager
 {
 	private final uk.ac.rothamsted.neo4j.utils.Neo4jDataManager delegateMgr;

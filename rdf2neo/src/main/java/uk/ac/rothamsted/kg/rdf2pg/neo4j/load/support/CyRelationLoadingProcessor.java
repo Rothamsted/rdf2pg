@@ -7,15 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGLoadingProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGRelationLoadingProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGRelation;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationMakeProcessor;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
  * <H1>The Relation Loading processor for Neo4j</H1>
  * 
- * As per {@link PGRelationLoadingProcessor} contract, gather {@link PGRelation PG relations} from RDF and 
+ * As per {@link PGRelationMakeProcessor} contract, gather {@link PGRelation PG relations} from RDF and 
  * uses a {@link CyRelationLoadingHandler} to issue corresponding Cypher instructions that create the 
  * relations on the target Neo4j. 
  *
@@ -23,8 +22,8 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
  * <dl><dt>Date:</dt><dd>12 Dec 2017</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
-public class CyRelationLoadingProcessor extends PGRelationLoadingProcessor<CyRelationLoadingHandler>
+@Component @Scope ( scopeName = "pgmakerSession" )
+public class CyRelationLoadingProcessor extends PGRelationMakeProcessor<CyRelationLoadingHandler>
 {	
 	/**
 	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates

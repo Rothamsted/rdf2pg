@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.exceptions.ExceptionUtils;
 import uk.ac.ebi.utils.exceptions.UncheckedFileNotFoundException;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.AbstractPGDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.AbstractPGDataManager;
 
 /**
  * TODO: comment me!
@@ -97,7 +97,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	}
 	
 	/**
-	 * Handlers accumulates all property types during loading, since many graphML readers require to list them
+	 * Handlers accumulates all property types during the export, since many graphML readers require to list them
 	 * in the file header.
 	 */
 	public void gatherNodeProperty ( String property ) {
@@ -110,7 +110,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 
 	
 	/**
-	 * Handlers accumulates all property types during loading, since many graphML readers require to list them
+	 * Handlers accumulates all property types during the export, since many graphML readers require to list them
 	 * in the file header.
 	 */
 	public void gatherEdgeProperty ( String property ) {

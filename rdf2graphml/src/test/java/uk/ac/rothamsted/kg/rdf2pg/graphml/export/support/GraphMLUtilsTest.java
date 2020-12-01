@@ -7,8 +7,6 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils;
-
 
 /**
  *

@@ -3,7 +3,7 @@ package uk.ac.rothamsted.kg.rdf2pg.idconvert;
 import java.util.function.Function;
 
 import uk.ac.ebi.utils.ids.IdUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /** 
  * <p>An IRI converter turns a full long IRI/URI into a more readable ID/Label.</p>

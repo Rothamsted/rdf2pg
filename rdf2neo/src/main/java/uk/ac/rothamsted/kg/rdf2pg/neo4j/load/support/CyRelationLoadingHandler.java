@@ -9,13 +9,12 @@ import java.util.Set;
 
 import org.apache.jena.query.QuerySolution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGRelationHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGRelation;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationHandler;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
  * Similarly to {@link CyNodeLoadingHandler}, this is used to {@link CyRelationLoadingProcessor} to process relation 
@@ -25,7 +24,7 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
  * <dl><dt>Date:</dt><dd>21 Dec 2017</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class CyRelationLoadingHandler extends PGRelationHandler
 {
 	private Neo4jDataManager neo4jDataManager;

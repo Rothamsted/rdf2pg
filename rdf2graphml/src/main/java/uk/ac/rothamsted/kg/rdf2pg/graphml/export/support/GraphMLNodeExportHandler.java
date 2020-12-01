@@ -19,11 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGNodeHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGNode;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGNode;
 
 /**
- * <h1>The GraphML Node Loading handler.</h1>
+ * <h1>The GraphML Node Export handler.</h1>
  *
  * This generates GraphML output corresponding to sets of {@link PGNode property graph nodes} mapped from RDF.
  * Neo4j DB.
@@ -32,7 +32,7 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGNode;
  * <dl><dt>Date:</dt><dd>16 Apr 2020</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class GraphMLNodeExportHandler extends PGNodeHandler
 {
 	@Autowired

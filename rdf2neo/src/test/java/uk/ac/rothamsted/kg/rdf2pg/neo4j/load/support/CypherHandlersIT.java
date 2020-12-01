@@ -31,11 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.DataTestUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.Neo4jDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 import uk.ac.rothamsted.neo4j.utils.test.CypherTester;
 
 /**

@@ -4,13 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.MultiConfigPGLoader;
-import uk.ac.rothamsted.kg.rdf2pg.load.SimplePGLoader;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherIndexer;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.SimplePGMaker;
 
 /**
  * <h1>The simple Cypher/Neo4j loader</h1> 
@@ -26,18 +25,18 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherIndexer;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class SimpleCyLoader extends
-  SimplePGLoader<CyNodeLoadingHandler, CyRelationLoadingHandler, CyNodeLoadingProcessor, CyRelationLoadingProcessor>
+  SimplePGMaker<CyNodeLoadingHandler, CyRelationLoadingHandler, CyNodeLoadingProcessor, CyRelationLoadingProcessor>
 {	
 	private CypherIndexer cypherIndexer;
 	
 	@Override
-	protected void loadBody ( String tdbPath, Object... opts )
+	protected void makeBody ( String tdbPath, Object... opts )
 	{		
 		try
 		{
-			super.loadBody ( tdbPath, opts );
+			super.makeBody ( tdbPath, opts );
 			
 			// User-defined indices
 			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;

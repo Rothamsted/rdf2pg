@@ -1,38 +1,37 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
-import jdk.management.jfr.ConfigurationInfo;
-import uk.ac.rothamsted.kg.rdf2pg.load.ConfigItem;
-import uk.ac.rothamsted.kg.rdf2pg.load.MultiConfigPGLoader;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 /**
- * TODO: comment me!
+ * It has just a minor addition to consider the DB indexing.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>29 Jun 2020</dd></dl>
  *
  */
 @Component
-public class MultiConfigNeo4jLoader extends MultiConfigPGLoader<Neo4jConfigItem, SimpleCyLoader>
+public class MultiConfigNeo4jLoader extends MultiConfigPGMaker<Neo4jConfigItem, SimpleCyLoader>
 {
 	@Override
-	protected void loadBegin ( String tdbPath, Object... opts )
+	protected void makeBegin ( String tdbPath, Object... opts )
 	{
-		super.loadBegin ( tdbPath, opts );
+		super.makeBegin ( tdbPath, opts );
 	}
 
+	/**
+	 * With respect to the parent, manages the additional case of mode == 2 (do the indexing).
+	 * TODO: options as a Map and then we can get rid of this, leaving the parent's version.
+	 */
 	@Override
-	protected void loadIteration ( int mode, Neo4jConfigItem cfg, String tdbPath, Object... opts )
+	protected void makeIteration ( int mode, Neo4jConfigItem cfg, String tdbPath, Object... opts )
 	{
-		try ( SimpleCyLoader cyLoader = this.getPGLoaderFactory ().getObject (); )
+		try ( SimpleCyLoader cyLoader = this.getPGMakerFactory ().getObject (); )
 		{
-			cfg.configureLoader ( cyLoader );
-			cyLoader.load ( tdbPath, mode == 0, mode == 1, mode == 2 );
-		}
+			cfg.configureMaker ( cyLoader );
+			cyLoader.make ( tdbPath, mode == 0, mode == 1, mode == 2 );
+		}		
 	}
 	
 }

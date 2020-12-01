@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import uk.ac.rothamsted.kg.rdf2pg.cli.ConfigFileCliCommand;
-import uk.ac.rothamsted.kg.rdf2pg.load.MultiConfigPGLoader;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.MultiConfigNeo4jLoader;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 
 /**
@@ -30,9 +30,9 @@ public class Rdf2NeoCommand extends ConfigFileCliCommand
 	@Override
 	public Integer call () throws Exception
 	{
-		try ( var loader = MultiConfigPGLoader.getSpringInstance ( this.xmlConfigPath, MultiConfigNeo4jLoader.class ) )
+		try ( var loader = MultiConfigPGMaker.getSpringInstance ( this.xmlConfigPath, MultiConfigNeo4jLoader.class ) )
 		{
-			loader.load ( tdbPath );
+			loader.make ( tdbPath );
 		}
 		log.info ( "The end" );
 		return 0;

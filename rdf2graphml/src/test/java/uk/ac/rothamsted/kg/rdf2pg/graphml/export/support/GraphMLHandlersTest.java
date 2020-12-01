@@ -24,8 +24,6 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.system.Txn;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -36,16 +34,11 @@ import com.machinezoo.noexception.Exceptions;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.ebi.utils.xml.XPathReader;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.SimpleGraphMLExporter;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLDataManager;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLNodeExportHandler;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLRelationExportHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGEntityHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.DataTestUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
- * Runs {@link GraphMLLoadingHandler}-related tests.
+ * Tests graphML export handlers.
  *
  * @author brandizi
  * @author cbobed

@@ -18,12 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGRelationHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGRelation;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationHandler;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
- * Similarly to {@link GraphMLNodeExportHandler}, this is used to {@link GraphMLRelationLoadingProcessor} to process
+ * Similarly to {@link GraphMLNodeExportHandler}, this is used to {@link GraphMLRelationExportProcessor} to process
  * relation mappings from RDF and export them into GraphML.
  *
  * @author cbobed
@@ -35,7 +35,7 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
  *
  */
 @Component
-@Scope ( scopeName = "loadingSession" )
+@Scope ( scopeName = "pgmakerSession" )
 public class GraphMLRelationExportHandler extends PGRelationHandler
 {
 	@Autowired

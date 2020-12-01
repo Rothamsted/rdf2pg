@@ -12,16 +12,19 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.SimpleCyLoader;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
- * TODO: comment me!
+ * Used by {@link SimpleCyLoader} to build Neo4j indices.
+ * 
+ * The idea is that {@link #getIndexesSparql()} returns a list of {@code <?nodeLabel ?propertyNameToIndex>}. 
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>26 Feb 2018</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class CypherIndexer
 {
 	private Neo4jDataManager neo4jDataManager;
@@ -111,7 +114,9 @@ public class CypherIndexer
 		this.rdfDataManager = rdfDataManager;
 	}
 
-	
+	/**
+	 * See above.
+	 */
 	public String getIndexesSparql ()
 	{
 		return indexesSparql;

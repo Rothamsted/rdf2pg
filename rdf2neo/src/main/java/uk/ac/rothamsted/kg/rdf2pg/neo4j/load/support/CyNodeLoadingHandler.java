@@ -12,14 +12,12 @@ import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGNodeHandler;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.PGNodeLoadingProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.entities.PGNode;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGNode;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
  * <h1>The Cypher Node Loading handler.</h1>
@@ -31,7 +29,7 @@ import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
  * <dl><dt>Date:</dt><dd>11 Dec 2017</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "loadingSession" )
+@Component @Scope ( scopeName = "pgmakerSession" )
 public class CyNodeLoadingHandler extends PGNodeHandler
 {
 	private Neo4jDataManager neo4jDataManager;
@@ -65,7 +63,6 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			SortedSet<String> labels = new TreeSet<> ( cyNode.getLabels () );
 			labels.add ( defaultLabel );
 			
-			@SuppressWarnings ( "unchecked" )
 			List<Map<String, Object>> cyNodes = cyData.computeIfAbsent ( labels, l -> new LinkedList<> () );
 
 			cyNodes.add ( neoMgr.flatPGProperties ( cyNode ) );

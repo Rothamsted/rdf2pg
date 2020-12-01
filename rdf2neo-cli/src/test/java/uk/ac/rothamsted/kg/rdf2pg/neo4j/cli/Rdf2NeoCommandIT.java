@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
 
 /**
  * TODO: comment me!

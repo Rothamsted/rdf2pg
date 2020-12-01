@@ -1,7 +1,5 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load;
 
-import static uk.ac.ebi.utils.io.IOUtils.readResource;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,23 +12,19 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.MultiConfigPGLoader;
-import uk.ac.rothamsted.kg.rdf2pg.load.PropertyGraphLoader;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.DataTestUtils;
-import uk.ac.rothamsted.kg.rdf2pg.load.support.rdf.RdfDataManager;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.MultiConfigNeo4jLoader;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.SimpleCyLoader;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherHandlersIT;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.Neo4jDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.PropertyGraphMaker;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
- * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGLoader}.
+ * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGMaker}.
  *
  * As developer user, you're probably interested in invoking the converter using Spring configuration,
  * @see {@link #testSpringMultiConfig()} or {@link #testNeoIndexing()}. 
@@ -85,10 +79,10 @@ public class CypherLoaderIT
 			CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
 			cyRelProc.setConsumer ( cyRelHandler );
 
-			cyloader.setPGNodeLoader ( cyNodeProc );
-			cyloader.setPGRelationLoader ( cyRelProc );
+			cyloader.setPGNodeMaker ( cyNodeProc );
+			cyloader.setPGRelationMaker ( cyRelProc );
 			
-			cyloader.load ( DataTestUtils.TDB_PATH );
+			cyloader.make ( DataTestUtils.TDB_PATH );
 			// TODO: test!
 			
 		} // try neoDriver
@@ -100,7 +94,7 @@ public class CypherLoaderIT
 	{
 		try ( var cymloader = new MultiConfigNeo4jLoader (); )
 		{
-			cymloader.setPGLoaderFactory ( () -> 
+			cymloader.setPGMakerFactory ( () -> 
 			{
 				// You don't want to do this, see #testSpring()
 				
@@ -124,8 +118,8 @@ public class CypherLoaderIT
 				cyRelProc.setConsumer ( cyRelHandler );
 	
 				SimpleCyLoader cyloader = new SimpleCyLoader ();
-				cyloader.setPGNodeLoader ( cyNodeProc );
-				cyloader.setPGRelationLoader ( cyRelProc );
+				cyloader.setPGNodeMaker ( cyNodeProc );
+				cyloader.setPGRelationMaker ( cyRelProc );
 				cyloader.setRdfDataManager ( rdfMgr );
 				
 				return cyloader;
@@ -157,7 +151,7 @@ public class CypherLoaderIT
 			
 			cymloader.setConfigItems ( config );
 	
-			cymloader.load ( DataTestUtils.TDB_PATH );
+			cymloader.make ( DataTestUtils.TDB_PATH );
 		}
 		// TODO: test!
 	}	
@@ -170,8 +164,8 @@ public class CypherLoaderIT
 	  // automatically 
 		try ( ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "test_config.xml" ); )
 		{			
-			PropertyGraphLoader cyloader = beanCtx.getBean ( SimpleCyLoader.class );
-			cyloader.load ( DataTestUtils.TDB_PATH );
+			PropertyGraphMaker cyloader = beanCtx.getBean ( SimpleCyLoader.class );
+			cyloader.make ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -185,7 +179,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( DataTestUtils.TDB_PATH );
+			mloader.make ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -199,7 +193,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.load ( DataTestUtils.TDB_PATH );
+			mloader.make ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}		

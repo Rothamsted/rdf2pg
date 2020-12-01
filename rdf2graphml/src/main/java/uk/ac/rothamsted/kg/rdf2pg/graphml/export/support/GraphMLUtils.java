@@ -17,7 +17,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * 
- * TODO: comment me!
+ * Several utils to deal with GraphML document writing.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>26 Oct 2020</dd></dl>

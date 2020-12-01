@@ -1,10 +1,9 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load;
 
-import uk.ac.rothamsted.kg.rdf2pg.load.ConfigItem;
-import uk.ac.rothamsted.kg.rdf2pg.load.SimplePGLoader;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem;
 
 /**
- * TODO: comment me!
+ * Extends the parent with the indexing stuff.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>29 Jun 2020</dd></dl>
@@ -32,10 +31,10 @@ import uk.ac.rothamsted.kg.rdf2pg.load.SimplePGLoader;
 
 
 	@Override
-	public void configureLoader ( SimpleCyLoader cypherLoader )
+	public void configureMaker ( SimpleCyLoader cypherLoader )
 	{
-		super.configureLoader ( cypherLoader );
-		if ( indexesSparql == null ) return;
+		super.configureMaker ( cypherLoader );
+		if ( this.indexesSparql == null ) return;
 		cypherLoader.getCypherIndexer ().setIndexesSparql ( indexesSparql );
 	}
 }
