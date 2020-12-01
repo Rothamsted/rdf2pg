@@ -1,7 +1,7 @@
 package uk.ac.rothamsted.kg.rdf2pg.cli;
 
 import picocli.CommandLine.Option;
-import uk.ac.rothamsted.rdf.pg.load.MultiConfigPGLoader;
+import uk.ac.rothamsted.kg.rdf2pg.load.MultiConfigPGLoader;
 
 /**
  * Use this if your flavour of rdf2pg needs a Spring Bean config file (which typically needs).

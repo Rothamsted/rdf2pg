@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * 
  */
 @Configuration
-@ComponentScan ( basePackages = "uk.ac.rothamsted.kg.rdf2**.cli" )
+@ComponentScan ( basePackages = "uk.ac.rothamsted.kg.rdf2pg.**.cli" )
 public abstract class Rdf2PGCli
 {
 	/**

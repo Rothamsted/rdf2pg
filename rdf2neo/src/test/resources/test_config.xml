@@ -7,7 +7,9 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package = "uk.ac.rothamsted.rdf.pg" />
+    <context:component-scan base-package = "uk.ac.rothamsted.kg.rdf2pg">
+    	<context:exclude-filter type = "regex" expression = "uk\.ac\.rothamsted\.kg\.rdf2pg\..+\.cli" />
+    </context:component-scan>
 
 		<!-- This is not typical of production-level config, used for tests only -->
 
