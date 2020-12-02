@@ -6,10 +6,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 
 /**
- * TODO: comment me!
+ * The test for the Neo CLI
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>30 Nov 2020</dd></dl>
@@ -17,19 +18,41 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
  */
 public class Rdf2NeoCommandIT
 {
-
-	@BeforeClass
-	public static void initTDB ()
+		
+	/**
+	 * From an existing TDB
+	 */
+	@Test
+	public void testTdb2Neo ()
 	{
 		DataTestUtils.initDBpediaDataSet ();
-	}
 		
-	
-	@Test
-	public void testCliInvocation ()
-	{
-		Rdf2PGCli.main ( "--config", "src/main/assembly/resources/examples/dbpedia/config.xml", DataTestUtils.TDB_PATH );
+		Rdf2PGCli.main ( 
+			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml",
+			"--tdb", DataTestUtils.TDB_PATH
+		);
 		// TODO: test!
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
 	}
+
+	/**
+	 * First populates a TDB, then invokes the conversion.
+	 */
+	@Test
+	public void testRdf2Neo ()
+	{
+		NeoTestUtils.initNeo ();
+		
+		var dbpath = "target/test-classes/examples/dbpedia/";
+		
+		Rdf2PGCli.main ( 
+			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml", 
+			"--tdb", "target/rdf2neo-test-tdb",
+			"--rdf", dbpath + "dbpedia_places.ttl",
+			"--rdf", dbpath + "dbpedia_people.ttl"
+		);
+		// TODO: test!
+		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
+	}
+
 }

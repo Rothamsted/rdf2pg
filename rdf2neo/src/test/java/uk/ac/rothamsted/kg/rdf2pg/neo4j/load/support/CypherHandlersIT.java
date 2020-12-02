@@ -31,8 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 import uk.ac.rothamsted.neo4j.utils.test.CypherTester;
 
 /**
@@ -57,7 +58,7 @@ public class CypherHandlersIT
 	@Before
 	public void initNeoData () throws IOException
 	{
-		initNeo ();
+		NeoTestUtils.initNeo ();
 
 		try (	
 			var neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
@@ -82,20 +83,6 @@ public class CypherHandlersIT
 		}
 	}
 	
-	/**
-	 * Facility to empty the Neo4j test DB. Auto-called by other tests.
-	 * It's here as static method, because we call it from other classes as well.
-	 */
-	public static void initNeo ()
-	{
-		try (	
-				Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-				Session session = neoDriver.session ();
-			)
-		{
-			session.run ( "MATCH (n) DETACH DELETE n" );
-		}
-	}
 	
 	/**
 	 * Test {@link CyNodeLoadingHandler} to see if nodes are mapped from RDF and loaded into Neo4J

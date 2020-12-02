@@ -28,6 +28,7 @@
 		<module>rdf2neo</module>
 		<module>rdf2graphml</module>
 		<module>rdf2neo-cli</module>
+		<module>rdf2graphml-cli</module>
   </modules>
   
   <properties>
@@ -139,22 +140,8 @@
 				<version>4.5.2</version>
 			</dependency>
 
-<!--
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${springboot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
 
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter</artifactId>
-        <version>${springboot.version}</version>
-			</dependency>
--->
-  		</dependencies>
+  	</dependencies>
   		
   </dependencyManagement>
 
@@ -182,6 +169,10 @@
 				    <systemPropertyVariables>
 				      <rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
 				    </systemPropertyVariables>
+			      <environmentVariables>
+			      	<!-- Just to align to production files which are used for tests too -->
+			       	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
+			      </environmentVariables>
 			    </configuration>
 			  </plugin>
 			
@@ -354,10 +345,6 @@
 			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
 												<pattern>\Qrdf2pg.sh\E</pattern>
 												<replacement>${rdf2pg.cli.rdf2pg}.sh</replacement>
-											</fileMapper>
-			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-												<pattern>\Qtdb2pg.sh\E</pattern>
-												<replacement>${rdf2pg.cli.tdb2pg}.sh</replacement>
 											</fileMapper>
 										</fileMappers>										               	
 		             	</artifactItem>	             	

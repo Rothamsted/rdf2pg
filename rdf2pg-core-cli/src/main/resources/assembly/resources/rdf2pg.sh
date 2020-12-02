@@ -1,63 +1,52 @@
 #!/bin/bash
 
-# This file and tdb2pg.sh are templated in rdf2pg-core-cli.
-# They're poured on a specific PG command line interface with more proper names (eg rdf2neo.sh, rdf2graphml.sh).
+# This is the Bash Launcher.
 #
-# Moreover, the variables ${rdf2pg.xxx} are defined in the CLI POMs to define sensible values for these files
-# (via Maven interpolation). Hence, they're not Bash variables.
+# See rdf2pg.sh for details on how these files are used as templates for the 
+# CLI-specific implementations.  
+# 
+
+# These are passed to the JVM. they're appended, so that you can predefine it from the shell
+OPTS="$OPTS -Xms2G -Xmx4G"
+
+# We always work with universal text encoding.
+OPTS="$OPTS -Dfile.encoding=UTF-8"
+
+# Monitoring with jvisualvm/jconsole (end-user doesn't usually need this)
+#OPTS="$OPTS 
+# -Dcom.sun.management.jmxremote.port=5010
+# -Dcom.sun.management.jmxremote.authenticate=false
+# -Dcom.sun.management.jmxremote.ssl=false"
+       
+# Used for invoking a command in debug mode (end user doesn't usually need this)
+#OPTS="$OPTS -Xdebug -Xnoagent"
+#OPTS="$OPTS -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+
+# You shouldn't need to change the rest
 #
+###
+
 export WORK_DIR="$(pwd)"
-export MYNAME=`basename $0` # My name is changed in every specific package
-
-if  [ "$1" == '-h' ] || [ "$1" == '--help' ] || [ $# -lt 3 ] || ! ( [ "$1" == '-c' ] || [ "$1" == '--config' ] ); then
-				cat <<EOT
-	
-	
-	*** ${rdf2pg.cli.title} ***
-	
-	$MYNAME -c|--config <bean config file> <RDF-FILE>...
-	
-	Loads the files into the TDB triple store set by RDF2PG_TDB (uses a default in /tmp if not set),
-	then invokes tdb2pg.sh passing this TDB and the -c option.
-		
-	Requires JENA_HOME to be set.	
-	
-EOT
-  exit 1
-fi
-
 if [ "$RDF2PG_HOME" == "" ]; then
 	cd "$(dirname $0)"
 	export RDF2PG_HOME="$(pwd)"
 	cd "$WORK_DIR"
 fi
 
-if [ "$RDF2PG_TDB" == "" ]; then
-	export RDF2PG_TDB=/tmp/rdf2pg_tdb
-	echo "Generating new TDB at '$RDF2PG_TDB'"
-  rm -Rf "$RDF2PG_TDB"
-  mkdir "$RDF2PG_TDB"
-fi
-
-if [ "$JENA_HOME" == '' ]; then
-	echo -e "\n\n  Please set JENA_HOME to the path of the Jena binaries, which includes bin/ utilities\n"
-	exit 1
-fi
-
-shift
-config_path="$1"
-shift
-
+# Additional .jar files or other CLASSPATH directories can be set with this.
+# (see http://kevinboone.net/classpath.html for details)  
+export CLASSPATH="$CLASSPATH:$RDF2PG_HOME:$RDF2PG_HOME/lib/*"
 
 # See here for an explanation about ${1+"$@"} :
 # http://stackoverflow.com/questions/743454/space-in-java-command-line-arguments 
 
-echo -e "\n\n  Invoking tdbloader\n"
-"$JENA_HOME/bin/tdbloader" --loc="$RDF2PG_TDB" ${1+"$@"}
+java \
+	$OPTS uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli ${1+"$@"}
 
-echo -e "\n\n  Invoking ${rdf2pg.cli.tdb2pg}.sh"
-"$RDF2PG_HOME/${rdf2pg.cli.tdb2pg}.sh" -c "$config_path" "$RDF2PG_TDB"
+EXCODE=$?
 
-excode=$?
-echo -e "\n\n $MYNAME finished\n"
-exit $excode
+# We assume stdout is for actual output, that might be pipelined to some other command, the rest (including logging)
+# goes to stderr.
+# 
+echo -e "\nJava Finished, quitting the shell too.\n" >&2
+exit $EXCODE

@@ -23,8 +23,8 @@ import com.google.common.collect.Sets;
 
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGNode;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 
 /**
  * A few tests for the {@link RdfDataManager}.

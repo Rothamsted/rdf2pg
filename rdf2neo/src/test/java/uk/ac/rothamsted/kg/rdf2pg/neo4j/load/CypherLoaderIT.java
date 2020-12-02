@@ -18,10 +18,11 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherHandlersIT;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.Neo4jDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.PropertyGraphMaker;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGMaker}.
@@ -43,7 +44,7 @@ public class CypherLoaderIT
 	
 	@Before
 	public void initNeo () {
-		CypherHandlersIT.initNeo ();
+		NeoTestUtils.initNeo ();
 	}
 	
 	@Test
@@ -151,7 +152,7 @@ public class CypherLoaderIT
 			
 			cymloader.setConfigItems ( config );
 	
-			cymloader.make ( DataTestUtils.TDB_PATH );
+			cymloader.load ( DataTestUtils.TDB_PATH );
 		}
 		// TODO: test!
 	}	
@@ -179,7 +180,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.make ( DataTestUtils.TDB_PATH );
+			mloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}	
@@ -193,7 +194,7 @@ public class CypherLoaderIT
 			MultiConfigNeo4jLoader mloader = MultiConfigNeo4jLoader.getSpringInstance ( beanCtx, MultiConfigNeo4jLoader.class );				
 		)
 		{			
-			mloader.make ( DataTestUtils.TDB_PATH );
+			mloader.load ( DataTestUtils.TDB_PATH );
 			// TODO: test
 		}
 	}		

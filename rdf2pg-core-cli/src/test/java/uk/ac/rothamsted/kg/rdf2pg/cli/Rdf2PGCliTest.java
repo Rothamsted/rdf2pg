@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ExitCode;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 /**
  * Test the basic machinery to define/invoke rdf2pg command lines.
@@ -24,9 +26,13 @@ import picocli.CommandLine.ExitCode;
  */
 public class Rdf2PGCliTest
 {
-	private static final String TEST_OPTION = "path/to/foo/file.xml";
+	private static final String TEST_CFG_OPTION = "path/to/foo/file.xml";
+	private static final String TEST_TDB_OPTION = "path/to/foo/tdb";
+	private static final String[] TEST_RDF_OPTION = { "one.ttl", "two.rdf" };
 	private static final String TEST_CMD_DESCRIPTION = "A Test Command Line";
-	private static String result;
+	
+	private static String cfg, tdb;
+	private static String[] rdfs;
 	
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
@@ -37,22 +43,44 @@ public class Rdf2PGCliTest
 	@Command (
 		name = "testCmd", description = TEST_CMD_DESCRIPTION			
 	)	
-	public static class TestCmd extends ConfigFileCliCommand
+	public static class TestCmd extends Rdf2PgCommand<MultiConfigPGMaker<?, ?>>
 	{
-		@Override
-		public Integer call () throws Exception
+		
+		public TestCmd ()
 		{
-			result = this.xmlConfigPath;
-			log.info ( "Result set to: '{}'. Now returning 0", result );
+			// We don't use it for tests
+			super ( null );
+		}
+
+		@Override
+		public int makePropertyGraph () throws Exception
+		{
+			cfg = this.xmlConfigPath;
+			tdb = this.tdbPath;
+			rdfs = this.rdfFiles;
+			
+			log.info ( "Command executed, returning 0" );
 			return 0;
+		}
+
+		@Override
+		protected void load2Tdb ()
+		{
+			log.info ( "Fake TDB loading of: {}", Arrays.toString ( rdfFiles ) );
 		}
 	}
 	
 	@Test
 	public void testCliInvocation ()
 	{
-		Rdf2PGCli.main ( "--config", TEST_OPTION );
-		Assert.assertEquals ( "Wrong result from CLI invocation!", TEST_OPTION, result );
+		Rdf2PGCli.main ( 
+			"--config", TEST_CFG_OPTION, "-t", TEST_TDB_OPTION,
+			"--rdf", TEST_RDF_OPTION [ 0 ], "-r", TEST_RDF_OPTION [ 1 ]  
+		);
+		Assert.assertEquals ( "Wrong result from CLI invocation (-c)!", TEST_CFG_OPTION, cfg );
+		Assert.assertEquals ( "Wrong result from CLI invocation (-t)!", TEST_TDB_OPTION, tdb );
+		Assert.assertEquals ( "Wrong result from CLI invocation (-r)!", 0, Arrays.compare ( TEST_RDF_OPTION, rdfs ) );
+		Assert.assertEquals ( "Wrong result from CLI invocation (exit doce)!", 0, Rdf2PGCli.getExitCode () );
 	}	
 
 	@Test
@@ -69,6 +97,7 @@ public class Rdf2PGCliTest
 
 		log.debug ( "CLI output:\n{}", outBuf.toString () );
 		assertTrue ( "Can't find CLI usage output (--config)!", outBuf.toString ().contains ( "--config" ) );
+		assertTrue ( "Can't find CLI usage output (--tdb)!", outBuf.toString ().contains ( "--tdb" ) );
 		assertTrue ( "Can't find CLI usage output (description)!", outBuf.toString ().contains ( TEST_CMD_DESCRIPTION ) );
 		
 		assertEquals ( "Wrong exit code from --help invocation!", ExitCode.USAGE, Rdf2PGCli.getExitCode () );

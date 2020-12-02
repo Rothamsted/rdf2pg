@@ -34,8 +34,8 @@ import com.machinezoo.noexception.Exceptions;
 
 import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.ebi.utils.xml.XPathReader;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 
 /**
  * Tests graphML export handlers.

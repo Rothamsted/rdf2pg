@@ -8,10 +8,13 @@ import org.springframework.stereotype.Component;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ExitCode;
+import picocli.CommandLine.Option;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 /**
- * A line command instantiated by {@link Rdf2PGCli} and passed to picocli.
+ * A line command template to run rdfpg CLI functions.
  * 
+ * TODO: review this comment.
  * It is expected to have one concrete implementation of this class per each *-cli package available in rdf2pg 
  * (eg, rdf2neo-cli, rdf2graphml-cli). Each command will do something specific of the particular RDF2PG converter. 
  *
@@ -30,5 +33,5 @@ import picocli.CommandLine.ExitCode;
 )
 public abstract class CliCommand implements Callable<Integer>
 {
-	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
+	protected Logger log = LoggerFactory.getLogger ( this.getClass () );	
 }

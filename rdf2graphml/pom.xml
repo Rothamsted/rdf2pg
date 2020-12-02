@@ -8,7 +8,6 @@
     <version>4.0-SNAPSHOT</version>
   </parent>
   
-  <groupId>uk.ac.rothamsted.kg.graphml</groupId>
   <artifactId>rdf2graphml</artifactId>
   
   <name>rdf2graphml - RDF/graphML Conversion Library</name>

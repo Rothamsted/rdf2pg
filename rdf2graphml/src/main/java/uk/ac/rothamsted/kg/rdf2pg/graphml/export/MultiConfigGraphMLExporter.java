@@ -27,6 +27,15 @@ public class MultiConfigGraphMLExporter
 	@Autowired
 	private GraphMLDataManager graphmlDataMgr;
 	
+	/**
+	 * Just a wrapper of {@link #make(String, Object...)}.
+	 */
+	public void export ( String tdbPath, String graphmlOutPath )
+	{
+		// TODO Auto-generated method stub
+		this.make ( tdbPath, graphmlOutPath );
+	}
+
 	@Override
 	protected void makeBegin ( String tdbPath, Object... opts )
 	{

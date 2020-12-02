@@ -14,6 +14,14 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 @Component
 public class MultiConfigNeo4jLoader extends MultiConfigPGMaker<Neo4jConfigItem, SimpleCyLoader>
 {
+	/**
+	 * Just a wrapper of {@link #make(String, Object...)}.
+	 */
+	public void load ( String tdbPath )
+	{
+		super.make ( tdbPath );
+	}
+
 	@Override
 	protected void makeBegin ( String tdbPath, Object... opts )
 	{

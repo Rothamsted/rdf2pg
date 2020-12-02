@@ -1,4 +1,4 @@
-package uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf;
+package uk.ac.rothamsted.kg.rdf2pg.test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,6 +11,7 @@ import org.apache.jena.system.Txn;
 
 import info.marcobrandizi.rdfutils.namespaces.NamespaceUtils;
 import uk.ac.ebi.utils.io.IOUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
  * A few utilities for running RDF2PG tests. This is here and not in a test folder, cause
@@ -87,7 +88,7 @@ public class DataTestUtils
 		} 
 	}	
 	
-	
+		
 	/**
 	 * Initialises {@link #TDB_PATH} with some dummy data.
 	 */

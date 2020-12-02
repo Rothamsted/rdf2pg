@@ -16,8 +16,8 @@ import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLRelationExportHa
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLRelationExportProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.PropertyGraphMaker;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.DataTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
+import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
 
 /**
  * Basic tests for {@link SimpleGraphMLExporter} and {@link MultiConfigPGMaker}.

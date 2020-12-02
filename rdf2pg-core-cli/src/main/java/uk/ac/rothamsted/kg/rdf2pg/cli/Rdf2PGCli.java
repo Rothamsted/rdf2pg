@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @Configuration
 @ComponentScan ( basePackages = "uk.ac.rothamsted.kg.rdf2pg.**.cli" )
-public abstract class Rdf2PGCli
+public class Rdf2PGCli
 {
 	/**
 	 * If you set this to true, main() will not invoke {@link System#exit(int)}. This is useful in unit tests.

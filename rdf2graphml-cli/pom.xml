@@ -7,11 +7,11 @@
     <version>4.0-SNAPSHOT</version>
   </parent>
   
-	<artifactId>rdf2neo-cli</artifactId>
-	<name>rdf2neo-cli - rdf2neo Command Line Interface</name>
+	<artifactId>rdf2graphml-cli</artifactId>
+	<name>rdf2graphml-cli - rdf2graphml Command Line Interface</name>
 
 	<properties>
-		<rdf2pg.cli.rdf2pg>rdf2neo</rdf2pg.cli.rdf2pg>
+		<rdf2pg.cli.rdf2pg>rdf2graphml</rdf2pg.cli.rdf2pg>
 	</properties>
 
 	<dependencies>
@@ -24,7 +24,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>rdf2neo</artifactId>
+			<artifactId>rdf2graphml</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -59,11 +59,6 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
-				
-	    <plugin>
-	      <artifactId>maven-failsafe-plugin</artifactId>
-	    </plugin>
-			
 
 			<!-- 
 				The package for line commands is built through this and using the files
@@ -84,12 +79,6 @@
 				</executions>
 			</plugin>
 
-			<!-- Detailed configurations are on the top POM -->
-			<plugin>
-				<groupId>com.github.harti2006</groupId>
-				<artifactId>neo4j-server-maven-plugin</artifactId>
-			</plugin>
-					   					    
 		</plugins>
 
 	</build>
