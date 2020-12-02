@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.utils.exceptions.ExceptionUtils;
@@ -51,7 +53,9 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	private Set<String> gatheredNodeProperties = Collections.synchronizedSet ( new HashSet<>() );
 	private Set<String> gatheredEdgeProperties = Collections.synchronizedSet ( new HashSet<>() );
 	
-	private String graphmlOutputPath = null; 
+	private String graphmlOutputPath = null;
+	
+	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 
 	/**
 	 * Used to synch file writing operations over file path, see {@link #appendOutput(String, String)}.
@@ -203,11 +207,25 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 			out.println ( GraphMLUtils.GRAPH_TAG_END );
 			out.println ( GraphMLUtils.GRAPHML_TAG_END );
+			
+			// Clean-up. We don't put it in finally(), cause you typically you want to inspect them
+			// if an exception occurs
+			log.info ( "Deleteing temp graphML files" );
+			Files.deleteIfExists ( Path.of ( getNodeTmpPath () ) );
+			Files.deleteIfExists ( Path.of ( getEdgeTmpPath () ) );
+			log.info ( "graphML writing finished" );
 		}
 		catch ( FileNotFoundException ex )
 		{
 			ExceptionUtils.throwEx ( 
 				UncheckedFileNotFoundException.class, ex, 
+				"Error while writing to graphML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
+			);
+		}
+		catch ( IOException ex )
+		{
+			ExceptionUtils.throwEx ( 
+				UncheckedIOException.class, ex, 
 				"Error while writing to graphML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
 			);
 		}
