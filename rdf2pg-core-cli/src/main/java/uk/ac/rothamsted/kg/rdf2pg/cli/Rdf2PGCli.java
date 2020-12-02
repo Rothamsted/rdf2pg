@@ -24,6 +24,10 @@ import picocli.CommandLine;
  *       exceptions and quitting the JVM with a proper exit code.</li>
  * </ul>
  * 
+ * Note that the Spring context loaded from configuration files is different than the one loaded for the process
+ * described above. The former usually doesn't have classes in the hereby *.cli package (the scan package directive
+ * in the XML excludes it).
+ * 
  */
 @Configuration
 @ComponentScan ( basePackages = "uk.ac.rothamsted.kg.rdf2pg.**.cli" )

@@ -57,7 +57,7 @@ public class Rdf2PGCliTest
 		{
 			cfg = this.xmlConfigPath;
 			tdb = this.tdbPath;
-			rdfs = this.rdfFiles;
+			rdfs = this.rdfFilePaths;
 			
 			log.info ( "Command executed, returning 0" );
 			return 0;
@@ -66,7 +66,7 @@ public class Rdf2PGCliTest
 		@Override
 		protected void load2Tdb ()
 		{
-			log.info ( "Fake TDB loading of: {}", Arrays.toString ( rdfFiles ) );
+			log.info ( "Fake TDB loading of: {}", Arrays.toString ( rdfFilePaths ) );
 		}
 	}
 	
