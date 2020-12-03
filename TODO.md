@@ -1,4 +1,10 @@
-* Rename Node/Relation Loading -> Maker
+* Merge into master
+
+* Rewrite documentation
+	* In order to avoid problems with links, merge into master first, then put a note on docs that
+	  documentation is being reviewed. 
+	
+* (Done) Rename Node/Relation Loading -> Maker
 
 * (DONE) Split generic/Neo4j/graphML into Maven modules
 * (DONE) Rerun tests for Neo4j
@@ -7,7 +13,7 @@
   * GraphMLLoaderTest, CypherLoaderIT, assertions to be added
   
     
-* Review the CLI
+* (Done) Review the CLI
   * Make rdf2graphml-cli
 
 
