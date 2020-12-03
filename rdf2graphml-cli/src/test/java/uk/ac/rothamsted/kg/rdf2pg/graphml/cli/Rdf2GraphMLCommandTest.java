@@ -29,7 +29,7 @@ public class Rdf2GraphMLCommandTest
 		Rdf2PGCli.main ( 
 			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml",
 			"--tdb", DataTestUtils.TDB_PATH,
-			outPath
+			"--output", outPath
 		);
 		// TODO: test!
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
@@ -47,9 +47,9 @@ public class Rdf2GraphMLCommandTest
 		Rdf2PGCli.main ( 
 			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml", 
 			"--tdb", "target/rdf2neo-test-tdb",
-			"--rdf", dbpath + "dbpedia_places.ttl",
-			"--rdf", dbpath + "dbpedia_people.ttl",
-			outPath
+			"-o", outPath,
+			dbpath + "dbpedia_places.ttl",
+			dbpath + "dbpedia_people.ttl"
 		);
 		// TODO: test!
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );

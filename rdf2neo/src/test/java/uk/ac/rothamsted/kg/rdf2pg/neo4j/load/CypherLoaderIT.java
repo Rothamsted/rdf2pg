@@ -16,7 +16,6 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherHandlersIT;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.Neo4jDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;

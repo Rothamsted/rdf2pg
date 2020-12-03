@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationMakeProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
 
 /**
  * <H1>The Relation Export Processor</H1>

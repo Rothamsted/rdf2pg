@@ -5,6 +5,7 @@ import org.apache.jena.tdb2.loader.Loader;
 
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 /**
@@ -27,20 +28,18 @@ public abstract class Rdf2PgCommand<MM extends MultiConfigPGMaker<?, ?>> extends
 
 	@Option ( 
 		names = { "-t", "--tdb" }, 
-		paramLabel = "<TDB path>", 
+		paramLabel = "<path>", 
 		description = "The path to the Jena TDB triple store to load from. The default is presumably empty and to be used with -r.",
 		required = false,
 		showDefaultValue = Visibility.ALWAYS
 	)
 	protected String tdbPath = "/tmp/rdf2pg-tdb";
 	
-	
-	@Option ( 
-		names = { "-r", "--rdf" },
-		paramLabel = "<RDF path>", 
-		description = "Files to be uses as input. They're first uploaded on the support TDB."
-		  + " If none, the --tdb store is taken with its current contents.",
-		required = false 
+	@Parameters (
+		paramLabel = "<file>", 
+		description = "RDF files to be uses as input. They're first uploaded on the support TDB."
+			+ " If none, the --tdb store is taken with its current contents."
+		
 	)
 	protected String [] rdfFilePaths;
 	 

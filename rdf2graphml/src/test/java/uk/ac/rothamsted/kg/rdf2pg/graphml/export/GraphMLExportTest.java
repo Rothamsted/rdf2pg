@@ -6,9 +6,6 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import uk.ac.ebi.utils.io.IOUtils;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.MultiConfigGraphMLExporter;
-import uk.ac.rothamsted.kg.rdf2pg.graphml.export.SimpleGraphMLExporter;
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLNodeExportHandler;
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLNodeExportProcessor;

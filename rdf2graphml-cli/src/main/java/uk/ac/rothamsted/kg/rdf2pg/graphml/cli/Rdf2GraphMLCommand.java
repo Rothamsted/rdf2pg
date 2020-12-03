@@ -3,7 +3,7 @@ package uk.ac.rothamsted.kg.rdf2pg.graphml.cli;
 import org.springframework.stereotype.Component;
 
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Option;
 import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PgCommand;
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.MultiConfigGraphMLExporter;
 
@@ -25,7 +25,11 @@ public class Rdf2GraphMLCommand extends Rdf2PgCommand<MultiConfigGraphMLExporter
 {
 	// TODO: stdout?!
 	
-	@Parameters ( paramLabel = "<graphML out path>", description = "The output path", arity = "1" )
+	@Option (
+		names = { "-o", "--output" },
+		paramLabel = "<path>", description = "The graphML output path.",
+		required = true
+	)
 	private String graphmlPath = null;
 	
 	public Rdf2GraphMLCommand ()

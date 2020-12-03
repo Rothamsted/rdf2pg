@@ -75,7 +75,7 @@ public class Rdf2PGCliTest
 	{
 		Rdf2PGCli.main ( 
 			"--config", TEST_CFG_OPTION, "-t", TEST_TDB_OPTION,
-			"--rdf", TEST_RDF_OPTION [ 0 ], "-r", TEST_RDF_OPTION [ 1 ]  
+			TEST_RDF_OPTION [ 0 ], TEST_RDF_OPTION [ 1 ]  
 		);
 		Assert.assertEquals ( "Wrong result from CLI invocation (-c)!", TEST_CFG_OPTION, cfg );
 		Assert.assertEquals ( "Wrong result from CLI invocation (-t)!", TEST_TDB_OPTION, tdb );

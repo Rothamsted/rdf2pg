@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ExitCode;
-import picocli.CommandLine.Option;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 
 /**
  * A line command template to run rdfpg CLI functions.

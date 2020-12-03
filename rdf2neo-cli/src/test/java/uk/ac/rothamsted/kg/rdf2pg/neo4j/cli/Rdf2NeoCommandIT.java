@@ -2,7 +2,6 @@ package uk.ac.rothamsted.kg.rdf2pg.neo4j.cli;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli;
@@ -48,8 +47,8 @@ public class Rdf2NeoCommandIT
 		Rdf2PGCli.main ( 
 			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml", 
 			"--tdb", "target/rdf2neo-test-tdb",
-			"--rdf", dbpath + "dbpedia_places.ttl",
-			"--rdf", dbpath + "dbpedia_people.ttl"
+			dbpath + "dbpedia_places.ttl",
+			dbpath + "dbpedia_people.ttl"
 		);
 		// TODO: test!
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
