@@ -51,4 +51,4 @@ jobs:
         export CI_DIR_URL="https://raw.githubusercontent.com/Rothamsted/knetminer-common/master/ci-build"
         wget "$CI_DIR_URL/install.sh" -O ci-build/install.sh
         bash ./ci-build/install.sh
-        bash ci-build/build.sh
+        bash ./ci-build/build.sh
