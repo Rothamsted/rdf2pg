@@ -1,5 +1,7 @@
 * (DONE) Merge into master
 
+  * Add tags to possibly retrieve the latest rdf2neo snapshot.
+
 * Rewrite documentation
 	* In order to avoid problems with links, merge into master first, then put a note on docs that
 	  documentation is being reviewed. 
