@@ -3,50 +3,42 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
-    <artifactId>rdf2neo-pom</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <groupId>uk.ac.rothamsted.kg</groupId>
+    <artifactId>rdf2pg-pom</artifactId>
+    <version>4.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>rdf2neo</artifactId>
   
-  <name>rdf2neo - Core lib</name>
-  <url>http://maven.apache.org</url>
+  <name>rdf2neo - RDF/Neo4j Conversion Library</name>
+  <url>http://maven.apache.org</url>    
     
 	<dependencies>
 
 		<dependency>
-		  <groupId>${project.groupId}</groupId>
+		  <groupId>uk.ac.rothamsted.kg.neo4j</groupId>
 			<artifactId>neo4j-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>uk.ac.ebi</groupId>
-			<artifactId>jutils-io</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>info.marcobrandizi</groupId>
-			<artifactId>rdfutils-jena</artifactId>
+	    <groupId>uk.ac.rothamsted.kg</groupId>
+  		<artifactId>rdf2pg-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
+			<groupId>uk.ac.ebi</groupId>
+			<artifactId>jutils-io</artifactId>
+			<scope>test</scope>
 		</dependency>		
-
-		<dependency>
-	    <groupId>javax.annotation</groupId>
-	    <artifactId>javax.annotation-api</artifactId>
-		</dependency>
 		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		            			            			      
+		
 	</dependencies>
  
 	<build>
@@ -67,19 +59,13 @@
 	      <artifactId>maven-failsafe-plugin</artifactId>
 	    </plugin>
 
-			<!-- These are needed in other modules -->				
-			<plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-jar-plugin</artifactId>
-		    <executions>
-		    		<execution>
-		        <goals>
-		          <goal>test-jar</goal>
-		        </goals>
-		      </execution>
-		    </executions>
-		  </plugin>				
-				
+			<!--
+				See the main POM. 
+			 -->
+  		<plugin>
+  			<artifactId>maven-dependency-plugin</artifactId>
+  		</plugin>
+  						
 		</plugins>	
 		
 	</build> 

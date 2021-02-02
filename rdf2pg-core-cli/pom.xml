@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+    <artifactId>rdf2pg-pom</artifactId>
+    <groupId>uk.ac.rothamsted.kg</groupId>
+    <version>4.0-SNAPSHOT</version>
+  </parent>
+  
+	<artifactId>rdf2pg-core-cli</artifactId>
+	<name>rdf2pg-core-cli - Command Line Support Library</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdf2pg-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<!-- Use Logback as concrete logger -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- 
+			Intercepts log4j and sends it to SL4J
+			This bridge is needed because we already use components based on Log4j, the ones following might be needed
+			in your application, so they're commented here. 
+		-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+					   					    
+		</plugins>
+
+	</build>
+
+</project>

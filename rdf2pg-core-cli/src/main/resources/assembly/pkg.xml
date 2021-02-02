@@ -1,0 +1,89 @@
+<!-- 
+  File for the Maven Assembly plug-in.
+ 	
+ 	This produces a binary that contains all the dependencies needed to run this command line tool (in lib/), 
+ 	plus everything that lies on src/main/assembly/resources/ (putting the contents of this folder on the top
+ 	of the final binary file). 	
+ -->
+<assembly>
+  <id>pkg</id>
+ 
+  <formats>
+    <format>zip</format>
+  </formats>
+  
+	<dependencySets>
+		<dependencySet>
+		  <!-- Enable only if non-empty <outputFileNameMapping></outputFileNameMapping> -->
+		  <outputDirectory>/lib</outputDirectory>
+		  <unpack>false</unpack>
+		  <scope>runtime</scope>
+		</dependencySet>
+	</dependencySets> 
+  
+
+  <fileSets>
+
+		<fileSet>
+			<directory>src/main/assembly/resources</directory>
+      <fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>      
+			<outputDirectory></outputDirectory>
+			<filtered>true</filtered>
+		</fileSet>
+
+
+		<fileSet>
+			<directory>${project.build.directory}/assembly/resources</directory>
+      <excludes>
+        <!-- Defined below, with x permissions, non-executables only here -->
+        <exclude>**/*.sh</exclude>
+        <!-- They're renamed while copying, see below -->
+      	<exclude>rdf2pg.sh</exclude>
+      	<exclude>tdb2pg.sh</exclude>
+      </excludes>
+      <fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>      
+			<outputDirectory></outputDirectory>
+			<filtered>true</filtered>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.build.directory}/assembly/resources</directory>
+      <includes>
+        <include>**/*.sh</include>
+      </includes>  
+      <fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>      
+			<outputDirectory></outputDirectory>
+			<filtered>true</filtered>
+		</fileSet>
+		
+				
+		<!-- 
+			These are packaged by the core module, then unpacked by the CLI POMs and eventually we pick
+			them here.
+		 -->
+		<fileSet>
+			<directory>${project.build.directory}/test-classes/examples</directory>
+			<outputDirectory>examples</outputDirectory>
+      <fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+			<excludes>
+				<exclude>dummy**/*</exclude>
+			</excludes>      
+			<filtered>false</filtered>			
+		</fileSet>
+
+  </fileSets>
+
+	<!-- Some more stuff from the Maven project -->		
+	<files>
+		<file>
+			<!-- Assuming you've it in your implementation -->
+			<source>README.md</source>
+		</file>
+ 
+	</files>
+
+</assembly>

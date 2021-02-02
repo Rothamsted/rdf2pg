@@ -1,14 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>uk.ac.rothamsted.rdf.neo4j</groupId>
-    <artifactId>rdf2neo-pom</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <groupId>uk.ac.rothamsted.kg</groupId>
+    <artifactId>rdf2pg-pom</artifactId>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
+
+	<groupId>uk.ac.rothamsted.kg.neo4j</groupId>
 	<artifactId>neo4j-utils</artifactId>
   
-  <name>neo4j Utilities</name>
+  <name>neo4j-utils - Neo4j Utilities</name>
   <description>Java utilities for Neo4j</description>
   
   <dependencies>
