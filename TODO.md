@@ -1,4 +1,4 @@
-* Merge into master
+* (DONE) Merge into master
 
 * Rewrite documentation
 	* In order to avoid problems with links, merge into master first, then put a note on docs that
