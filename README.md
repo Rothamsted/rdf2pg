@@ -24,7 +24,9 @@ module is a command line tool to manage Neo4J imports.
 
 We recently [presented](https://www.slideshare.net/mbrandizi/swat4l-2018brandizi) rdf2neo at 
 the [SWAT4LS workshop](http://www.swat4ls.org/). See also the [paper][10] in the 
-proceedings. 
+proceedings.
+
+The benchmark mentioned by the paper is [here](https://github.com/Rothamsted/graphdb-benchmarks).
 
 [10]: https://figshare.com/articles/Getting_the_best_of_Linked_Data_and_Property_Graphs_rdf2neo_and_the_KnetMiner_Use_Case/7314323
 
