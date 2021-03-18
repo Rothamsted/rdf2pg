@@ -1,129 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
-    <context:component-scan base-package = "uk.ac.rothamsted.kg.rdf2pg">
-    	<context:exclude-filter type = "regex" expression = "uk\.ac\.rothamsted\.kg\.rdf2pg\..+\.cli" />
-    </context:component-scan>
+  <context:component-scan base-package = "uk.ac.rothamsted.kg.rdf2pg">
+  	<context:exclude-filter type = "regex" expression = "uk\.ac\.rothamsted\.kg\.rdf2pg\..+\.cli" />
+  </context:component-scan>
+
+	<!-- 
+	  Each ConfigItem is a mapping query set.
+	  Every config item is supposed to be associated to a data subset, e.g., one for people, another for places, etc.   	  
 	
-		<!-- 
-		  Each ConfigItem is a mapping query set.
-		  Every config item is supposed to be associated to a data subset, e.g., one for people, another for places, etc.   	  
+	  You must define instances of ConfigItem and not a list of ConfigItem(s), due to the way Spring
+	  manages injection in this case (https://jira.spring.io/browse/SPR-8519).
+	-->
+
+	<!-- Queries to map places -->
+	<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
 		
-		  You must define instances of ConfigItem and not a list of ConfigItem(s), due to the way Spring
-		  manages injection in this case (https://jira.spring.io/browse/SPR-8519).
+		<!--
+		  This is the name of this config item/subset of data. It is used only for communication purposes, such as 
+		  log messages.
 		-->
+		<property name = "name" value = "places" />
 
-		<!-- Queries to map places -->
-		<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
-			
-			<!--
-			  This is the name of this config item/subset of data. It is used only for communication purposes, such as 
-			  log messages.
-			-->
-			<property name = "name" value = "places" />
-
-			<property name = "nodeIrisSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_node_iris.sparql" />
-				</bean>
-			</property>
-			
-			<property name="labelsSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_node_labels.sparql" />
-				</bean>
-			</property>
-
-			<property name="nodePropsSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_node_props.sparql" />
-				</bean>
-			</property>
-
-			<property name="relationTypesSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_rel_types.sparql" />
-				</bean>
-			</property>
-
-			<property name="relationPropsSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_rel_props.sparql" />
-				</bean>
-			</property>
-			
-			<!-- 
-				This query defines those node labels and properties that need to be indexed.
-				The query can mention all the necessary index, even those about other datasets
-				in a multi-config.
-			-->			
-			<property name="indexesSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_node_indexes.sparql" />
-				</bean>
-			</property>
-
-		</bean>
-
-
-		<!-- Queries to map people -->
-
-		<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
+		<property name = "nodeIrisSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_node_iris.sparql" />
+			</bean>
+		</property>
 		
-			<property name = "name" value = "people" />
+		<property name="labelsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_node_labels.sparql" />
+			</bean>
+		</property>
 
-			<property name = "nodeIrisSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_people_iris.sparql" />
-				</bean>
-			</property>
-			
-			<property name="labelsSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_people_labels.sparql" />
-				</bean>
-			</property>
+		<property name="nodePropsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_node_props.sparql" />
+			</bean>
+		</property>
 
-			<property name="nodePropsSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_people_props.sparql" />
-				</bean>
-			</property>
+		<property name="relationTypesSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_rel_types.sparql" />
+			</bean>
+		</property>
 
-			<property name="relationTypesSparql">
-				<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
-					<constructor-arg value = "examples/dbpedia/dbpedia_people_rel_types.sparql" />
-				</bean>
-			</property>
-
-			<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
-						
-		</bean>
-
-
-
-
-		<!-- And some boilerplate -->
+		<property name="relationPropsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_rel_props.sparql" />
+			</bean>
+		</property>
 		
-		<!-- We need the pgmakerSession scope, since a new driver is created for each query set -->
-		<bean id = "neoDriver" 
-				  class = "org.neo4j.driver.v1.GraphDatabase" factory-method="driver"
-				  scope = "pgmakerSession"
-		>
-			
-			<constructor-arg value = "bolt://127.0.0.1:7687" />
+		<!-- 
+			This query defines those node labels and properties that need to be indexed.
+			The query can mention all the necessary index, even those about other datasets
+			in a multi-config.
+		-->			
+		<property name="indexesSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_node_indexes.sparql" />
+			</bean>
+		</property>
+
+	</bean>
+
+
+	<!-- Queries to map people -->
+
+	<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
+	
+		<property name = "name" value = "people" />
+
+		<property name = "nodeIrisSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_people_iris.sparql" />
+			</bean>
+		</property>
+		
+		<property name="labelsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_people_labels.sparql" />
+			</bean>
+		</property>
+
+		<property name="nodePropsSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_people_props.sparql" />
+			</bean>
+		</property>
+
+		<property name="relationTypesSparql">
+			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_people_rel_types.sparql" />
+			</bean>
+		</property>
+
+		<!-- We don't have any property name="relationPropsSparql", since there are straight relations only -->
 					
-			<constructor-arg>
-				<bean class = "org.neo4j.driver.v1.AuthTokens" factory-method = "basic">
-					<constructor-arg value = "neo4j" />
-					<constructor-arg value = "test" />
-				</bean>
-			</constructor-arg>
-			
-		</bean>
+	</bean>
+
+
+
+
+	<!-- And some boilerplate -->
+	
+	<!-- We need the pgmakerSession scope, since a new driver is created for each query set -->
+	<bean id = "neoDriver" 
+			  class = "org.neo4j.driver.v1.GraphDatabase" factory-method="driver"
+			  scope = "pgmakerSession"
+	>
+		
+		<constructor-arg value = "bolt://127.0.0.1:7687" />
+				
+		<constructor-arg>
+			<bean class = "org.neo4j.driver.v1.AuthTokens" factory-method = "basic">
+				<constructor-arg value = "neo4j" />
+				<constructor-arg value = "test" />
+			</bean>
+		</constructor-arg>
+		
+	</bean>
 		
 </beans>
