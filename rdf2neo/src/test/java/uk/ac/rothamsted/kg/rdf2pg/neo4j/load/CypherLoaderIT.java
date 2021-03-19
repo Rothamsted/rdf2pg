@@ -9,9 +9,11 @@ import org.junit.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.spring.SimpleCyLoaderFactory;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
@@ -94,36 +96,41 @@ public class CypherLoaderIT
 	{
 		try ( var cymloader = new MultiConfigNeo4jLoader (); )
 		{
-			cymloader.setPGMakerFactory ( () -> 
-			{
-				// You don't want to do this, see #testSpring()
-				
-				RdfDataManager rdfMgr = new RdfDataManager ();
-				Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
-				Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );			
-				
-				CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
-				CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
-				
-				cyNodeHandler.setRdfDataManager ( rdfMgr );
-				cyNodeHandler.setNeo4jDataManager ( neoMgr );
-				
-				cyRelHandler.setRdfDataManager ( rdfMgr );
-				cyRelHandler.setNeo4jDataManager ( neoMgr );
-	
-				CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
-				cyNodeProc.setBatchJob ( cyNodeHandler );
-				
-				CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
-				cyRelProc.setConsumer ( cyRelHandler );
-	
-				SimpleCyLoader cyloader = new SimpleCyLoader ();
-				cyloader.setPGNodeMaker ( cyNodeProc );
-				cyloader.setPGRelationMaker ( cyRelProc );
-				cyloader.setRdfDataManager ( rdfMgr );
-				
-				return cyloader;
-			});
+			// You don't want to do this, see #testSpring()
+			cymloader.setPGMakerFactory ( 
+				new SimpleCyLoaderFactory () 
+				{
+					@Override
+					public SimpleCyLoader getObject () throws BeansException
+					{
+						RdfDataManager rdfMgr = new RdfDataManager ();
+						Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+						Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );			
+						
+						CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();
+						CyRelationLoadingHandler cyRelHandler = new CyRelationLoadingHandler ();
+						
+						cyNodeHandler.setRdfDataManager ( rdfMgr );
+						cyNodeHandler.setNeo4jDataManager ( neoMgr );
+						
+						cyRelHandler.setRdfDataManager ( rdfMgr );
+						cyRelHandler.setNeo4jDataManager ( neoMgr );
+			
+						CyNodeLoadingProcessor cyNodeProc = new CyNodeLoadingProcessor ();
+						cyNodeProc.setBatchJob ( cyNodeHandler );
+						
+						CyRelationLoadingProcessor cyRelProc = new CyRelationLoadingProcessor ();
+						cyRelProc.setConsumer ( cyRelHandler );
+			
+						SimpleCyLoader cyloader = new SimpleCyLoader ();
+						cyloader.setPGNodeMaker ( cyNodeProc );
+						cyloader.setPGRelationMaker ( cyRelProc );
+						cyloader.setRdfDataManager ( rdfMgr );
+						
+						return cyloader;
+					} // getObject()
+				} // SimpleCyloaderFactory
+			); // setPGMakerFactory()
 	
 			
 			List<Neo4jConfigItem> config = new LinkedList<> ();

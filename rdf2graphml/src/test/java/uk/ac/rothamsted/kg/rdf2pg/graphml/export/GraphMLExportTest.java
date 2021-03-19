@@ -82,7 +82,7 @@ public class GraphMLExportTest
 			gmlExporter.make ( DataTestUtils.TDB_PATH );
 			// TODO: test!
 			
-		} // try neoDriver
+		} // try gmlExporter
 	}
 	
 	

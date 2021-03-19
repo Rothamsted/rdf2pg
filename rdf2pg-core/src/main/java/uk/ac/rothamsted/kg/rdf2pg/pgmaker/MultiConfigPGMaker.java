@@ -3,11 +3,8 @@ package uk.ac.rothamsted.kg.rdf2pg.pgmaker;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +32,7 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
   implements PropertyGraphMaker, AutoCloseable
 {
 	private List<CI> configItems = new LinkedList<> ();
-	private ObjectFactory<SM> pgMakerFactory;
+	private SimplePGMakerFactory<SM> pgMakerFactory;
 	
 	private ApplicationContext springContext;
 	
@@ -149,13 +146,18 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 	 * a factory via Spring.
 	 * 
 	 */
-	public ObjectFactory<SM> getPGMakerFactory ()
+	public SimplePGMakerFactory<SM> getPGMakerFactory ()
 	{
 		return pgMakerFactory;
 	}
 
-	@Resource ( type = SimplePGMakerFactory.class )
-	public void setPGMakerFactory ( ObjectFactory<SM> makerFactory )
+	/**
+	 * You need to create a bean of type {@link SimplePGMakerFactory} in the specific PG package.
+	 * 
+	 * @Resource creates problems with Java 11 (<a href = "https://stackoverflow.com/questions/56855335">see here</a>).
+	 */
+	@Autowired
+	public void setPGMakerFactory ( SimplePGMakerFactory<SM> makerFactory )
 	{
 		this.pgMakerFactory = makerFactory;
 	}
