@@ -6,24 +6,27 @@ import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.wri
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
@@ -36,7 +39,7 @@ import uk.ac.ebi.utils.exceptions.UncheckedFileNotFoundException;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.AbstractPGDataManager;
 
 /**
- * TODO: comment me!
+ * Utilities to manipilate data for the GraphML output.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>1 Oct 2020</dd></dl>
@@ -58,7 +61,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	/**
 	 * Used to synch file writing operations over file path, see {@link #appendOutput(String, String)}.
 	 */
-	private static Map<String, String> outLocks = new HashMap<> ();
+	private Map<String, Writer> outLocks;
 	
 	{
 		gatherNodeProperty ( "iri" );
@@ -72,19 +75,17 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 	private void appendOutput ( String graphML, String outPath )
 	{		
-		synchronized ( outLocks.get ( outPath ) )
+		try {
+			var writer = this.outLocks.get ( outPath );
+			writer.append ( graphML );
+		}
+		catch ( IOException ex )
 		{
-			try {
-				Files.writeString ( Paths.get ( outPath ), graphML, StandardOpenOption.CREATE, StandardOpenOption.APPEND );
-			}
-			catch ( IOException ex )
-			{
-				ExceptionUtils.throwEx ( 
-					UncheckedIOException.class,
-					ex,
-					"Error while writing to the graphML file '%s': %s", outPath, ex.getMessage () 
-				);
-			}
+			ExceptionUtils.throwEx ( 
+				UncheckedIOException.class,
+				ex,
+				"Error while writing to the temp graphML file '%s': %s", outPath, ex.getMessage () 
+			);
 		}
 	}
 	
@@ -134,9 +135,26 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	public void setGraphmlOutputPath ( String graphmlOutputPath )
 	{
 		this.graphmlOutputPath = graphmlOutputPath;
-
-		Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
-		.forEach ( outPath -> outLocks.put ( outPath, outPath ) );
+		
+		Function<String, Writer> wopener = path -> 
+		{
+			try {
+				return new FileWriter ( path );
+			}
+			catch ( IOException ex )
+			{
+				throw ExceptionUtils.buildEx (
+					UncheckedIOException.class, "Error while trying to open temp file \"%s\": %s", path, ex.getMessage () 
+				);
+			}
+		};
+		
+		outLocks = Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
+		.collect ( 
+			Collectors.toMap (
+				Function.identity (), 
+				outPath -> new BufferedWriter ( wopener.apply ( outPath ), 10 * 2<<19 ) 
+		));
 	}
 	
 	private String getNodeTmpPath ()
@@ -152,10 +170,22 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 	public void writeGraphML ()
 	{
+		outLocks.forEach ( (path, writer) -> 
+		{
+			try {
+				writer.close ();
+			}
+			catch ( IOException ex ) {
+				throw ExceptionUtils.buildEx (
+					UncheckedIOException.class, "Error while trying to close temp file \"%s\": %s", path, ex.getMessage () 
+				);
+			}
+		});
+		
 		try ( PrintStream out = new PrintStream (
 			new BufferedOutputStream ( 
 				new FileOutputStream ( this.graphmlOutputPath ),
-				2<<19
+				10 * 2<<19
 			)
 		))
 		{
@@ -208,7 +238,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			
 			// Clean-up. We don't put it in finally(), cause you typically you want to inspect them
 			// if an exception occurs
-			log.info ( "Deleteing temp graphML files" );
+			log.info ( "Deleting temp graphML files" );
 			Files.deleteIfExists ( Path.of ( getNodeTmpPath () ) );
 			Files.deleteIfExists ( Path.of ( getEdgeTmpPath () ) );
 			log.info ( "graphML writing finished" );

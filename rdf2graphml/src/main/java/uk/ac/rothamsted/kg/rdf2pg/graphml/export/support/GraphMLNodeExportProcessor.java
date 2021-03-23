@@ -3,6 +3,7 @@ package uk.ac.rothamsted.kg.rdf2pg.graphml.export.support;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.utils.threading.HackedBlockingQueue;
 import uk.ac.ebi.utils.threading.batchproc.BatchProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeMakeProcessor;
 
@@ -20,5 +21,9 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeMakeProcessor;
 @Component @Scope ( scopeName = "pgmakerSession" )
 public class GraphMLNodeExportProcessor extends PGNodeMakeProcessor<GraphMLNodeExportHandler>
 {
-	// It's like the base class, it just needs generics instantiation and Spring annotations.
+	public GraphMLNodeExportProcessor ()
+	{
+		super ();
+		//this.setExecutor ( HackedBlockingQueue.createExecutor (1, 1) );
+	}
 }
