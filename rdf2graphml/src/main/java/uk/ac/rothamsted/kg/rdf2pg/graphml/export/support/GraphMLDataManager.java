@@ -1,5 +1,7 @@
 package uk.ac.rothamsted.kg.rdf2pg.graphml.export.support;
 
+import static uk.ac.ebi.utils.exceptions.ExceptionUtils.buildEx;
+import static uk.ac.ebi.utils.exceptions.ExceptionUtils.throwEx;
 import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.writeEdgeAttribHeaders;
 import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.writeNodeAttribHeaders;
 import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.writeXMLAttrib;
@@ -141,10 +143,9 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			try {
 				return new FileWriter ( path );
 			}
-			catch ( IOException ex )
-			{
-				throw ExceptionUtils.buildEx (
-					UncheckedIOException.class, "Error while trying to open temp file \"%s\": %s", path, ex.getMessage () 
+			catch ( IOException ex ) {
+				throw buildEx (
+					UncheckedIOException.class, ex, "Error while trying to open temp file \"%s\": %s", path, ex.getMessage () 
 				);
 			}
 		};
@@ -176,8 +177,8 @@ public class GraphMLDataManager extends AbstractPGDataManager
 				writer.close ();
 			}
 			catch ( IOException ex ) {
-				throw ExceptionUtils.buildEx (
-					UncheckedIOException.class, "Error while trying to close temp file \"%s\": %s", path, ex.getMessage () 
+				throw buildEx (
+					UncheckedIOException.class, ex, "Error while trying to close temp file \"%s\": %s", path, ex.getMessage () 
 				);
 			}
 		});
@@ -236,23 +237,21 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			out.println ( GraphMLUtils.GRAPH_TAG_END );
 			out.println ( GraphMLUtils.GRAPHML_TAG_END );
 			
-			// Clean-up. We don't put it in finally(), cause you typically you want to inspect them
+			// Clean-up. We don't put it in finally(), cause you typically want to inspect them
 			// if an exception occurs
 			log.info ( "Deleting temp graphML files" );
 			Files.deleteIfExists ( Path.of ( getNodeTmpPath () ) );
 			Files.deleteIfExists ( Path.of ( getEdgeTmpPath () ) );
 			log.info ( "graphML writing finished" );
 		}
-		catch ( FileNotFoundException ex )
-		{
-			ExceptionUtils.throwEx ( 
+		catch ( FileNotFoundException ex ) {
+			throwEx ( 
 				UncheckedFileNotFoundException.class, ex, 
 				"Error while writing to graphML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
 			);
 		}
-		catch ( IOException ex )
-		{
-			ExceptionUtils.throwEx ( 
+		catch ( IOException ex ) {
+			throwEx ( 
 				UncheckedIOException.class, ex, 
 				"Error while writing to graphML file '%s': %s", this.graphmlOutputPath, ex.getMessage () 
 			);

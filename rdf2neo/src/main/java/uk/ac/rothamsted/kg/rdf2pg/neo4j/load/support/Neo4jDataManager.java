@@ -3,9 +3,9 @@ package uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

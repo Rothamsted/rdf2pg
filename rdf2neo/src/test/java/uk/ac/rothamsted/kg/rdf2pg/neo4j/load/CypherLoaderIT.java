@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -52,7 +52,10 @@ public class CypherLoaderIT
 	public void testLoading () throws Exception
 	{
 		try (
-			var neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var neoDriver = GraphDatabase.driver ( 
+				NeoTestUtils.NEO_TEST_URL, 
+				AuthTokens.basic ( NeoTestUtils.NEO_TEST_USER, NeoTestUtils.NEO_TEST_PWD )
+			);
 			var cyloader = new SimpleCyLoader ();
 			var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 		)
@@ -104,7 +107,10 @@ public class CypherLoaderIT
 					public SimpleCyLoader getObject () throws BeansException
 					{
 						RdfDataManager rdfMgr = new RdfDataManager ();
-						Driver neoDriver = GraphDatabase.driver ( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+						Driver neoDriver = GraphDatabase.driver (
+							NeoTestUtils.NEO_TEST_URL, 
+							AuthTokens.basic ( NeoTestUtils.NEO_TEST_USER, NeoTestUtils.NEO_TEST_PWD )
+						);
 						Neo4jDataManager neoMgr = new Neo4jDataManager ( neoDriver );			
 						
 						CyNodeLoadingHandler cyNodeHandler = new CyNodeLoadingHandler ();

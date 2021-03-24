@@ -8,7 +8,7 @@
 	<parent>
 	  <groupId>uk.ac.rothamsted.knetminer</groupId>
 	  <artifactId>knetminer-common</artifactId>
-	  <version>1.0.1-SNAPSHOT</version>
+	  <version>2.0.1-SNAPSHOT</version>
 	</parent>  
   
   
@@ -35,7 +35,6 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<neo4j.server.version>3.5.12</neo4j.server.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<!-- Overrides the version defined in the parent POM -->
 		<jutils.version>10.0-SNAPSHOT</jutils.version>
@@ -61,13 +60,7 @@
 				<artifactId>jutils-io</artifactId>
 				<version>${jutils.version}</version>
 			</dependency>
-		  		
-			<dependency>
-				<groupId>org.neo4j.driver</groupId>
-				<artifactId>neo4j-java-driver</artifactId>
-				<version>1.7.5</version>
-			</dependency> 
-			           			      
+		  					           			      
   		<dependency>
 				<groupId>info.marcobrandizi</groupId>
 				<artifactId>rdfutils-jena</artifactId>
@@ -183,30 +176,12 @@
 				<plugin>
 					<groupId>com.github.harti2006</groupId>
 					<artifactId>neo4j-server-maven-plugin</artifactId>
-					<version>1.2</version>
-					<configuration>
-						<!-- port>7474</port --> 
-						<version>${neo4j.server.version}</version>
-						<deleteDb>true</deleteDb>
-					</configuration>
-					<executions>
-						<execution>
-							<id>start-neo4j-server</id>
-							<goals><goal>start</goal></goals>
-						</execution>
-						<execution>
-							<id>stop-neo4j-server</id>
-							<goals><goal>stop</goal></goals>
-						</execution>
-					</executions>
 				</plugin>
 				
 				<!-- Use this to start integration tests (*IT.java) -->
 		    <plugin>
 		      <artifactId>maven-failsafe-plugin</artifactId>
-		      <version>3.0.0-M4</version>
 		      <configuration>
-		      	<trimStackTrace>false</trimStackTrace>
 			      <properties>
 			        <property>
 			        	<!-- As above -->
@@ -226,16 +201,6 @@
 			      	<rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
 			      </systemPropertyVariables>
 		      </configuration>
-					<executions>
-	          <execution>
-	          	<id>failsafe-test</id>
-	            <goals><goal>integration-test</goal></goals>
-	          </execution>
-	          <execution>
-		      		<id>failsafe-verify</id>
-		      		<goals><goal>verify</goal></goals>
-	          </execution>
-	        </executions>	      
 		    </plugin>
 		    
 				<!-- 
@@ -284,7 +249,6 @@
 				 -->
 	  		<plugin>
 	  			<artifactId>maven-dependency-plugin</artifactId>
-	  			<version>3.1.2</version>
 	  			<executions>
 	  				<!--
 	  					This downloads common test files from the core module.

@@ -76,7 +76,7 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 		// Nodes are always identified by means of their default label ('%1$s'), which is always created for them. 
 		// 
 		String cypherCreateRel = 
-			"UNWIND {relations} AS rel\n" +
+			"UNWIND $relations AS rel\n" +
 		  // So, every item that is unwound has from/to and a property map
 		  // The property map always contain the relation IRI
 			"MATCH ( from:`%1$s`{ iri: rel.fromIri } ), ( to:`%1$s`{ iri: rel.toIri } )\n" +

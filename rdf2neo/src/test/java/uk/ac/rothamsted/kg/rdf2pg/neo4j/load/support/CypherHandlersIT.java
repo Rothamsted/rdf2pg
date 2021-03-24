@@ -21,12 +21,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.neo4j.driver.v1.AccessMode;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.AccessMode;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.SessionConfig;
+import org.neo4j.driver.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,10 @@ public class CypherHandlersIT
 		NeoTestUtils.initNeo ();
 
 		try (	
-			var neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var neoDriver = GraphDatabase.driver( 
+				NeoTestUtils.NEO_TEST_URL, 
+				AuthTokens.basic ( NeoTestUtils.NEO_TEST_USER, NeoTestUtils.NEO_TEST_PWD )
+			);
 			var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 		)
 		{
@@ -91,11 +95,18 @@ public class CypherHandlersIT
 	public void testNodes () throws Exception
 	{
 		try (	
-			Driver neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			Driver neoDriver = GraphDatabase.driver ( 
+				NeoTestUtils.NEO_TEST_URL, 
+				AuthTokens.basic ( NeoTestUtils.NEO_TEST_USER, NeoTestUtils.NEO_TEST_PWD )
+			);
 		)
 		{
-			Session session = neoDriver.session ( AccessMode.READ );
-			StatementResult cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
+			var config = SessionConfig.builder ()
+			.withDefaultAccessMode ( AccessMode.READ )
+			.build ();
+			
+			Session session = neoDriver.session ( config );
+			Result cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
 			Assert.assertEquals ( "Wrong count for TestNode", 2, cursor.next ().get ( "ct" ).asLong () );
 			
 			cursor = session.run ( "MATCH ( n:TestNode { iri:'" + iri ( "ex:2" ) + "'} ) RETURN properties ( n ) AS props" );
@@ -114,7 +125,10 @@ public class CypherHandlersIT
 	public void testRelations () throws Exception
 	{
 		try (	
-			var neoDriver = GraphDatabase.driver( "bolt://127.0.0.1:7687", AuthTokens.basic ( "neo4j", "test" ) );
+			var neoDriver = GraphDatabase.driver ( 
+				NeoTestUtils.NEO_TEST_URL, 
+				AuthTokens.basic ( NeoTestUtils.NEO_TEST_USER, NeoTestUtils.NEO_TEST_PWD )
+			);
 			var rdfMgr = new RdfDataManager ( DataTestUtils.TDB_PATH );
 		)
 		{

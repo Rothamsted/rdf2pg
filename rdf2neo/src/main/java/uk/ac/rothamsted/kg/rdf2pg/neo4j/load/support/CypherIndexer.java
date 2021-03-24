@@ -81,7 +81,10 @@ public class CypherIndexer
 
 			for ( String actualLabel: labels ) {
 				log.info ( "Indexing on '{}'.'{}'", actualLabel, propName );
-				neo4jDataManager.runCypher ( String.format ( "CREATE INDEX ON :`%s`( `%s` )", actualLabel, propName ));
+				neo4jDataManager.runCypher ( String.format (
+					"CREATE INDEX IF NOT EXISTS FOR (n:`%s`) ON (n.`%s`)",						
+					actualLabel, propName 
+				));
 			}
 		});
 

@@ -1,19 +1,20 @@
 package uk.ac.rothamsted.neo4j.utils;
 
-import static org.neo4j.driver.v1.Values.parameters;
+
+import static org.neo4j.driver.Values.parameters;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Values;
-import org.neo4j.driver.v1.exceptions.DatabaseException;
-import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
-import org.neo4j.driver.v1.exceptions.TransientException;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Values;
+import org.neo4j.driver.exceptions.DatabaseException;
+import org.neo4j.driver.exceptions.ServiceUnavailableException;
+import org.neo4j.driver.exceptions.TransientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class Neo4jDataManager
 			log.trace ( "Cypher: {} params: {}", cypher, ArrayUtils.toString ( keyVals ) );
 		
 		this.runSessionVoid ( session -> {
-			StatementResult cursor = session.run ( cypher, parameters ( keyVals ) );
+			Result cursor = session.run ( cypher, parameters ( keyVals ) );
 			cursor.forEachRemaining ( action );			
 		});
 	}

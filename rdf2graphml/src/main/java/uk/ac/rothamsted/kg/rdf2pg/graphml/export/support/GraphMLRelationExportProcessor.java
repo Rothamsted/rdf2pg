@@ -21,6 +21,8 @@ public class GraphMLRelationExportProcessor extends PGRelationMakeProcessor<Grap
 	public GraphMLRelationExportProcessor ()
 	{
 		super ();
+		// Might be useful to experiment with different degrees of parallelism
+		// 1, 1 essentially makes things sequential
 		//this.setExecutor ( HackedBlockingQueue.createExecutor (1, 1) );
 	}	
 }

@@ -73,7 +73,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 		log.trace ( "Sending {} node(s) to Cypher", nodeResources.size () );
 
 		// The labels are a constant wrt the undelining graph database, but they are varied by us for each label set
-		String cypherCreateNodes = "UNWIND {nodes} AS node\n" + 
+		String cypherCreateNodes = "UNWIND $nodes AS node\n" + 
 			"CREATE (n:%s)\n" +
 			"SET n = node";
 		
@@ -96,7 +96,10 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			neoMgr.runCypher ( cyCreateStr, "nodes", props );
 			
 			// And now, index it
-			for ( String label: labels ) neoMgr.runCypher ( String.format ( "CREATE INDEX ON :`%s`(iri)", label ) );
+			for ( String label: labels ) 
+				neoMgr.runCypher ( String.format ( 
+					"CREATE INDEX IF NOT EXISTS FOR (n:`%s`) ON (n.iri)", label 
+				));
 			
 			nodesCtr += props.size ();
 		}

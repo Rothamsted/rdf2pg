@@ -1,6 +1,6 @@
 package uk.ac.rothamsted.neo4j.utils;
 
-import org.neo4j.driver.v1.exceptions.Neo4jException;
+import org.neo4j.driver.exceptions.Neo4jException;
 
 /**
  * This is useful when you want to report a generic Neo4j error. @Neo4jException could be used for this,

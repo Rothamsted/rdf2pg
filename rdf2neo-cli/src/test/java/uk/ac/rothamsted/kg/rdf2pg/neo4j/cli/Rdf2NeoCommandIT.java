@@ -27,7 +27,7 @@ public class Rdf2NeoCommandIT
 		DataTestUtils.initDBpediaDataSet ();
 		
 		Rdf2PGCli.main ( 
-			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml",
+			"--config", "target/test-classes/test_config.xml",
 			"--tdb", DataTestUtils.TDB_PATH
 		);
 		// TODO: test!
@@ -45,7 +45,7 @@ public class Rdf2NeoCommandIT
 		var dbpath = "target/test-classes/examples/dbpedia/";
 		
 		Rdf2PGCli.main ( 
-			"--config", "src/main/assembly/resources/examples/dbpedia/config.xml", 
+			"--config", "target/test-classes/test_config.xml", 
 			"--tdb", "target/rdf2neo-test-tdb",
 			dbpath + "dbpedia_places.ttl",
 			dbpath + "dbpedia_people.ttl"
