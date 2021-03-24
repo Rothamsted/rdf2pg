@@ -10,7 +10,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Resource;
+import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -96,15 +98,24 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			neoMgr.runCypher ( cyCreateStr, "nodes", props );
 			
 			// And now, index it
-			for ( String label: labels ) 
-				neoMgr.runCypher ( String.format ( 
-					"CREATE INDEX IF NOT EXISTS FOR (n:`%s`) ON (n.iri)", label 
-				));
+			for ( String label: labels )
+				try {
+					neoMgr.runCypher ( String.format ( 
+						"CREATE INDEX IF NOT EXISTS FOR (n:`%s`) ON (n.iri)", label 
+					));
+				}
+				catch ( ClientException ex )
+				{
+					// This seems to happen due to concurrency, the index is already there, so let's give up the duplicated
+					// attempt
+					if ( ! StringUtils.containsIgnoreCase ( ex.getMessage (), "equivalent index already exists" ) )
+						throw ex;
+				}
 			
 			nodesCtr += props.size ();
 		}
 		
-		log.info ( "{} actual node(s) sent to Cypher", nodesCtr );
+		log.debug ( "{} actual node(s) sent to Cypher", nodesCtr );
 	}
 			
 	

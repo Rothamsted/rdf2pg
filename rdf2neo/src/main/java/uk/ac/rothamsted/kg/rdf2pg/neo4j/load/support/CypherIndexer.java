@@ -38,9 +38,9 @@ public class CypherIndexer
 	{
 		String idxSparql = getIndexesSparql ();
 		if ( idxSparql == null ) return;
-		
+
 		log.info ( "Starting Cypher Indexing" );
-		
+
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		Neo4jDataManager neoMgr = this.getNeo4jDataManager ();
 		

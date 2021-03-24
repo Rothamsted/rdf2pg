@@ -99,7 +99,7 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 			
 		}
 
-		log.trace ( "ML {} relation(s) exported", relRecords.size () );
+		log.debug ( "ML {} relation(s) exported", relRecords.size () );
 	}
 
 	/**
