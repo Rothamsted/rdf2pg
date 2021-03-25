@@ -10,12 +10,12 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.ExitCode;
 
 /**
- * A line command template to run rdfpg CLI functions.
+ * A line command template to run rdfpg CLI commands.
  * 
- * TODO: review this comment.
- * It is expected to have one concrete implementation of this class per each *-cli package available in rdf2pg 
- * (eg, rdf2neo-cli, rdf2graphml-cli). Each command will do something specific of the particular RDF2PG converter. 
- *
+ * While at the moment there is only {@link Rdf2PgCommand one direct subclass} of this, we keep this 
+ * abstraction for possible future commands which aren't different than the rdf2pg pattern and still 
+ * have something in common with it. 
+ *   
  * @author brandizi
  * <dl><dt>Date:</dt><dd>27 Nov 2020</dd></dl>
  *
