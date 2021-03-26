@@ -17,10 +17,10 @@ import uk.ac.rothamsted.kg.rdf2pg.graphml.export.MultiConfigGraphMLExporter;
  */
 @Component
 @Command (
-		name = "rdf2graphml", 
-		description = "\n\n  *** The RDF/graphML Converter ***\n" +
-			"\nConverts RDF data from a Jena TDB database into graphML format.\n"
-	)	
+	name = "rdf2graphml", 
+	description = "\n\n  *** The RDF/graphML Converter ***\n" +
+		"\nConverts RDF data from a Jena TDB database into graphML format.\n"
+)	
 public class Rdf2GraphMLCommand extends Rdf2PgCommand<MultiConfigGraphMLExporter>
 {
 	// TODO: stdout?!

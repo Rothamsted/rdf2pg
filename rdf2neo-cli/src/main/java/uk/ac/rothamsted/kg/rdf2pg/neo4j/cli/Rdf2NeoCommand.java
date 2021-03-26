@@ -16,10 +16,10 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.MultiConfigNeo4jLoader;
  */
 @Component
 @Command (
-		name = "rdf2neo", 
-		description = "\n\n  *** The RDF-to-Neo4j Converter ***\n" +
-		  "\nConverts RDF data from a Jena TDB database into Neo4J data.\n"
-	)	
+	name = "rdf2neo", 
+	description = "\n\n  *** The RDF-to-Neo4j Converter ***\n" +
+	  "\nConverts RDF data from a Jena TDB database into Neo4J data.\n"
+)	
 public class Rdf2NeoCommand extends Rdf2PgCommand<MultiConfigNeo4jLoader>
 {
 	public Rdf2NeoCommand ()

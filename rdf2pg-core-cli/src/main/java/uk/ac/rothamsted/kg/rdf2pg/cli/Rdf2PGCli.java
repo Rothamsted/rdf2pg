@@ -44,18 +44,34 @@ public class Rdf2PGCli
 	protected static int exitCode = 0;
 	
 	/**
-	 * Likely, you don't want to change much of method. It does this:
-	 * <ul>
-	 *   <li>Gets an instance of {@link Rdf2PGCli} bean from Spring, via {@link #getInstance()}. So, override that if you 
-	 *       want a different instantiation.</li>
-	 *   <li>Runs {@link #command} Using {@link #run(String...)}, that is, runs whatever CLI implementation Spring found
-	 *       in the current package or below.</li>
-	 *   <li>Runs everything within {@link #wrapMain(Supplier)}, so the JVM termination and exit code handling happen there.</li>
-	 * </ul>
+	 * Likely, you don't want to change this method.
+	 * 
+	 * It {@link #getInstance() gets an instance} of 
+	 * {@link Rdf2PGCli myself} that is managed by Spring. Then, it gets the package-specific 
+	 * {@link #command command} that is set via Spring and runs it (via {@link CommandLine picocli}).
+	 * 
+	 * Finally, if {@link #NO_EXIT_PROP} isn't "true", it invokes {@link System#exit(int)} with the
+	 * code returned by the command. If the {@link #NO_EXIT_PROP} is set, we don't shutdown and the 
+	 * returned exit code {@link #getExitCode() is available} for testing.
+	 * 
 	 */
 	public static void main ( String... args )
 	{
-		wrapMain ( () -> getInstance().run ( args ) );
+		try {
+			var cli = getInstance ();
+			var cmd = new CommandLine ( cli.command );
+			exitCode = cmd.execute ( args );
+		}
+		catch ( Throwable ex ) 
+		{
+			ex.printStackTrace ( System.err );
+			exitCode = 1;
+		}
+		finally 
+		{
+			if ( !"true".equals ( System.getProperty ( NO_EXIT_PROP ) ) )
+				System.exit ( exitCode );
+		}			
 	}
 	
 	/**
@@ -69,39 +85,6 @@ public class Rdf2PGCli
 			Rdf2PGCli cli = ctx.getBean ( Rdf2PGCli.class );
 			return cli;
 		}
-	}
-	
-	/**
-	 * Runs {@link #command} using {@link CommandLine}.
-	 * @see {@link #main(String...)}.
-	 */
-	protected int run ( String... args )
-	{
-		var cmd = new CommandLine ( this.command );
-		return cmd.execute ( args );
-	}
-	
-	/**
-	 * This is a facility you should use in case you want your own version of {@link #main(String...)}.
-	 * It runs the action and then invokes {@link System#exit(int)}, if {@link #NO_EXIT_PROP} isn't set.
-	 * 
-	 * action should be what you normally put under {@link #main(String...)}
-	 */
-	protected static void wrapMain ( Supplier<Integer> action ) 
-	{
-		try {
-			exitCode = action.get ();
-		}
-		catch ( Throwable ex ) 
-		{
-			ex.printStackTrace ( System.err );
-			exitCode = 1;
-		}
-		finally 
-		{
-			if ( !"true".equals ( System.getProperty ( NO_EXIT_PROP ) ) )
-				System.exit ( exitCode );
-		}			
 	}
 
 	/**
