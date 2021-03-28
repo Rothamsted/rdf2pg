@@ -29,15 +29,15 @@ public abstract class PGMakerProcessor<T, H extends PGEntityHandler<T>>
 {
 	public PGMakerProcessor ()
 	{
-		super ();
-		this.setBatchCollector ( new SetBatchCollector<> ( 2500 ) );
+		super ( 2500 );
 	}
 
 
-	@Autowired ( required = false ) @Qualifier ( "batchMaxSize" )
 	// I'm here just to use Spring annotations 
-	public void setBatchMaxSize ( int maxBatchSize ) {
-		this.getBatchCollector ().setMaxBatchSize ( maxBatchSize );
+	@Autowired ( required = false ) @Qualifier ( "batchMaxSize" )
+	@Override
+	public void setMaxBatchSize ( int maxBatchSize ) {
+		super.setMaxBatchSize ( maxBatchSize );
 	}
 	
 	/**

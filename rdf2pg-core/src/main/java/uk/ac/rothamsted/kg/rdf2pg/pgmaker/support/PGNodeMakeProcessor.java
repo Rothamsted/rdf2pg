@@ -59,4 +59,5 @@ public abstract class PGNodeMakeProcessor<NH extends PGNodeHandler>
 	{
 		this.nodeIrisSparql = nodeIrisSparql;
 	}
+	
 }

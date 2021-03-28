@@ -52,10 +52,10 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 	{
 		this.renameThread ( "graphmlRelX:" );
 		log.trace ( "Begin of {} relations", relRecords.size () );
-
+		
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
-		{
+		{			
 			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
 

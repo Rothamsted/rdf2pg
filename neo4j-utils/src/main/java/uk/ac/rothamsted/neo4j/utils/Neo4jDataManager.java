@@ -57,8 +57,8 @@ public class Neo4jDataManager
 			ServiceUnavailableException.class
 		);
 		attempter.setMaxAttempts ( this.getMaxRetries () );
-		attempter.setMinPauseTime ( 30 * 1000 );
-		attempter.setMaxPauseTime ( 3 * 60 * 1000 );
+		attempter.setMinPauseTime ( 10 * 1000 );
+		attempter.setMaxPauseTime ( 1 * 60 * 1000 );
 		
 		Object[] result = new Object [ 1 ];
 		attempter.execute ( () -> 
