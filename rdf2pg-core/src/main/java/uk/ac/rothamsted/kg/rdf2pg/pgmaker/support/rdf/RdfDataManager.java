@@ -81,8 +81,8 @@ public class RdfDataManager extends TDBEndPointHelper
 			
 			boolean wasInTnx = dataSet.isInTransaction ();
 			if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
-			try {
-				QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params );
+			try ( QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params ) )
+			{
 				qx.execSelect ().forEachRemaining ( row ->
 					pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) )
 				);
@@ -151,9 +151,8 @@ public class RdfDataManager extends TDBEndPointHelper
 		
 		boolean wasInTnx = dataSet.isInTransaction ();
 		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
-		try
+		try ( QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params ) )
 		{
-			QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params );
 			qx.execSelect ().forEachRemaining ( row ->
 			{
 				String propName = this.getPGId ( row.get ( "name" ), propIdConverter );

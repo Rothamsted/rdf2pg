@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.ebi.utils.runcontrol.MultipleAttemptsExecutor;
+import uk.org.lidalia.slf4jext.Level;
 
 /**
  * Wrapper to manage access to Cypher and Neo4j.
@@ -31,6 +32,7 @@ public class Neo4jDataManager
 {
 	private Driver neo4jDriver;
 	private int maxRetries = 10;
+	private Level attemptMsgLogLevel = Level.DEBUG;
 
 	private Logger log = LoggerFactory.getLogger ( this.getClass () );
 	
@@ -57,8 +59,9 @@ public class Neo4jDataManager
 			ServiceUnavailableException.class
 		);
 		attempter.setMaxAttempts ( this.getMaxRetries () );
-		attempter.setMinPauseTime ( 10 * 1000 );
-		attempter.setMaxPauseTime ( 1 * 60 * 1000 );
+		attempter.setMinPauseTime ( 3 * 1000 );
+		attempter.setMaxPauseTime ( 7 * 1000 );
+		attempter.setAttemptMsgLogLevel ( this.attemptMsgLogLevel );
 		
 		Object[] result = new Object [ 1 ];
 		attempter.execute ( () -> 
@@ -71,8 +74,8 @@ public class Neo4jDataManager
 	}
 
 	/**
-	 * A convenience wrapper of {@link #runSession(Function)} that doesn't force the action executor to return a value, if that's not
-	 * expected by the invoker of this method.
+	 * A convenience wrapper of {@link #runSession(Function)} that doesn't force the action executor to return a value, 
+	 * if that's not expected by the invoker of this method.
 	 * 
 	 */
 	public void runSessionVoid ( Consumer<Session> action ) {
@@ -141,12 +144,18 @@ public class Neo4jDataManager
 	}
 
 	/**
-	 * The methods of this class try Cypher queries multiple times, until they run successfully, or this no. of 
+	 * {@link #runSession(Function)} tries Cypher queries multiple times, until they run successfully, or this no. of 
 	 * attempts is reached. This is useful in case of parallel writing threads/processes, where it might happen
 	 * that exceptions due to concurrent access to the database server can be recovered by simply retrying after a 
 	 * random time.
 	 * 
+	 * All the Cypher-running methods in this class are affected.
+	 * 
 	 * Default is 10, must be at least 1.
+	 * 
+	 * This bean property is a wrapper or {@link MultipleAttemptsExecutor#getMaxAttempts()}
+	 * 
+	 * @see #getAttemptMsgLogLevel()
 	 * 
 	 */
 	public int getMaxRetries ()
@@ -164,4 +173,23 @@ public class Neo4jDataManager
 		);
 		this.maxRetries = maxRetries;
 	}
+
+	/**
+	 * A delegate of {@link MultipleAttemptsExecutor#setAttemptMsgLogLevel(Level)}, allows for setting
+	 * the log level of the message notifying that {@link #runSession(Function)} is being re-attempted due to problems
+	 * like deadlocked transactions.
+	 * 
+	 * The default is {@link Level#DEBUG}.
+	 * 
+	 * @see #getMaxRetries()
+	 */
+	public Level getAttemptMsgLogLevel ()
+	{
+		return attemptMsgLogLevel;
+	}
+
+	public void setAttemptMsgLogLevel ( Level attemptMsgLogLevel )
+	{
+		this.attemptMsgLogLevel = attemptMsgLogLevel;
+	}	
 }

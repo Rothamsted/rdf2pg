@@ -84,7 +84,7 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 			"SET r = rel.properties";
 			
 		long relsCtr = 0;
-		String defaultLabel = neoMgr.getDefaultLabel ();		
+		String defaultLabel = neoMgr.getDefaultLabel ();
 		for ( Entry<String, List<Map<String, Object>>> cyDataE: cyData.entrySet () )
 		{
 			String type = cyDataE.getKey ();
