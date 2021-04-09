@@ -80,6 +80,10 @@ public class RdfDataManager extends TDBEndPointHelper
 			Query qry = SparqlUtils.getCachedQuery ( labelsSparql );
 			Function<String, String> labelIdConverter = this.getPGNodeLabelIdConverter ();
 						
+			this.processSelect (
+				"rdf2pg",
+			);
+			
 			Txn.executeRead ( 
 				this.getDataSet (),  
 				() -> 

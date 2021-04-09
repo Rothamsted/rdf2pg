@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.AbstractPGDataManager;
+import uk.org.lidalia.slf4jext.Level;
 
 /**
  * A conceptual extension of {@link uk.ac.rothamsted.neo4j.utils.Neo4jDataManager} that adds some RDF import-related
@@ -76,5 +77,14 @@ public class Neo4jDataManager extends AbstractPGDataManager
 	{
 		return delegateMgr;
 	}
-	
+
+	public Level getAttemptMsgLogLevel ()
+	{
+		return delegateMgr.getAttemptMsgLogLevel ();
+	}
+
+	public void setAttemptMsgLogLevel ( Level attemptMsgLogLevel )
+	{
+		delegateMgr.setAttemptMsgLogLevel ( attemptMsgLogLevel );
+	}
 }
