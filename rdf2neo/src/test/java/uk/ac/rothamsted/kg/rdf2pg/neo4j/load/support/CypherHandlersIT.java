@@ -31,7 +31,6 @@ import org.neo4j.driver.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
@@ -141,11 +140,7 @@ public class CypherHandlersIT
 			handler.setRelationPropsSparql ( DataTestUtils.SPARQL_REL_PROPS  );
 
 			Set<QuerySolution> relSparqlRows = new HashSet<> ();
-			Dataset dataSet = rdfMgr.getDataSet ();
-			Txn.executeRead ( dataSet,  () ->
-				SparqlUtils.select ( DataTestUtils.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
-					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
-			);
+			rdfMgr.processSelect ( DataTestUtils.SPARQL_REL_TYPES, row -> relSparqlRows.add ( row ) );
 
 			handler.accept ( relSparqlRows );
 

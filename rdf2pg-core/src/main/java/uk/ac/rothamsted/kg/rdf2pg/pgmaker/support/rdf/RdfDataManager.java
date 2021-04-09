@@ -6,21 +6,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.QuerySolutionMap;
-import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.system.Txn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
 import uk.ac.rothamsted.kg.rdf2pg.idconvert.DefaultIri2IdConverter;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
@@ -49,7 +43,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	private Function<String, String> pgNodeLabelIdConverter = new DefaultIri2IdConverter ();
 	private Function<String, String> pgPropertyIdConverter = new DefaultIri2IdConverter (); 
 	private Function<String, String> pgRelationIdConverter = new DefaultIri2IdConverter ();
-	
+		
 	public RdfDataManager () {
 	}
 
@@ -74,27 +68,15 @@ public class RdfDataManager extends TDBEndPointHelper
 		PGNode pgNode = new PGNode ( nodeRes.getURI () );
 		
 		// The node's labels
+		// If this is omitted, nodes will get the default label only.
 		if ( labelsSparql != null )
 		{
-			// If it's omitted, it will get the default label.
-			Query qry = SparqlUtils.getCachedQuery ( labelsSparql );
 			Function<String, String> labelIdConverter = this.getPGNodeLabelIdConverter ();
 						
 			this.processSelect (
-				"rdf2pg",
-			);
-			
-			Txn.executeRead ( 
-				this.getDataSet (),  
-				() -> 
-				{
-					try ( QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params ) )
-					{
-						qx.execSelect ().forEachRemaining ( row ->
-							pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) )
-						);
-					}
-				}
+				labelsSparql,
+				row -> pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) ),
+				params
 			);
 		}
 		
@@ -153,27 +135,21 @@ public class RdfDataManager extends TDBEndPointHelper
 		// It may be omitted, if you don't have any property except the IRI.
 		if ( propsSparql == null ) return;
 		
-		Query qry = SparqlUtils.getCachedQuery ( propsSparql );
 		Function<String, String> propIdConverter = this.getPGPropertyIdConverter ();
 		
-		Txn.executeRead (
-			this.getDataSet (), 
-			() -> 
+		this.processSelect ( 
+			propsSparql,
+			row ->
 			{
-				try ( QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params ) )
-				{
-					qx.execSelect ().forEachRemaining ( row ->
-					{
-						String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
-						if ( propName == null ) throw new IllegalArgumentException ( 
-							"Null property name for " + cyEnt.getIri () 
-						);
-						
-						String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
-						cyEnt.addPropValue ( propName, propValue );
-					});
-				}				
-			}	
+				String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
+				if ( propName == null ) throw new IllegalArgumentException ( 
+					"Null property name for " + cyEnt.getIri () 
+				);
+				
+				String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
+				cyEnt.addPropValue ( propName, propValue );
+			},
+			params
 		);
 	} // addPGProps()
 	
@@ -184,9 +160,7 @@ public class RdfDataManager extends TDBEndPointHelper
 	 */
 	public long processNodeIris ( String nodeIrisSparql, Consumer<Resource> action )
 	{
-		return this.processSelect ( "processNodeIris()", nodeIrisSparql, row ->
-			action.accept ( row.getResource ( "iri" ) )
-		);
+		return this.processSelect ( "processNodeIris()", nodeIrisSparql, row -> action.accept ( row.getResource ( "iri" ) ) );
 	}
 	
 	
@@ -223,7 +197,8 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * {@link PGRelationHandler#getRelationTypesSparql() relation types query}.
 	 * 
 	 */
-	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action ) {
+	public long processRelationIris ( String relationIrisSparql, Consumer<QuerySolution> action )
+	{
 		return processSelect ( "processRelationIris()", relationIrisSparql, action );
 	}
 	
@@ -278,18 +253,19 @@ public class RdfDataManager extends TDBEndPointHelper
 	}
 
 	/**
-	 * If sparql is null, just doesn't do anything. This is useful in the rdf2neo context, since there are configured
-	 * queries that are optional. 
+	 * No action for the case that sparqlSelect is null. 
+	 * This is useful in rdf2pg, to ignore the conversion of certain types.
 	 */
 	@Override
-	public long processSelect ( String logPrefix, String sparql, Consumer<QuerySolution> action )
+	public long processSelect (
+		String logPrefix, String sparqlSelect, Consumer<QuerySolution> action, QuerySolutionMap params 
+	)
 	{
-		if ( sparql == null ) {
+		if ( sparqlSelect == null ) {
 			log.debug ( "null SPARQL for {}, skipping", logPrefix );
 			return 0;
 		}
-		
-		return super.processSelect ( logPrefix, sparql, action );
+		return super.processSelect ( logPrefix, sparqlSelect, action, params );
 	}
-
+	
 }
