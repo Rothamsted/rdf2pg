@@ -24,12 +24,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import uk.ac.rothamsted.kg.rdf2pg.cli.CliCommand;
+import uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli;
 
 public class JanusgraphSchemaGatherer extends CliCommand {
 
@@ -81,7 +84,7 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 		long end = System.currentTimeMillis();
 		System.out.println("took aprox: "+((end-start)/1000)+" s. "); 
 		
-		return sanityCheck?1:-1; 
+		return sanityCheck?0:-1; 
 	}
 		
 	public final  Hashtable<String, String> getAttributesAsHashtable (XMLStreamReader xmlr) {
@@ -344,46 +347,68 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 		
 	}
 	
-public static boolean containsNoReservedWord(HashSet<String> set) {
-		
-		return !( set.contains("vertex") || 
-				set.contains("element") || 
-				set.contains("edge") || 
-				set.contains("property") || 
-				set.contains("label") || 
-				set.contains("key") ); 
+	public static boolean containsNoReservedWord(HashSet<String> set) {
+			
+			return !( set.contains("vertex") || 
+					set.contains("element") || 
+					set.contains("edge") || 
+					set.contains("property") || 
+					set.contains("label") || 
+					set.contains("key") ); 
+		}
+	
+	public final static void printSchemaInformation(HashSet<String> vertexLabels, 
+															HashSet<String> vertexProperties, 
+															HashSet<String> edgeLabels, 
+															HashSet<String> edgeProperties) {
+			System.out.println("----------------"); 
+			System.out.println("Vertex labels::"); 
+			System.out.println("----------------"); 
+			for (String s: vertexLabels) {
+				System.out.println(s); 
+			}
+			System.out.println("----------------"); 
+			System.out.println("Vertex properties::"); 
+			System.out.println("----------------"); 
+			for (String s: vertexProperties) {
+				System.out.println(s); 
+			}
+			System.out.println("----------------"); 
+			System.out.println("Edge labels::"); 
+			System.out.println("----------------"); 
+			for (String s: edgeLabels) {
+				System.out.println(s); 
+			}
+			System.out.println("----------------"); 
+			System.out.println("Edge Properties::"); 
+			System.out.println("----------------"); 
+			for (String s: edgeProperties) {
+				System.out.println(s); 
+			}
+		}
+	
+	
+	// The main (it's currently outside spring as it doesn't need any configuration)
+	public static void main ( String... args )
+	{
+		int exitCode = 0; 
+
+		try {
+			var cli = new JanusgraphSchemaGatherer() ;
+			var cmd = new CommandLine ( cli);
+			exitCode = cmd.execute ( args );
+		}
+		catch ( Throwable ex ) 
+		{
+			ex.printStackTrace ( System.err );
+			exitCode = 1;
+		}
+		finally 
+		{
+			System.exit ( exitCode );
+		}			
 	}
 
-public final static void printSchemaInformation(HashSet<String> vertexLabels, 
-														HashSet<String> vertexProperties, 
-														HashSet<String> edgeLabels, 
-														HashSet<String> edgeProperties) {
-		System.out.println("----------------"); 
-		System.out.println("Vertex labels::"); 
-		System.out.println("----------------"); 
-		for (String s: vertexLabels) {
-			System.out.println(s); 
-		}
-		System.out.println("----------------"); 
-		System.out.println("Vertex properties::"); 
-		System.out.println("----------------"); 
-		for (String s: vertexProperties) {
-			System.out.println(s); 
-		}
-		System.out.println("----------------"); 
-		System.out.println("Edge labels::"); 
-		System.out.println("----------------"); 
-		for (String s: edgeLabels) {
-			System.out.println(s); 
-		}
-		System.out.println("----------------"); 
-		System.out.println("Edge Properties::"); 
-		System.out.println("----------------"); 
-		for (String s: edgeProperties) {
-			System.out.println(s); 
-		}
-	}
-		
 			
 }
 	
