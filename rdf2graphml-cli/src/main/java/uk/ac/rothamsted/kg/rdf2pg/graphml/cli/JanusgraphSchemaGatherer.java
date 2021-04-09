@@ -51,6 +51,13 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 	protected String groovyFilename = ""; 
 	
 	@Option (
+			names = { "-d", "--disable-check"}, 
+			description = "Disable collision checks", 
+			required = false
+			)
+		protected boolean disableCheck= false; 
+	
+	@Option (
 		names = { "-k", "--key"}, 
 		description = "Name of the key property serving as ID to create an index on it if required", 
 		required = false
@@ -70,16 +77,20 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 		boolean sanityCheck = true; 
 			
 		gatherAllInformation(graphMLFilename, vertexLabels, vertexProperties, edgeLabels, edgeProperties); 
-		sanityCheck = checkSanity(vertexLabels, vertexProperties, edgeLabels, edgeProperties); 
-		if (sanityCheck) {
-			writeGroovyScript(groovyFilename, 
-									vertexLabels, 
-									vertexProperties, 
-									edgeLabels, 
-									edgeProperties,
-									!"".equalsIgnoreCase(key), 
-									key);
+		if (!disableCheck) {
+			checkSanity(vertexLabels, vertexProperties, edgeLabels, edgeProperties);
 		}
+		else 
+		{
+			sanityCheck = true; 
+		}
+		writeGroovyScript(groovyFilename, 
+								vertexLabels, 
+								vertexProperties, 
+								edgeLabels, 
+								edgeProperties,
+								!"".equalsIgnoreCase(key), 
+								key);
 		// printSchemaInformation(vertexLabels, vertexProperties, edgeLabels, edgeProperties);  
 		long end = System.currentTimeMillis();
 		System.out.println("took aprox: "+((end-start)/1000)+" s. "); 
@@ -200,88 +211,33 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 			}
 	}
 	
-	public final boolean checkSanity (HashSet<String> vertexLabels,  
+	public final void checkSanity (HashSet<String> vertexLabels,  
 											HashSet<String> vertexProperties, 
 											HashSet<String> edgeLabels, 
 											HashSet<String> edgeProperties) 
 	{
-		String VL_LABEL = "vertexLabels";
-		String VP_LABEL = "vertexProperties";  
-		String EL_LABEL = "edgeLabels"; 
-		// String EP_LABEL = "edgeProperties"; 
-		
-		boolean everythingOK = true; 
+			
 		HashSet<String> auxSet = null; 
-		HashMap<String, HashSet<String>> collisions = new HashMap<String, HashSet<String>>(); 
 		/* reserved keywords: vertex, element, edge, property, label, key */ 
 		
-		everythingOK = containsNoReservedWord(vertexLabels); 
-		if (!everythingOK) log.error("Vertex labels containing reserved words"); 
-		
-		everythingOK &= containsNoReservedWord (vertexProperties);
-		if (!everythingOK) log.error("Vertex properties containing reserved words");
-		
-		everythingOK &= containsNoReservedWord (edgeLabels); 
-		if (!everythingOK) log.error("Edge labels containing reserved words"); 
-		
-		everythingOK &= containsNoReservedWord(edgeProperties); 
-		if (!everythingOK) log.error("Edge properties containing reserved words"); 
+		 
+		if (!containsNoReservedWord(vertexLabels)) log.warn("Vertex labels containing reserved words"); 
+		if (!containsNoReservedWord (vertexProperties)) log.warn("Vertex properties containing reserved words");
+		if (!containsNoReservedWord (edgeLabels)) log.warn("Edge labels containing reserved words"); 
+		if (!containsNoReservedWord(edgeProperties)) log.error("Edge properties containing reserved words"); 
 		
 		// we check the intersection of the different label names
 		// to avoid collisions
-		auxSet = new HashSet<String>(vertexLabels); 
-		auxSet.retainAll(vertexProperties);
-		collisions.put(VL_LABEL, auxSet); 
-		everythingOK = auxSet.isEmpty();
 		
-		auxSet = new HashSet<String>(vertexLabels); 
-		auxSet.retainAll(edgeLabels);
-		// we keep track of the potential collisions is everything is ok, this should be empty
-		collisions.get(VL_LABEL).addAll(auxSet);
-		everythingOK = auxSet.isEmpty();
+		checkCollisions(vertexLabels, vertexProperties, "vertex labels vs vertexProperties"); 
+		checkCollisions(vertexLabels, edgeLabels, "vertex labels vs edgeLabels"); 
+		checkCollisions(vertexLabels, edgeProperties, "vertex labels vs edgeProperties"); 
 		
-		auxSet = new HashSet<String>(vertexLabels); 
-		auxSet.retainAll(edgeLabels);
-		collisions.get(VL_LABEL).addAll(auxSet); 
-		everythingOK = auxSet.isEmpty();
+		checkCollisions(vertexProperties, edgeLabels, "vertex properties vs edgeLabels"); 
+		checkCollisions(vertexProperties, edgeProperties, "vertex properties vs edgeProperties"); 
 		
-		auxSet = new HashSet<String>(vertexProperties); 
-		auxSet.retainAll(edgeLabels);
-		collisions.put(VP_LABEL, auxSet); 
-		everythingOK = auxSet.isEmpty();
-	
-		auxSet = new HashSet<String>(vertexProperties); 
-		auxSet.retainAll(edgeProperties);
-		collisions.get(VP_LABEL).addAll(auxSet); 
-		everythingOK = auxSet.isEmpty();
-			
-		auxSet = new HashSet<String>(edgeLabels); 
-		auxSet.retainAll(edgeProperties);
-		collisions.put(EL_LABEL, auxSet); 
-		everythingOK = auxSet.isEmpty();
+		checkCollisions(edgeLabels, edgeProperties, "edge labels vs edgeProperties"); 
 		
-		if (!everythingOK) {
-			if (!collisions.get(VL_LABEL).isEmpty()) {
-				log.error("collisions with the vertex labels: "); 
-				for (String lab: collisions.get(VL_LABEL)) {
-					log.error(lab); 
-				}
-			}
-			if (!collisions.get(VP_LABEL).isEmpty()) {
-				log.error("collisions with the vertex properties: "); 
-				for (String lab: collisions.get(VP_LABEL)) {
-					log.error(lab); 
-				}
-			}
-			if (!collisions.get(EL_LABEL).isEmpty()) {
-				log.error("collisions with the edge labels: "); 
-				for (String lab: collisions.get(EL_LABEL)) {
-					log.error(lab); 
-				}
-			}
-		}
-		
-		return everythingOK; 
 	}
 	
 	public final void writeGroovyScript (String filename, 
@@ -356,6 +312,18 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 					set.contains("label") || 
 					set.contains("key") ); 
 		}
+	
+	public void checkCollisions (HashSet<String> set1, HashSet<String> set2, String message) {
+		HashSet<String> auxSet = new HashSet<String>(set1); 
+		auxSet.retainAll(set2);
+		if (!auxSet.isEmpty()) {
+			log.warn("Collisions with the "+message+": "); 
+			for (String lab: auxSet){
+				log.warn("-> "+lab); 
+			}
+		}
+	}
+	
 	
 	public final static void printSchemaInformation(HashSet<String> vertexLabels, 
 															HashSet<String> vertexProperties, 
