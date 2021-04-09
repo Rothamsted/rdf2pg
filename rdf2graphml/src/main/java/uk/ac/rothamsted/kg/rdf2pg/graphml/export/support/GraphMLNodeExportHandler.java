@@ -40,10 +40,7 @@ public class GraphMLNodeExportHandler extends PGNodeHandler
 	
 	@Override
 	public void accept ( Set<Resource> nodeResources )
-	{
-		// TODO: The node/relation preparation is common code, doesn't depend on
-		// the target, FACTORISE THE COPY-PASTE!!!
-		
+	{		
 		this.renameThread ( "graphmlNodeX:" );
 		log.trace ( "Begin graphML export of {} node(s)", nodeResources.size () );
 					

@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import uk.ac.ebi.utils.threading.batchproc.collectors.SetBatchCollector;
 import uk.ac.ebi.utils.threading.batchproc.processors.SetBasedBatchProcessor;
 
 /**

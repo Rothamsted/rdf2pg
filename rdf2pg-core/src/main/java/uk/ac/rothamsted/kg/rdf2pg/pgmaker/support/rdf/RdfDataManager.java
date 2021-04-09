@@ -15,6 +15,7 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.system.Txn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -78,25 +79,27 @@ public class RdfDataManager extends TDBEndPointHelper
 			// If it's omitted, it will get the default label.
 			Query qry = SparqlUtils.getCachedQuery ( labelsSparql );
 			Function<String, String> labelIdConverter = this.getPGNodeLabelIdConverter ();
-			
-			boolean wasInTnx = dataSet.isInTransaction ();
-			if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
-			try {
-				QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params );
-				qx.execSelect ().forEachRemaining ( row ->
-					pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) )
-				);
-			}
-			finally {
-				if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
-			}
+						
+			Txn.executeRead ( 
+				this.getDataSet (),  
+				() -> 
+				{
+					try ( QueryExecution qx = QueryExecutionFactory.create ( qry, this.getDataSet(), params ) )
+					{
+						qx.execSelect ().forEachRemaining ( row ->
+							pgNode.addLabel ( this.getPGId ( row.get ( "label" ), labelIdConverter ) )
+						);
+					}
+				}
+			);
 		}
 		
 		// and the properties
 		this.addPGProps ( pgNode, propsSparql );
 		
 		return pgNode;
-	}
+		
+	} // getPGNode()
 
 	/**
 	 * Just a variant of {@link #getPGNode(Resource, String, String)}.
@@ -149,26 +152,26 @@ public class RdfDataManager extends TDBEndPointHelper
 		Query qry = SparqlUtils.getCachedQuery ( propsSparql );
 		Function<String, String> propIdConverter = this.getPGPropertyIdConverter ();
 		
-		boolean wasInTnx = dataSet.isInTransaction ();
-		if ( !wasInTnx ) dataSet.begin ( ReadWrite.READ );
-		try
-		{
-			QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params );
-			qx.execSelect ().forEachRemaining ( row ->
+		Txn.executeRead (
+			this.getDataSet (), 
+			() -> 
 			{
-				String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
-				if ( propName == null ) throw new IllegalArgumentException ( 
-					"Null property name for " + cyEnt.getIri () 
-				);
-				
-				String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
-				cyEnt.addPropValue ( propName, propValue );
-			});
-		}
-		finally {
-			if ( !wasInTnx && dataSet.isInTransaction () ) dataSet.end ();
-		}
-	}
+				try ( QueryExecution qx = QueryExecutionFactory.create ( qry, dataSet, params ) )
+				{
+					qx.execSelect ().forEachRemaining ( row ->
+					{
+						String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
+						if ( propName == null ) throw new IllegalArgumentException ( 
+							"Null property name for " + cyEnt.getIri () 
+						);
+						
+						String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
+						cyEnt.addPropValue ( propName, propValue );
+					});
+				}				
+			}	
+		);
+	} // addPGProps()
 	
 	/**
 	 * Does something with the results coming from {@link PGNodeMakeProcessor#getNodeIrisSparql() node IRI query}.

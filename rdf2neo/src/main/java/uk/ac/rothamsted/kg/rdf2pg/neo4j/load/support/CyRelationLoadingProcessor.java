@@ -25,6 +25,12 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 @Component @Scope ( scopeName = "pgmakerSession" )
 public class CyRelationLoadingProcessor extends PGRelationMakeProcessor<CyRelationLoadingHandler>
 {	
+	public CyRelationLoadingProcessor ()
+	{
+		super ();
+		// this.setMaxBatchSize ( 1000 );
+	}
+
 	/**
 	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
