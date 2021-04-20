@@ -20,10 +20,8 @@ import java.util.stream.Stream;
 
 import javax.xml.xpath.XPathConstants;
 
-import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.system.Txn;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -32,7 +30,6 @@ import org.w3c.dom.NodeList;
 
 import com.machinezoo.noexception.Exceptions;
 
-import info.marcobrandizi.rdfutils.jena.SparqlUtils;
 import uk.ac.ebi.utils.xml.XPathReader;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
@@ -145,12 +142,11 @@ public class GraphMLHandlersTest
 	
 			Set<QuerySolution> relSparqlRows = new HashSet<> ();
 			
-			Dataset dataSet = rdfMgr.getDataSet ();
-			Txn.executeRead ( dataSet,  () ->
-				SparqlUtils.select ( DataTestUtils.SPARQL_REL_TYPES, rdfMgr.getDataSet ().getDefaultModel () )
-					.forEachRemaining ( row -> relSparqlRows.add ( row ) )
+			rdfMgr.processSelect (
+				DataTestUtils.SPARQL_REL_TYPES,
+				row -> relSparqlRows.add ( row )
 			);
-	
+				
 			handler.accept ( relSparqlRows );
 			graphmlMgr.writeGraphML(); 
 	
