@@ -64,6 +64,13 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 		)
 	protected String key = ""; 
 	
+	@Option (
+			names = {"-c", "--include-connection"}, 
+			description = "Include generic connection commands to the script", 
+			required  = false
+			)
+	protected boolean includeConnection = false; 
+	
 	@Override
 	public final Integer call () throws Exception
 	{
@@ -90,6 +97,7 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 								edgeLabels, 
 								edgeProperties,
 								!"".equalsIgnoreCase(key), 
+								includeConnection, 
 								key);
 		// printSchemaInformation(vertexLabels, vertexProperties, edgeLabels, edgeProperties);  
 		long end = System.currentTimeMillis();
@@ -246,6 +254,7 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 											HashSet<String> edgeLabels,
 											HashSet<String> edgeProperties, 
 											boolean createKeyIndex, 
+											boolean includeConnection, 
 											String key) throws FileNotFoundException {
 		
 		try ( PrintStream out = new PrintStream (
@@ -253,6 +262,10 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 										new FileOutputStream (filename ) ) )  				
 			)
 		{
+			if (includeConnection) {
+				out.println(":remote connect tinkerpop.serverl conf/remote.yaml session"); 
+				out.println(":remote console"); 
+			}
 			// we build the schema with the default settings 
 			// some tunning might be required depending on the particular scenario
 			out.println("graph.tx().commit()"); 
@@ -267,7 +280,12 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 				out.println("m.makeEdgeLabel('"+el+"').multiplicity(MULTI).make()"); 
 			}
 			for (String ep: edgeProperties) {
-				out.println("m.makePropertyKey('"+ep+"').dataType(String.class).make()"); 
+				// avoiding the possible collisions in the propertyKeys not 
+				// to break the uniqueness constraint
+				// TO BE ANALYZED: might be neeeded to be applied as well to Vertex and Edge labels 
+				if (!vertexProperties.contains(ep)) {
+					out.println("m.makePropertyKey('"+ep+"').dataType(String.class).make()");
+				}
 			}
 			out.println("m.commit()"); 
 			out.println(""); 
@@ -296,6 +314,9 @@ public class JanusgraphSchemaGatherer extends CliCommand {
 
 				out.println("m.commit()"); 
 				out.println("graph.tx().commit()"); 
+			}
+			if (includeConnection) {
+				out.println(":exit"); 
 			}
 			out.flush();
 		}
