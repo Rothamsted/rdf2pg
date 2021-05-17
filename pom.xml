@@ -43,30 +43,7 @@
   
   <dependencyManagement>
   		<dependencies>
-
-			<dependency>
-				<groupId>com.machinezoo.noexception</groupId>
-				<artifactId>noexception</artifactId>
-				<version>1.3.2</version>
-			</dependency>
-
-			<dependency>
-				<groupId>uk.ac.ebi</groupId>
-				<artifactId>jutils</artifactId>
-				<version>${jutils.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>uk.ac.ebi</groupId>
-				<artifactId>jutils-io</artifactId>
-				<version>${jutils.version}</version>
-			</dependency>
 		  					           			      
-  		<dependency>
-				<groupId>info.marcobrandizi</groupId>
-				<artifactId>rdfutils-jena</artifactId>
-				<version>3.0-SNAPSHOT</version>
-  		</dependency>  			
-
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -78,26 +55,7 @@
 				<artifactId>logback-classic</artifactId>
 	      <version>1.2.3</version>
 			</dependency>
-			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>5.2.3.RELEASE</version>
-			</dependency>
-
-			<!-- Removed from JDK11 -->			
-			<dependency>
-		    <groupId>javax.annotation</groupId>
-		    <artifactId>javax.annotation-api</artifactId>
-		    <version>1.3.2</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.6</version>
-			</dependency>
-			
+						
 			<!-- 
 				Intercepts log4j and sends it to SL4J
 				This bridge is needed because we already use components based on Log4j, the ones following might be needed
@@ -126,13 +84,6 @@
 			  <artifactId>jul-to-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>			
-
-			<dependency>
-				<groupId>info.picocli</groupId>
-				<artifactId>picocli</artifactId>
-				<version>4.5.2</version>
-			</dependency>
-
 
   	</dependencies>
   		
