@@ -97,15 +97,7 @@
 			  <plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-surefire-plugin</artifactId>
-			    <version>3.0.0-M4</version>
 			    <configuration>
-			      <properties>
-			        <property>
-			        	<!-- Prints out spaces and test name before/after every test method and automatically -->
-			          <name>listener</name>
-			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
-			        </property>
-			      </properties>
 				    <!--
 				      Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
 				      See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
