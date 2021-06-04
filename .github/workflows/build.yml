@@ -35,8 +35,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-v3-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2-v3
+        key: ${{ runner.os }}-m2-v4-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-v4
 
     - name: Build
       env:
