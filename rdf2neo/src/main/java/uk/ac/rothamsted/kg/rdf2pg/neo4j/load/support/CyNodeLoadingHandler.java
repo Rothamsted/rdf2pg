@@ -74,7 +74,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 		//
 		log.trace ( "Sending {} node(s) to Cypher", nodeResources.size () );
 
-		// The labels are a constant wrt the undelining graph database, but they are varied by us for each label set
+		// The labels are a constant wrt the underlying graph database, but they are varied by us for each label set
 		String cypherCreateNodes = "UNWIND $nodes AS node\n" + 
 			"CREATE (n:%s)\n" +
 			"SET n = node";
