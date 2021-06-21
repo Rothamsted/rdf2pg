@@ -1,4 +1,4 @@
-name: Build
+name: Standard Build
 
 on:
   push:
@@ -35,8 +35,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-v5-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2-v5
+        key: ${{ runner.os }}-m2-v6-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-v6
 
     - name: Build
       env:
