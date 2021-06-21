@@ -269,7 +269,7 @@
 	  	<!-- To pick the parent POM -->
 			<id>knetminer-repo</id>
 			<name>Knetminer Unified Repository</name>
-			<url>https://knetminer.org/artifactory/repository/maven-public</url>
+			<url>https://knetminer.com/artifactory/repository/maven-public</url>
 			<snapshots><enabled>true</enabled></snapshots>
 			<releases><enabled>true</enabled></releases>
 			  </repository>
