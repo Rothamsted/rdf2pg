@@ -1,8 +1,11 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,6 +27,7 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.PropertyGraphMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.test.DataTestUtils;
+import uk.ac.rothamsted.neo4j.utils.test.CypherTester;
 
 /**
  * Basic tests for {@link SimpleCyLoader} and {@link MultiConfigPGMaker}.
@@ -193,7 +197,15 @@ public class CypherLoaderIT
 		)
 		{			
 			mloader.load ( DataTestUtils.TDB_PATH );
-			// TODO: test
+			var cytest = new CypherTester ( beanCtx.getBean ( Driver.class ) );
+			assertTrue ( "Player data not found!", cytest.ask ( 
+				"MATCH (player:Person{label:'Atsuto Tatara'}) - [hasTeam:team] -> (team:SportsTeam)\n" +
+				"RETURN COUNT(DISTINCT team) > 2"
+			));
+			assertTrue ( "Added relation constant attributes not found!", cytest.ask ( 
+				"MATCH ()-[r{relationProvenance:'examples'}]->()\n" +
+				"RETURN COUNT(DISTINCT r) > 0"
+			));
 		}
 	}	
 
@@ -207,7 +219,7 @@ public class CypherLoaderIT
 		)
 		{			
 			mloader.load ( DataTestUtils.TDB_PATH );
-			// TODO: test
+			// TODO: CALL db.indexes(); to test for the index existance.
 		}
 	}		
 }

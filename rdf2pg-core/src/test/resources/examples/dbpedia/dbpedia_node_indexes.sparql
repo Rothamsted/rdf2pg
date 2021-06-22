@@ -1,6 +1,7 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dbo: <http://dbpedia.org/ontology/>
 PREFIX schema: <http://schema.org/>
+PREFIX ex: <http://www.example.com/res/>
 
 # This is an example of how to index nodes, specifying labels and property names.
 # 
@@ -10,19 +11,33 @@ PREFIX schema: <http://schema.org/>
 #  
 # All node types are indexed on the 'iri' property, independently on what you define here 
 # (and before relations creation).
+#
+# ?isRelation is optional, if present and set to true in a given row, ?propertyName refers to 
+# a relation and ?label refers to its type. Relation indexing was introduced in Neo 4.3
 # 
-SELECT ?label ?propertyName
+# For both nodes and relations, '*' is a special case, see below.
+#
+SELECT ?label ?propertyName ?isRelation
 {
-	VALUES ( ?label ?propertyName )
+	VALUES ( ?label ?propertyName ?isRelation)
 	{
 	  # The label 'Place' is indexed over the property name 'populationTotal'
 	  # label and property name IRIs are translated by ID converters.
 	  #
-	  ( schema:Place dbo:populationTotal )	  
-	  ( schema:AdministrativeArea dbo:populationTotal )	  
-	  
+	  ( schema:Place dbo:populationTotal false)	  
+	  ( schema:AdministrativeArea dbo:populationTotal false)	  
+	  	  
 	  # '*' has the special meaning 'index this property for all labels'
-	  #
-	  ( '*' rdfs:label )
+	  ( '*' rdfs:label false)
+
+	  # Since Neo4j 4.3, relation properties can be indexed too.
+	  # As above, '*' means we are indexing the provenance property for all relationship types 
+	  ( '*' ex:relationProvenance true )
+	  
+	  # The combination of */_type_, means 'index on the node labels' (available since Neo4j 4.3)
+	  ( '*' '_type_' false)
+	  
+	  # Or, index on all relation types when isRelation is set
+	  ( '*' '_type_' true )
 	}
 }
