@@ -97,7 +97,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 			// So, this structure with a list having a map per each node is the parameter to be sent to Cypher (for unwinding) 
 			neoMgr.runCypher ( cyCreateStr, "nodes", props );
 			
-			// And now, index it
+			// And now, index the 'iri' for these labels
 			for ( String label: labels )
 				try {
 					neoMgr.runCypher ( String.format ( 
@@ -110,7 +110,7 @@ public class CyNodeLoadingHandler extends PGNodeHandler
 					// attempt
 					if ( ! StringUtils.containsIgnoreCase ( ex.getMessage (), "equivalent index already exists" ) )
 						throw ex;
-				}
+			}
 			
 			nodesCtr += props.size ();
 		}

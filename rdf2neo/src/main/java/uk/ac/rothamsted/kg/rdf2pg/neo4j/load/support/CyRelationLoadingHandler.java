@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.QuerySolution;
+import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -93,7 +95,21 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 			List<Map<String, Object>> props = cyDataE.getValue ();
 			
 			neoMgr.runCypher ( cyCreateStr, "relations", props );
-			relsCtr += props.size (); 
+			relsCtr += props.size ();
+			
+			// And now, index the iri for this type (supported since Neo4j 4.3
+			try {
+				neoMgr.runCypher ( String.format ( 
+					"CREATE INDEX IF NOT EXISTS FOR ()-[r:`%s`]-() ON (r.iri)", type 
+				));
+			}
+			catch ( ClientException ex )
+			{
+				// This seems to happen due to concurrency, the index is already there, so let's give up the duplicated
+				// attempt
+				if ( !StringUtils.containsIgnoreCase ( ex.getMessage (), "equivalent index already exists" ) )
+					throw ex;
+			}			
 		}
 		
 		log.debug ( "{} actual relations(s) sent to Cypher", relsCtr );		
