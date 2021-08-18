@@ -21,7 +21,7 @@ public abstract class Rdf2PgCommand<MM extends MultiConfigPGMaker<?, ?>> extends
 	@Option ( 
 		names = { "-c", "--config" }, 
 		description = "Configuration file (see examples/). "
-								+ "WARNING! use 'file:///...' to specify absolute paths (Spring requirement).",
+			+ "WARNING! use 'file:///...' to specify absolute paths (Spring requirement).",
     required = true
 	)
 	protected String xmlConfigPath = "";
@@ -29,7 +29,9 @@ public abstract class Rdf2PgCommand<MM extends MultiConfigPGMaker<?, ?>> extends
 	@Option ( 
 		names = { "-t", "--tdb" }, 
 		paramLabel = "<path>", 
-		description = "The path to the Jena TDB triple store to load from. The default is presumably empty and to be used with -r.",
+		description = 
+			"The path to the Jena TDB triple store to load from. It's created if doesn't exist, "
+		  + " the existing content is taken if it exists.",
 		required = false,
 		showDefaultValue = Visibility.ALWAYS
 	)
@@ -43,6 +45,17 @@ public abstract class Rdf2PgCommand<MM extends MultiConfigPGMaker<?, ?>> extends
 	)
 	protected String [] rdfFilePaths;
 	 
+	
+	@Option ( 
+		names = { "-l", "--rdf-load" }, 
+		description = "Only loads RDF files to the working TDB. This is save you from downloading Jena when you want to "
+			+ "populate a TDB separately (eg, in data pipelines).",
+		required = false,
+		showDefaultValue = Visibility.ALWAYS
+	)
+	protected boolean rdfLoadOnly = false;
+	
+	
 	/** 
 	 * The implementors should pass this in the constructor and the {@link #getMakerFromSpringConfig()} will return 
 	 * the specific maker to work with.  
@@ -77,7 +90,7 @@ public abstract class Rdf2PgCommand<MM extends MultiConfigPGMaker<?, ?>> extends
 	public final Integer call () throws Exception
 	{
 		if ( this.rdfFilePaths != null && rdfFilePaths.length > 0 ) this.load2Tdb ();
-		return this.makePropertyGraph ();
+		return rdfLoadOnly ? 0 : this.makePropertyGraph ();
 	}
 
 
