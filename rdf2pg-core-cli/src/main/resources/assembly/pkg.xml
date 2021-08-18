@@ -38,9 +38,8 @@
       <excludes>
         <!-- Defined below, with x permissions, non-executables only here -->
         <exclude>**/*.sh</exclude>
-        <!-- They're renamed while copying, see below -->
+        <!-- They're renamed while copying, see get-cli-resources in the main POM. -->
       	<exclude>rdf2pg.sh</exclude>
-      	<exclude>tdb2pg.sh</exclude>
       </excludes>
       <fileMode>0644</fileMode>
 			<directoryMode>0755</directoryMode>      

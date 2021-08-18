@@ -80,7 +80,7 @@ public class Rdf2PGCliTest
 		Assert.assertEquals ( "Wrong result from CLI invocation (-c)!", TEST_CFG_OPTION, cfg );
 		Assert.assertEquals ( "Wrong result from CLI invocation (-t)!", TEST_TDB_OPTION, tdb );
 		Assert.assertEquals ( "Wrong result from CLI invocation (-r)!", 0, Arrays.compare ( TEST_RDF_OPTION, rdfs ) );
-		Assert.assertEquals ( "Wrong result from CLI invocation (exit doce)!", 0, Rdf2PGCli.getExitCode () );
+		Assert.assertEquals ( "Wrong result from CLI invocation (exit code)!", 0, Rdf2PGCli.getExitCode () );
 	}	
 
 	@Test
