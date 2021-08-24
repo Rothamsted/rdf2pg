@@ -9,7 +9,7 @@ import uk.ac.rothamsted.kg.rdf2pg.graphml.export.MultiConfigGraphMLExporter;
 
 
 /**
- * TODO: comment me!
+ * The rdf2graphml CLI.
  *
  * @author brandizi
  * <dl><dt>Date:</dt><dd>29 Nov 2020</dd></dl>

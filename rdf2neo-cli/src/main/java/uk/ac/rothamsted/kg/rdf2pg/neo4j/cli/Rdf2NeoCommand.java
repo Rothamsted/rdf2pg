@@ -8,8 +8,8 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.MultiConfigNeo4jLoader;
 
 
 /**
- * TODO: comment me!
- *
+ * The rdf2neo CLI.
+ * 
  * @author brandizi
  * <dl><dt>Date:</dt><dd>29 Nov 2020</dd></dl>
  *

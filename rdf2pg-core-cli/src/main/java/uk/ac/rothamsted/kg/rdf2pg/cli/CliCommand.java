@@ -13,7 +13,7 @@ import picocli.CommandLine.ExitCode;
  * A line command template to run rdfpg CLI commands.
  * 
  * While at the moment there is only {@link Rdf2PgCommand one direct subclass} of this, we keep this 
- * abstraction for possible future commands which aren't different than the rdf2pg pattern and still 
+ * abstraction for possible future commands which are different than the rdf2pg pattern and still 
  * have something in common with it. 
  *   
  * @author brandizi
