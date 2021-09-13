@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.spring.PGMakerSessionScope;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeMakeProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationHandler;
@@ -28,6 +29,11 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
  * @author Marco Brandizi
  * <dl><dt>Date:</dt><dd>26 Oct 2020</dd></dl>
  *
+ * Note: We recommend that you extend your extension of this class with both
+ * {@code @Component} and {@code Scope} declarations. The special pgMakerSession puts simple makers
+ * within the scope of a single-configuration conversion, and this is necessary for stateful operations 
+ * like opening/closing sessionf for the {@link RdfDataManager}. See {@link PGMakerSessionScope} for 
+ * details.  
  */
 @Component @Scope ( scopeName = "pgmakerSession" )
 public abstract class SimplePGMaker
