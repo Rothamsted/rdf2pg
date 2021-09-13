@@ -3,7 +3,8 @@
 We recently extended rdf2neo heavily, to turn it into a a new tool, which makes it easy to convert from RDF
 to any property graph format or database, and by means of RDF mapping. 
 
-This documentation refers to the old rdf2neo and [we are updating it](wiki). For the moment, 
+This documentation refers to the old rdf2neo and 
+[we are updating it](https://github.com/Rothamsted/rdf2pg/wiki). For the moment, 
 keep in mind that the mechanisms to map from RDF to a PG remained the same, rdf2neo-* are 
 essentially the original project, while rdf2graphml* is an addition to export RDF to graphml, 
 once you have defined how to map from RDF to a property graph. 
