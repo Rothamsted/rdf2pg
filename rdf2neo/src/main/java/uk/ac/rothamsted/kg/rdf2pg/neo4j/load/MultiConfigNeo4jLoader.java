@@ -19,13 +19,7 @@ public class MultiConfigNeo4jLoader extends MultiConfigPGMaker<Neo4jConfigItem, 
 	 */
 	public void load ( String tdbPath )
 	{
-		super.make ( tdbPath );
-	}
-
-	@Override
-	protected void makeBegin ( String tdbPath, Object... opts )
-	{
-		super.makeBegin ( tdbPath, opts );
+		this.make ( tdbPath );
 	}
 
 	/**

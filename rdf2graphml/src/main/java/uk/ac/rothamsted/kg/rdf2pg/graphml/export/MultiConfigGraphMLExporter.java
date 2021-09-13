@@ -1,5 +1,6 @@
 package uk.ac.rothamsted.kg.rdf2pg.graphml.export;
 
+import org.apache.jena.graph.impl.SimpleGraphMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +50,9 @@ public class MultiConfigGraphMLExporter
 		this.graphmlDataMgr.setGraphmlOutputPath ( outPath );
 	}
 
+	/**
+	 * Adds opts[0] (the output path) to to {@link SimpleGraphMLExporter#make(String, Object...)}. 
+	 */
 	@Override
 	protected void makeIteration ( int mode, ConfigItem<SimpleGraphMLExporter> cfg, String tdbPath, Object... opts )
 	{
@@ -61,6 +65,9 @@ public class MultiConfigGraphMLExporter
 		}
 	}
 
+	/**
+	 * Finalises the export via {@link GraphMLDataManager#writeGraphML()}.
+	 */
 	@Override
 	protected void makeEnd ( String tdbPath, Object... opts )
 	{
