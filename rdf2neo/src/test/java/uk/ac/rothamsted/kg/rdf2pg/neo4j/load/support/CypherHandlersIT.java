@@ -13,10 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.system.Txn;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,9 +23,9 @@ import org.neo4j.driver.AccessMode;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.SessionConfig;
-import org.neo4j.driver.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +103,7 @@ public class CypherHandlersIT
 			.build ();
 			
 			Session session = neoDriver.session ( config );
+			
 			Result cursor = session.run ( "MATCH ( n:TestNode ) RETURN COUNT ( n ) AS ct" );
 			Assert.assertEquals ( "Wrong count for TestNode", 2, cursor.next ().get ( "ct" ).asLong () );
 			
