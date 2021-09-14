@@ -76,7 +76,28 @@
 		    
   		<plugin>
   			<artifactId>maven-dependency-plugin</artifactId>
-  			<executions>		    
+  			<executions>
+  				<!-- Specific resources from the rdf2neo package -->
+  				<execution>
+  					<id>get-rdf2neo-resources</id>
+  					<phase>prepare-package</phase>
+  					<goals>
+  						<goal>unpack</goal>
+  					</goals>
+  					<configuration>
+	          	<artifactItems>
+	            	<artifactItem>
+							    <groupId>uk.ac.rothamsted.kg</groupId>
+						  		<artifactId>rdf2neo</artifactId>
+									<version>${project.version}</version>
+									<classifier>tests</classifier>
+									<type>test-jar</type>
+      	          <excludes>**/*.class</excludes>
+									<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
+	             	</artifactItem>
+	          	</artifactItems>
+  					</configuration>
+  				</execution>  					    
   				<execution>
   					<id>get-cli-resources</id>
   					<phase>prepare-package</phase>
