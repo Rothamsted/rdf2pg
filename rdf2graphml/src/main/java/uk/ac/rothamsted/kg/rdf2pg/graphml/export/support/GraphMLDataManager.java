@@ -70,7 +70,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 		gatherNodeProperty ( GraphMLUtils.LABEL_VERTEX_ATTR );
 		
 		// The iri is built using the md5
-		// we get then the type as well at the same point
+		// we then  get the type as well at the same point
 		gatherEdgeProperty ( GraphMLUtils.LABEL_EDGE_ATTR );
 	}
 
@@ -193,22 +193,25 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			// Schema headers
 			out.println ( GraphMLUtils.GRAPHML_TAG_HEADER );
 			
+			// Node attribute IDs
 			var sb = new StringBuilder ();
 			writeNodeAttribHeaders ( this.getGatheredNodeProperties (), sb );
 			out.println ( sb.toString () );
 
+			// Relation attribute IDs
 			sb = new StringBuilder ();
 			writeEdgeAttribHeaders ( this.getGatheredEdgeProperties (), sb );
 			out.println( sb.toString()); 
 			
+			// Opening XML element for the graph
 			sb = new StringBuilder(); 
 			out.append ( GraphMLUtils.GRAPH_TAG_START );
 			writeXMLAttrib ( GraphMLUtils.DEFAULT_DIRECTED_ATTR, GraphMLUtils.DIRECTED_DEFAULT_DIRECTED_VALUE , sb );
 			sb.append(" >");
 			out.println( sb.toString()); 
 	
-			var l = new ArrayList<String> (); 
 			
+			var l = new ArrayList<String> (); 			
 			if (Files.exists(Paths.get(getNodeTmpPath()))) {
 				l.add(getNodeTmpPath()); 
 			}
