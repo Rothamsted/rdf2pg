@@ -272,6 +272,6 @@
 			<url>https://knetminer.com/artifactory/repository/maven-public</url>
 			<snapshots><enabled>true</enabled></snapshots>
 			<releases><enabled>true</enabled></releases>
-			  </repository>
+		</repository>
 	</repositories>	
 </project>
