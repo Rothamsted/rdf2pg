@@ -19,7 +19,7 @@
   <version>4.0-SNAPSHOT</version>
   
   <name>rdf2pg-pom - top POM</name>
-  <url/>
+  <url>https://github.com/Rothamsted/rdf2pg</url>
       
   <modules>
 		<module>rdf2pg-core</module>
