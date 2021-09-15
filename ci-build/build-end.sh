@@ -15,17 +15,3 @@ git diff --exit-code || (
 )
 
 cd "$MYDIR"
-
-
-# If there aren't differences in the download page, we might as well stop here, but let's not 
-# over-complicate things, this is a rare case (eg, during tests against the CI pipeline)
-#
-
-# Jenkins will do internal stuff, such as updating download links and deploying
-# on our servers.
-#
-echo -e "\n\n\tTriggering RRes deployment\n"
-  
-job='ondex_rres_deployment'
-curl --user "$KNET_JENKINS_USER:$KNET_JENKINS_TOKEN" -X POST -o - --fail \
-     "https://knetminer.org/build/job/$job/build"
