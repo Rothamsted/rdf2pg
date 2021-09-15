@@ -5,7 +5,7 @@ rm -Rf rdf2pg.wiki
 git clone https://github.com/Rothamsted/rdf2pg.wiki.git
 cd rdf2pg.wiki
 
-down_script="$MYDIR/mk-downloads-page.sh"
+down_script="$MYDIR/ci-build/mk-downloads-page.sh"
 $down_script >Downloads.md
 
 git diff --exit-code || (  
