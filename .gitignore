@@ -5,4 +5,6 @@ target/
 .DS_Store
 /bin/
 # Created by GH Actions
-/ci-build/
+/ci-build/build.sh
+/ci-build/install.sh
+/ci-build/maven-settings.xml
