@@ -31,7 +31,7 @@ programmatically you can point to them in your POM this way:
 	<dependency>
 		<groupId>uk.ac.rothamsted.kg</groupId>
 		<artifactId>rdf2graphml</artifactId>
-		<version>SEE POM AT https://github.com/Rothamsted/rdf2pg/blob/master/rdf2neo/pom.xml</version>
+		<version>SEE POM AT https://github.com/Rothamsted/rdf2pg/blob/master/rdf2graphml/pom.xml</version>
 	</dependency>
 ...
 	<repositories>
