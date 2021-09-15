@@ -1,3 +1,5 @@
+[[ "$GIT_BRANCH" == 'master' ]] || return
+
 echo -e "\n\n\tGenerating New Downloads Page\n"
 
 cd /tmp
