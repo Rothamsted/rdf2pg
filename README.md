@@ -561,3 +561,6 @@ As explained above, node labels, relation types and node/relation property names
 	<bean id = "nodeLabelIdConverter" class = "my.package.MyCustomIdConverter" />
 </beans>
 ```
+
+# The rdf2pg Framework
+
