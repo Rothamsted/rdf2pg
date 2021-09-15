@@ -51,4 +51,3 @@ The entry point to start a conversion (like the command line tools do) is
 architecture.
 
 [10]: https://github.com/Rothamsted/rdf2pg/wiki/rdf2pg-Architecture
-
