@@ -1,6 +1,8 @@
 # Revision History
 
-## 4.0-SNAPSHOT
+## 4.0.1-SNAPSHOT
+
+## 4.0
 * **Turned into rdf2pg**. Now it has a new architecture, which makes it easy to write 
   converters from RDF to any property graph endpoint, by means of RDF/PG mapping 
 * **Requires JDK >= 11 from this version**
