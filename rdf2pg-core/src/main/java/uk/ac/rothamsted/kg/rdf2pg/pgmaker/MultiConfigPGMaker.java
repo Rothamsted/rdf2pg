@@ -41,7 +41,7 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 
 	
 	/** 
-	 * Gets an instance from the Spring application context. The returned instance is bound to the context parameter,
+	 * Gets an instance from the Spring application context. The returned instance is bound to the beanCtx parameter,
 	 * so that {@link MultiConfigPGMaker#close()} can close it.
 	 * 
 	 * See the XML examples to know how you should configure
