@@ -64,12 +64,8 @@ public class CypherIndexer
 			));
 			
 			var isRelation = JENAUTILS.literal2Boolean ( row.getLiteral ( "isRelation" ) ).orElse ( false );
-			
-			
-			// TODO: document this case (new 4.3 indices on labels or node types)
-			//
-			
-			// *.* label or relation type indexing (available since Neo 4.3
+						
+			// *.* label or relation type indexing (available since Neo 4.3)
 			//
 			if ( equalsIgnoreCase ( "*", label ) && equalsIgnoreCase ( "_type_", propName ) )
 			{
