@@ -39,7 +39,7 @@ public class Rdf2PGCli
 	public static final String NO_EXIT_PROP = "rdf2pg.no_jvm_exit"; 
 	
 	@Autowired
-	protected CliCommand command;
+	protected Rdf2PgCommand<?> rdf2PgCommand;
 		
 	protected static int exitCode = 0;
 	
@@ -59,7 +59,7 @@ public class Rdf2PGCli
 	{
 		try {
 			var cli = getInstance ();
-			var cmd = new CommandLine ( cli.command );
+			var cmd = new CommandLine ( cli.rdf2PgCommand );
 			exitCode = cmd.execute ( args );
 		}
 		catch ( Throwable ex ) 
