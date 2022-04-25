@@ -4,29 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import com.github.jsonldjava.shaded.com.google.common.base.Supplier;
+import org.springframework.stereotype.Component;
 
 import picocli.CommandLine;
 
 /**
  * A skeleton for a typical Command Line entry point.
  * 
- * It works this way:
+ * It works this way: 
  * 
- * <ul>
- *   <li>This class instantiates a Spring context and populates it with components it finds on
- *       the same package it's defined or sub-packages.</li>
- *       
- * 	 <li>Later, it expects to find exactly one instance of {@link CliCommand}, which is used with
- *       the picocli API, using {@link CommandLine} (see their documentation for details).
- *       That command is the one that is invoked, through wrappers like {@link #wrapMain(Supplier)}, which deal with
- *       exceptions and quitting the JVM with a proper exit code.</li>
- * </ul>
+ * <p>The OS/JVM invokes {@link #main(String...)}, in turn, this will {@link #getInstance() get an instance} of
+ * this class, in the form of a bean in a Spring context. Such bean will have {@link #rdf2PgCommand} with exactly
+ * one instance of the {@link Rdf2PgCommand} class.</p>
  * 
- * Note that the Spring context loaded from configuration files is different than the one loaded for the process
+ * <p>The typical way to obtain this is to have one Maven CLI module per each new conversion target, where to put only
+ * one extension of {@link Rdf2PgCommand} implementation that is annotated with {@link Component} (ie, marked as a bean).</p>
+ * 
+ * 
+ * <p>Note that the Spring context loaded from configuration files is different than the one loaded for the process
  * described above. The former usually doesn't have classes in the hereby *.cli package (the scan package directive
- * in the XML excludes it).
+ * in the XML excludes it).</p>
  * 
  */
 @Configuration
