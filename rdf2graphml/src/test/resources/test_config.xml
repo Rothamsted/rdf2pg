@@ -13,23 +13,23 @@
 
 	<!-- This is not typical of production-level config, used for tests only -->
 
-	<bean id = "nodeIrisSparql" class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+	<bean id = "nodeIrisSparql" class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 		<constructor-arg value = "examples/dbpedia/dbpedia_node_iris.sparql" />
 	</bean>
 
-	<bean id = "labelsSparql" class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+	<bean id = "labelsSparql" class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 		<constructor-arg value = "examples/dbpedia/dbpedia_node_labels.sparql" />
 	</bean>
 	
-	<bean id = "nodePropsSparql" class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+	<bean id = "nodePropsSparql" class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 		<constructor-arg value = "examples/dbpedia/dbpedia_node_props.sparql" />
 	</bean>
 
-	<bean id = "relationTypesSparql" class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+	<bean id = "relationTypesSparql" class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 		<constructor-arg value = "examples/dbpedia/dbpedia_rel_types.sparql" />
 	</bean>
 	
-	<bean id = "relationPropsSparql" class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+	<bean id = "relationPropsSparql" class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 		<constructor-arg value = "examples/dbpedia/dbpedia_rel_props.sparql" />
 	</bean>
 		

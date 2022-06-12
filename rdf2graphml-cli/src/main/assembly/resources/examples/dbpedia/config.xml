@@ -41,7 +41,7 @@
 
 		<property name = "nodeIrisSparql">
 			<!-- Use this to read a SPARQL query from a file -->
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
       	 <!-- 
       	   You need the index param, cause there are a couple of variants for this methods and Spring needs
       	   some disambiguation
@@ -51,25 +51,25 @@
 		</property>
 		
 		<property name="labelsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_node_labels.sparql' }" index = "0" />
 			</bean>
 		</property>
 
 		<property name="nodePropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_node_props.sparql' }" index = "0" />
 			</bean>
 		</property>
 
 		<property name="relationTypesSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_rel_types.sparql' }" index = "0" />
 			</bean>
 		</property>
 
 		<property name="relationPropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_rel_props.sparql' }" index = "0" />
 			</bean>
 		</property>
@@ -84,25 +84,25 @@
 		<property name = "name" value = "people" />
 
 		<property name = "nodeIrisSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_people_iris.sparql' }" index = "0" />
 			</bean>
 		</property>
 		
 		<property name="labelsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_people_labels.sparql' }" index = "0" />
 			</bean>
 		</property>
 
 		<property name="nodePropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_people_props.sparql' }" index = "0" />
 			</bean>
 		</property>
 
 		<property name="relationTypesSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readFile">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
 				<constructor-arg value = "#{ pwd + '/dbpedia_people_rel_types.sparql' }" index = "0" />
 			</bean>
 		</property>

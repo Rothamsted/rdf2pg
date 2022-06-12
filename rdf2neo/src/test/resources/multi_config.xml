@@ -27,31 +27,31 @@
 		<property name = "name" value = "places" />
 
 		<property name = "nodeIrisSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_node_iris.sparql" />
 			</bean>
 		</property>
 		
 		<property name="labelsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_node_labels.sparql" />
 			</bean>
 		</property>
 
 		<property name="nodePropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_node_props.sparql" />
 			</bean>
 		</property>
 
 		<property name="relationTypesSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_rel_types.sparql" />
 			</bean>
 		</property>
 
 		<property name="relationPropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_rel_props.sparql" />
 			</bean>
 		</property>
@@ -66,25 +66,25 @@
 		<property name = "name" value = "people" />
 
 		<property name = "nodeIrisSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_people_iris.sparql" />
 			</bean>
 		</property>
 		
 		<property name="labelsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_people_labels.sparql" />
 			</bean>
 		</property>
 
 		<property name="nodePropsSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_people_props.sparql" />
 			</bean>
 		</property>
 
 		<property name="relationTypesSparql">
-			<bean class = "uk.ac.ebi.utils.io.IOUtils" factory-method = "readResource">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
 				<constructor-arg value = "examples/dbpedia/dbpedia_people_rel_types.sparql" />
 			</bean>
 		</property>

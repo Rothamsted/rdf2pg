@@ -36,8 +36,6 @@
     <maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.25</slf4j.version>
-		<!-- Overrides the version defined in the parent POM -->
-		<jutils.version>10.0</jutils.version>
   </properties>
   
   <dependencyManagement>
