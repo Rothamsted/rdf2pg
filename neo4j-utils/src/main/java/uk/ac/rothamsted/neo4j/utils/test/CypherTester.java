@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.driver.internal.value.BooleanValue;
 import org.neo4j.driver.Driver;
@@ -21,7 +20,8 @@ import org.neo4j.driver.types.TypeSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.ebi.utils.exceptions.UncheckedFileNotFoundException;
+import uk.ac.ebi.utils.exceptions.ExceptionUtils;
+import uk.ac.ebi.utils.opt.io.IOUtils;
 import uk.ac.rothamsted.neo4j.utils.Neo4jDataManager;
 
 /**
@@ -144,18 +144,13 @@ public class CypherTester
 	public boolean askFromFile ( String cypherPath, Object... keyVals )
 	{
 		try {
-			return ask ( IOUtils.toString ( new FileReader ( cypherPath ) ), keyVals );
+			return ask ( IOUtils.readFile ( cypherPath ), keyVals );
 		}
-		catch ( FileNotFoundException ex )
-		{
-			throw new UncheckedFileNotFoundException ( 
-				"File '" + cypherPath + "' not found while running CypherTester: " + ex.getMessage (), 
-				ex 
+		catch ( UncheckedIOException ex ) {
+			throw ExceptionUtils.buildEx ( UncheckedIOException.class, ex,
+				"Error while running CypherTester on \"%s\": $cause", cypherPath
 			);
 		}
-		catch ( IOException ex ) {
-			throw new UncheckedIOException ( "I/O error while running CypherTester: " + ex.getMessage (), ex );
-		}		
 	}
 
 	/**
