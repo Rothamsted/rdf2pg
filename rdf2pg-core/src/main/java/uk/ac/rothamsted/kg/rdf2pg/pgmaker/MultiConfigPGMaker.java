@@ -17,7 +17,7 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.spring.SimplePGMakerFactory;
  * <H1>The multi-configuration property graph generator.</H1>
  *
  * <p>This uses multiple {@link ConfigItem SPARQL query configurations} to run {@link SimplePGMaker} multiple times.
- * This allows for logically separate items in an RDF data set to be mapped separately, each with its own set of SPARQL
+ * This allows for logically separated items in an RDF data set to be mapped separately, each with its own set of SPARQL
  * queries.</p> 
  *
  * <p>Note also that everything is designed to support configuration via Spring Bean files.</p>
