@@ -1,8 +1,9 @@
 # Revision History
 
-* *This file has been last revised on 2023-02-03*.
+* *This file has been last revised on 2023-02-03*. **Please, keep this note updated**.
 
-## 4.0.1-SNAPSHOT
+## 4.0.2-SNAPSHOT
+* Current snapshot.
 
 ## 4.0
 * **Turned into rdf2pg**. Now it has a new architecture, which makes it easy to write 
