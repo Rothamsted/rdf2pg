@@ -80,7 +80,8 @@ public class GraphMLExportTest
 			gmlExporter.setPGRelationMaker ( gmlRelProc );
 			
 			gmlExporter.make ( DataTestUtils.TDB_PATH );
-			// TODO: test!
+
+			// TODO: assertions!
 			
 		} // try gmlExporter
 	}

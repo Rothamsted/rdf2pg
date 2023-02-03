@@ -1,14 +1,14 @@
 # Revision History
 
+* *This file has been last revised on 2023-02-03*.
+
 ## 4.0.1-SNAPSHOT
 
 ## 4.0
 * **Turned into rdf2pg**. Now it has a new architecture, which makes it easy to write 
-  converters from RDF to any property graph endpoint, by means of RDF/PG mapping 
+  converters from RDF to any property graph endpoint, by means of RDF/PG mapping.
 * **Requires JDK >= 11 from this version**
-
-## 1.0.2-SNAPSHOT
-* Just started
+* Some dependencies upgraded.
   
 ## 1.0.1
 * Made to link stable releases of our own dependencies.

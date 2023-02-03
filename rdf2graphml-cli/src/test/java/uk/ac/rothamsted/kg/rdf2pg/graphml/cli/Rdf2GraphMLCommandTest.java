@@ -31,15 +31,16 @@ public class Rdf2GraphMLCommandTest
 			"--tdb", DataTestUtils.TDB_PATH,
 			"--output", outPath
 		);
-		// TODO: test!
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
+
+		// TODO: assertions on the output!
 	}
 
 	/**
 	 * First populates a TDB, then invokes the conversion.
 	 */
 	@Test
-	public void testRdf2Neo ()
+	public void testRdf2GraphML ()
 	{
 		var outPath = "target/rdf2graphml-test.graphml";
 		var dbpath = "target/test-classes/examples/dbpedia/";
@@ -51,8 +52,9 @@ public class Rdf2GraphMLCommandTest
 			dbpath + "dbpedia_places.ttl",
 			dbpath + "dbpedia_people.ttl"
 		);
-		// TODO: test!
+
 		assertEquals ( "Bad exit code!", 0, Rdf2PGCli.getExitCode () );
+		// TODO: assertions on the output!
 	}	
 	
 }

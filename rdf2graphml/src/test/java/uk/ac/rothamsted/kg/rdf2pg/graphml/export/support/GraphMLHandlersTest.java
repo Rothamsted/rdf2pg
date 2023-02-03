@@ -161,7 +161,8 @@ public class GraphMLHandlersTest
 			((Double)(gmlxpath.read("count(//edge)", XPathConstants.NUMBER))).longValue()
 		); 
 		
-		// we checked the edge's label as well, but currently only the relations part is generated
+		// TODO: remove?
+		// This checks the edge's label as well, but currently only the relations part is generated
 //			log.info("ex1:labelV :: "+xPathGML.read("//node[@id='http://www.example.com/res/1']/@labelV", XPathConstants.STRING)); 
 //			log.info("ex2:labelV :: "+xPathGML.read("//node[@id='http://www.example.com/res/2']/@labelV", XPathConstants.STRING)); 
 //			assertTrue("Wrong label for {ex:1}!", 
@@ -174,51 +175,14 @@ public class GraphMLHandlersTest
 			1, 
 			((Double)(gmlxpath.read("count(//edge[@labelE='relatedTo'][@source='http://www.example.com/res/1'][@target='http://www.example.com/res/2'])", XPathConstants.NUMBER))).longValue()
 		); 
-		
-		
-//			Assert.assertTrue (
-//				"Wrong count for {3 derivedFrom 1}!",
-//				tester.ask ( 
-//					"MATCH p = (:SuperTestNode{ iri:$iri1 })-[:derivedFrom]->(:TestNode{ iri:$iri2 }) RETURN COUNT ( p ) = 1",
-//					"iri1", iri ( "ex:3" ), "iri2", iri ( "ex:1" )
-//				)
-//			);
-		
+				
 		assertEquals( "Wrong count for {3 derivedFrom 1}!",
 			1,
 			((Double)(gmlxpath.read("count(//edge[@labelE='derivedFrom'][@source='http://www.example.com/res/3'][@target='http://www.example.com/res/1'])",XPathConstants.NUMBER))).longValue()
 		); 
-		
-		
-		
-		// in graphML you can only have one value for the label 
-		// that's why we don't test the :AdditionalLabel on ex:3
-		
-		
-//			Assert.assertTrue (
-//					"reified relation, wrong property value for 'note'!",
-//					tester.compare (
-//						// Test against the Cypher result
-//						notesv -> {
-//							List<Object> notes = notesv.asList ();
-//							if ( notes == null || notes.isEmpty () ) return false;
-//
-//							// notes collection is sorted, then compared to the sorted values in the reference
-//							return notes
-//								.stream ()
-//								.sorted ()
-//								.collect ( Collectors.toList () )
-//								.equals ( 
-//									Arrays.asList ( new String[] { "Another Note", "Reified Relation" } )
-//								);
-//						},
-//						// the relation containing .note
-//						"MATCH (:TestNode{ iri:$iri1 })-[r:relatedTo]->(:AdditionalLabel{ iri:$iri2 })\n"
-//						+ "RETURN r.note\n",
-//						"iri1", iri ( "ex:2" ), "iri2", iri ( "ex:3" )
-//					)
-//				);
-		
+
+		// the relatedTo relation has the properties "Another Note", "Reified Relation".
+		//
 		String valueList= gmlxpath.read("//edge[@labelE='relatedTo'][@source='http://www.example.com/res/2'][@target='http://www.example.com/res/3']/data[@key='note']/text()", XPathConstants.STRING);
 		
 		List<String> notesGML = new ArrayList<>(); 
