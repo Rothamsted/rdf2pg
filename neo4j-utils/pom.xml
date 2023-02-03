@@ -3,7 +3,7 @@
   <parent>
     <groupId>uk.ac.rothamsted.kg</groupId>
     <artifactId>rdf2pg-pom</artifactId>
-    <version>4.0</version>
+    <version>4.0.2-SNAPSHOT</version>
   </parent>
 
 
