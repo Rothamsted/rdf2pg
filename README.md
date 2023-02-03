@@ -1,10 +1,3 @@
-# !!! WARNING !!!! DOCUMENTATION NEEDS TO BE UPDATED!!!
-
-We recently extended rdf2neo heavily, to turn it into a a new tool, which makes it easy to convert from RDF to any property graph format or database, and by means of RDF mapping.
-
-[We are updating the documentation](https://github.com/Rothamsted/rdf2pg/wiki), so for the moment, information might be incomplete and several links are still missing.
-
-
 # The rdf2pg Framework
 
 rdf2pg is a framework to convert from RDF data to [labelled property graphs][10] (PG), aiming 
