@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.Neo4jDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.test.NeoTestUtils;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.PropertyGraphMaker;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
@@ -143,9 +143,9 @@ public class CypherLoaderIT
 			); // setPGMakerFactory()
 	
 			
-			List<Neo4jConfigItem> config = new LinkedList<> ();
+			List<ConfigItem<SimpleCyLoader>> config = new LinkedList<> ();
 			{
-				var cfgi = new Neo4jConfigItem ();
+				var cfgi = new ConfigItem<SimpleCyLoader> ();
 				cfgi.setName ( "places" );
 				cfgi.setNodeIrisSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_IRIS );
 				cfgi.setLabelsSparql ( DataTestUtils.DBPEDIA_SPARQL_NODE_LABELS );
@@ -156,7 +156,7 @@ public class CypherLoaderIT
 			}
 
 			{
-				var cfgi = new Neo4jConfigItem ();
+				var cfgi = new ConfigItem<SimpleCyLoader> ();
 				cfgi.setName ( "people" );
 
 				cfgi.setNodeIrisSparql ( DataTestUtils.DBPEDIA_SPARQL_PEOPLE_IRIS );

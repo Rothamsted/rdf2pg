@@ -1,5 +1,6 @@
 package uk.ac.rothamsted.kg.rdf2pg.pgmaker;
 
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGIndexer;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeMakeProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationHandler;
@@ -20,11 +21,14 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 	private String nodeIrisSparql, labelsSparql, nodePropsSparql;
 	private String relationTypesSparql, relationPropsSparql;
 	
+	private String indexesSparql;
+
+	
 	public ConfigItem () {}
 
 		
 	/**
-	 * @see {@link SimplePGMaker#getName()}.
+	 * @see {@link SimplePGMaker#getComponentName()}.
 	 */
 	public String getName () {
 		return name;
@@ -44,7 +48,7 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 	}
 
 	/**
-	 * @see PGNodeHandler#getLabelsSparql().
+	 * @see PGNodeHandler#getLabelsSparql()
 	 */
 	public String getLabelsSparql () {
 		return labelsSparql;
@@ -54,7 +58,7 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 	}
 	
 	/**
-	 * @see PGNodeHandler#getNodePropsSparql(). 
+	 * @see PGNodeHandler#getNodePropsSparql()
 	 */
 	public String getNodePropsSparql () {
 		return nodePropsSparql;
@@ -82,10 +86,23 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 	public void setRelationPropsSparql ( String relationPropsSparql ) {
 		this.relationPropsSparql = relationPropsSparql;
 	}
+	
+	/**
+	 * @see PGIndexer#getIndexesSparql() 
+	 */
+	public String getIndexesSparql ()
+	{
+		return indexesSparql;
+	}
+
+	public void setIndexesSparql ( String indexesSparql )
+	{
+		this.indexesSparql = indexesSparql;
+	}	
 
 	public void configureMaker ( SM simpleMaker )
 	{
-		simpleMaker.setName ( this.getName () );
+		simpleMaker.setComponentName ( this.getName () );
 		
 		PGNodeMakeProcessor<?> nodeMaker = simpleMaker.getPGNodeMaker ();
 		PGRelationMakeProcessor<?> relMaker = simpleMaker.getPGRelationMaker ();
@@ -100,5 +117,14 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 		
 		relHandler.setRelationTypesSparql ( this.getRelationTypesSparql () );
 		relHandler.setRelationPropsSparql ( this.getRelationPropsSparql () );
+		
+		if ( this.indexesSparql == null ) return;
+		var indexer = simpleMaker.getPgIndexer (); 
+		if ( indexer == null ) throw new UnsupportedOperationException ( String.format (
+				"%san index SPARQL query was specified in the configuration, but there is no indexing "
+				+ "component for this PG target", simpleMaker.getCompNamePrefix () ));
+
+		indexer.setIndexesSparql ( indexesSparql );
+		
 	}
 }

@@ -55,6 +55,20 @@
 				<constructor-arg value = "examples/dbpedia/dbpedia_rel_props.sparql" />
 			</bean>
 		</property>
+		
+		<!-- 
+			This query defines those node labels and properties that need to be indexed.
+			The query can mention all the necessary index, even those about other datasets
+			in a multi-config.
+			
+			The default target for this is simple CSV output, which can be used for things
+			like specific scripts at the target database.  
+		-->			
+		<property name="indexesSparql">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readResource">
+				<constructor-arg value = "examples/dbpedia/dbpedia_node_indexes.sparql" />
+			</bean>
+		</property>
 
 	</bean>
 
@@ -93,26 +107,4 @@
 					
 	</bean>
 
-
-
-
-	<!-- And some boilerplate -->
-	
-	<!-- We need the pgmakerSession scope, since a new driver is created for each query set -->
-	<bean id = "neoDriver" 
-			  class = "org.neo4j.driver.GraphDatabase" factory-method="driver"
-			  scope = "pgmakerSession"
-	>
-		
-		<constructor-arg value = "bolt://127.0.0.1:17690" />
-				
-		<constructor-arg>
-			<bean class = "org.neo4j.driver.AuthTokens" factory-method = "basic">
-				<constructor-arg value = "neo4j" />
-				<constructor-arg value = "test" />
-			</bean>
-		</constructor-arg>
-		
-	</bean>
-		
 </beans>

@@ -1,6 +1,5 @@
 package uk.ac.rothamsted.kg.rdf2pg.neo4j.load;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +7,6 @@ import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyNodeLoadingProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingHandler;
 import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CyRelationLoadingProcessor;
-import uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support.CypherIndexer;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.SimplePGMaker;
 
 /**
@@ -28,38 +26,7 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.SimplePGMaker;
 @Component @Scope ( scopeName = "pgmakerSession" )
 public class SimpleCyLoader extends
   SimplePGMaker<CyNodeLoadingHandler, CyRelationLoadingHandler, CyNodeLoadingProcessor, CyRelationLoadingProcessor>
-{	
-	private CypherIndexer cypherIndexer;
-	
-	@Override
-	protected void makeBody ( String tdbPath, Object... opts )
-	{		
-		try
-		{
-			super.makeBody ( tdbPath, opts );
-			
-			// User-defined indices
-			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
-
-			if ( doIdx ) {
-				CypherIndexer indexer = this.getCypherIndexer ();
-				if ( indexer != null ) indexer.index ();
-			}
-		}
-		catch ( Exception ex ) {
-			throw new RuntimeException ( "Error while running the RDF/Cypher loader:" + ex.getMessage (), ex );
-		}
-	}
-	
-	
-	public CypherIndexer getCypherIndexer ()
-	{
-		return cypherIndexer;
-	}
-
-	@Autowired
-	public void setCypherIndexer ( CypherIndexer cypherIndexer )
-	{
-		this.cypherIndexer = cypherIndexer;
-	}
+{
+	// Nothing needed, it's just a marker for fitting the generics and telling Spring.
 }
+

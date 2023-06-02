@@ -1,16 +1,16 @@
 package uk.ac.rothamsted.kg.rdf2pg.pgmaker;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.system.Txn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.utils.exceptions.ExceptionUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.spring.PGMakerSessionScope;
+import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGIndexer;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeHandler;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGNodeMakeProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationHandler;
@@ -32,23 +32,25 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
  * Note: We recommend that you extend your extension of this class with both
  * {@code @Component} and {@code Scope} declarations. The special pgMakerSession puts simple makers
  * within the scope of a single-configuration conversion, and this is necessary for stateful operations 
- * like opening/closing sessionf for the {@link RdfDataManager}. See {@link PGMakerSessionScope} for 
+ * like opening/closing a session for the {@link RdfDataManager}. See {@link PGMakerSessionScope} for 
  * details.  
  */
 @Component @Scope ( scopeName = "pgmakerSession" )
 public abstract class SimplePGMaker
   <NH extends PGNodeHandler, RH extends PGRelationHandler, 
   NP extends PGNodeMakeProcessor<NH>, RP extends PGRelationMakeProcessor<RH>>
+	extends DefaultNamedPGMakeComp
 	implements PropertyGraphMaker, AutoCloseable
 {	
-	protected NP nodeMaker;
-	protected RP relationMaker;
+	private NP nodeMaker;
+	private RP relationMaker;
+	
+	private PGIndexer pgIndexer;
 
-	protected RdfDataManager rdfDataManager = new RdfDataManager ();
-	
-	protected String name;
-	
+	private RdfDataManager rdfDataManager = new RdfDataManager ();
+		
 	protected Logger log = LoggerFactory.getLogger ( this.getClass () );
+	
 	
 	/**
 	 *  This does the job.
@@ -86,7 +88,7 @@ public abstract class SimplePGMaker
 
 	protected void makeEnd ( String tdbPath, Object... opts )
 	{
-		log.info ( "{}RDF-PG conversion finished", getNamePrefix () );
+		log.info ( "{}RDF-PG conversion finished", getCompNamePrefix () );
 	}
 	
 	/**
@@ -103,7 +105,7 @@ public abstract class SimplePGMaker
 			rdfDataManager.open ( tdbPath );
 			Dataset ds = rdfMgr.getDataSet ();
 			
-			final String namePrefx = this.getNamePrefix ();
+			final String namePrefx = this.getCompNamePrefix ();
 			
 			Txn.executeRead ( ds, () -> 
 				log.info ( "{}RDF source has about {} triple(s)", namePrefx, ds.getUnionModel().size () )
@@ -117,9 +119,22 @@ public abstract class SimplePGMaker
 			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
 			if ( doRels ) this.getPGRelationMaker ().process ( rdfMgr, opts );
 			
+			// User-defined indices
+			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
+
+			if ( doIdx ) {
+				PGIndexer indexer = this.getPgIndexer ();
+				if ( indexer != null )
+				{
+					indexer.setComponentName ( this.getComponentName () );
+					indexer.index ();
+				}
+			}
 		}
 		catch ( Exception ex ) {
-			throw new RuntimeException ( "Error while running the RDF/PG maker:" + ex.getMessage (), ex );
+			ExceptionUtils.throwEx ( RuntimeException.class, ex, 
+				"Error while running the RDF/PG maker: $cause"
+			);
 		}
 	}
 	
@@ -184,29 +199,18 @@ public abstract class SimplePGMaker
 	{
 		this.relationMaker = relationMaker;
 	}
-		
-	/**
-	 * Represents the nodes/relations kind that are made by this maker. This is prefixed to logging messages
-	 * and is primarily useful when the simple maker is used by {@link MultiConfigPGMaker}. 
-	 */
-	public String getName ()
+
+	public PGIndexer getPgIndexer ()
 	{
-		return name;
+		return pgIndexer;
 	}
 
-	@Autowired ( required = false ) @Qualifier ( "defaultMakerName" )
-	public void setName ( String name )
-	{
-		this.name = name;
-	}
-	
 	/**
-	 * It's {@link #getName()}, possibly (if not empty/null) in a form like "[ name ] ", 
-	 * which is used internally for logging and alike.
+	 * @see PGIndexer for notes about Spring auto-wiring.  
 	 */
-	protected String getNamePrefix ()
+	@Autowired ( required = false )	
+	public void setPgIndexer ( PGIndexer pgIndexer )
 	{
-		String result = StringUtils.trimToEmpty ( this.getName () );
-		return result.isEmpty () ? "" : "[" + result + "] ";
-	}
+		this.pgIndexer = pgIndexer;
+	}		
 }

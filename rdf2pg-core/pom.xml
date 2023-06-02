@@ -34,6 +34,13 @@
 	    <artifactId>javax.annotation-api</artifactId>
 		</dependency>
 		
+		<!-- Used in SimpleTsvIndexer for exporting index definitions -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+	    <artifactId>opencsv</artifactId>
+	    <version>5.7.1</version>						
+		</dependency>		
+		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>

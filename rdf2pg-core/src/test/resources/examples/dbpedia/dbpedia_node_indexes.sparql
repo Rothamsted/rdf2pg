@@ -7,7 +7,8 @@ PREFIX ex: <http://www.example.com/res/>
 # 
 # You can define one index query per data set.
 # 
-# This kind of indexing happens after all nodes and relations have been created on the Cypher end.
+# This kind of indexing happens after all nodes and relations have been created on the 
+# property graph target.
 #  
 # All node types are indexed on the 'iri' property, independently on what you define here 
 # (and before relations creation).
@@ -16,6 +17,10 @@ PREFIX ex: <http://www.example.com/res/>
 # a relation and ?label refers to its type. Relation indexing was introduced in Neo 4.3
 # 
 # For both nodes and relations, '*' is a special case, see below.
+#
+# The exact way in which the tuples above is processed depends on the specific property graph
+# target. For instance, rdf2neo translates these definitions into corresponding Cypher commands
+# (see CypherIndexer), while the default indexer just otuputs a TSV list (see SimpleTsvIndexer).
 #
 SELECT ?label ?propertyName ?isRelation
 {

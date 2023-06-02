@@ -112,7 +112,7 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 		try ( SM pgSimpleMaker = this.getPGMakerFactory ().getObject (); )
 		{
 			cfg.configureMaker ( pgSimpleMaker );
-			pgSimpleMaker.make ( tdbPath, mode == 0, mode == 1 );
+			pgSimpleMaker.make ( tdbPath, mode == 0, mode == 1, mode == 2 );
 		}
 	}
 	

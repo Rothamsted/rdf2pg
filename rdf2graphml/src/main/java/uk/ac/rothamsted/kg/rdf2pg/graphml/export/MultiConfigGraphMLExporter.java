@@ -33,7 +33,6 @@ public class MultiConfigGraphMLExporter
 	 */
 	public void export ( String tdbPath, String graphmlOutPath )
 	{
-		// TODO Auto-generated method stub
 		this.make ( tdbPath, graphmlOutPath );
 	}
 
@@ -61,7 +60,7 @@ public class MultiConfigGraphMLExporter
 		try (  var graphMLExporter = this.getPGMakerFactory ().getObject (); )
 		{
 			cfg.configureMaker ( graphMLExporter );
-			graphMLExporter.make ( tdbPath, mode == 0, mode == 1, outPath );
+			graphMLExporter.make ( tdbPath, mode == 0, mode == 1, mode == 2, outPath );
 		}
 	}
 

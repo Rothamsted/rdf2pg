@@ -114,6 +114,23 @@ public class GraphMLExportTest
 			mmaker.make ( DataTestUtils.TDB_PATH, "target/test-mconfig-exporter.graphml" );
 			// TODO: test
 		}
-	}	
+	}
+	
+	/**
+	 * Default indexing output is a TSV, which can be useful for your own datbase-specific scripts.
+	 * TODO: update docs.
+	 */
+	@Test
+	public void testSimpleIndexing ()
+	{
+		try ( 
+			ConfigurableApplicationContext beanCtx = new ClassPathXmlApplicationContext ( "multi_config_indexing.xml" );
+			MultiConfigGraphMLExporter mmaker = MultiConfigGraphMLExporter.getSpringInstance ( beanCtx, MultiConfigGraphMLExporter.class );				
+		)
+		{			
+			mmaker.make ( DataTestUtils.TDB_PATH, "target/test-indexing.graphml" );
+			// Test the output file
+		}
+	}		
 	
 }
