@@ -86,7 +86,7 @@ public abstract class PGIndexer extends DefaultNamedPGMakeComp
 	private String indexesSparql;
 
 	
-	private Logger log = LoggerFactory.getLogger ( this.getClass () ); 
+	protected Logger log = LoggerFactory.getLogger ( this.getClass () ); 
 	
 	
 	protected abstract void index ( List<IndexDef> indexDefinitions );

@@ -38,7 +38,13 @@ public class SimpleTsvIndexer extends PGIndexer
 	{
 		if ( indexDefinitions == null || indexDefinitions.isEmpty () ) return;
 		
-		try ( Writer w = this.outputPath == null
+		String outLabel = Optional.ofNullable ( this.outputPath )
+			.map ( o -> '"' + o + '"' )
+			.orElse ( "<std out>" );
+		
+		log.info ( "Writing TSV index to {}", outLabel );
+		
+		try ( Writer w = outputPath == null
 			? new OutputStreamWriter ( System.out )
 			: new FileWriter ( outputPath, !isFirstCall ); // append after the first call
 		
@@ -60,7 +66,7 @@ public class SimpleTsvIndexer extends PGIndexer
 		{
 			ExceptionUtils.throwEx ( UncheckedIOException.class, ex, 
 				"Error while saving PG index definitions to %s: $cause",
-				Optional.ofNullable ( outputPath ).map ( o -> '"' + o + '"' ).orElse ( "<std out>" )
+				outLabel
 			);
 		}
 	}
