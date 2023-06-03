@@ -19,8 +19,8 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem;
 /**
  * This is a custom Spring bean {@link Scope} that models the notion of a PG making session.
  *  
- * We start a new session upon every new {@link ConfigItem} and every new query type (nodes or relations), 
- * so that we can commit intermediate changes.
+ * We start a new session upon every new {@link ConfigItem} and every new query type 
+ * (nodes, relations, indexes), so that we can commit intermediate changes.
  *
  * There are several components around, which must have this scope, see Spring annotations and XML examples.
  *

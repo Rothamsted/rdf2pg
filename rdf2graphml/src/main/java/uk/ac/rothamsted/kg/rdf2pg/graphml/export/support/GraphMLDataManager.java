@@ -52,8 +52,8 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.AbstractPGDataManager;
 @Component
 public class GraphMLDataManager extends AbstractPGDataManager
 {
-	public static final String NODE_FILE_EXTENSION = "-Nodes-tmp.graphml"; 
-	public static final String EDGE_FILE_EXTENSION = "-Edges-tmp.graphml"; 
+	public static final String NODE_TMP_FILE_EXTENSION = "-Nodes-tmp"; 
+	public static final String EDGE_TMP_FILE_EXTENSION = "-Edges-tmp"; 
 	
 	private Set<String> gatheredNodeProperties = Collections.synchronizedSet ( new HashSet<>() );
 	private Set<String> gatheredEdgeProperties = Collections.synchronizedSet ( new HashSet<>() );
@@ -162,12 +162,12 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 	private String getNodeTmpPath ()
 	{
-		return this.graphmlOutputPath + NODE_FILE_EXTENSION;
+		return this.graphmlOutputPath + NODE_TMP_FILE_EXTENSION;
 	}
 
 	private String getEdgeTmpPath ()
 	{
-		return this.graphmlOutputPath + EDGE_FILE_EXTENSION;
+		return this.graphmlOutputPath + EDGE_TMP_FILE_EXTENSION;
 	}
 	
 	

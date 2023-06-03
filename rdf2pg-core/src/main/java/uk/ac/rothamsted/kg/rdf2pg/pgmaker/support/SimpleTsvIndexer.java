@@ -26,10 +26,12 @@ import uk.ac.ebi.utils.exceptions.ExceptionUtils;
  * <dl><dt>Date:</dt><dd>1 Jun 2023</dd></dl>
  *
  */
-@Component @Scope ( scopeName = "pgmakerSession" )
+@Component
 public class SimpleTsvIndexer extends PGIndexer
 {
 	private String outputPath = null;
+	
+	boolean isFirstCall = true;
 	
 	@Override
 	protected void index ( List<IndexDef> indexDefinitions )
@@ -38,14 +40,17 @@ public class SimpleTsvIndexer extends PGIndexer
 		
 		try ( Writer w = this.outputPath == null
 			? new OutputStreamWriter ( System.out )
-			: new FileWriter ( outputPath );
+			: new FileWriter ( outputPath, !isFirstCall ); // append after the first call
 		
 			ICSVWriter tsvw = new CSVWriterBuilder ( w )
 			.withSeparator ( '\t' )
 			.build (); 
 		)
 		{
-			tsvw.writeNext ( new String[] { "Type", "Property", "IsRelation" } );
+			if ( isFirstCall ) {
+				tsvw.writeNext ( new String[] { "Type", "Property", "IsRelation" } );
+				isFirstCall = false;
+			}
 			for ( var idxDef: indexDefinitions )
 				tsvw.writeNext ( new String[] { 
 					idxDef.getType (), idxDef.getPropertyName (), Boolean.toString ( idxDef.isRelation () ) 

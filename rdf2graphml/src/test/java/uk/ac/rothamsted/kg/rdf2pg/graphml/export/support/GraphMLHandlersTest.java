@@ -57,7 +57,7 @@ public class GraphMLHandlersTest
 	 */
 	public GraphMLDataManager createGraphMLDataMgr ( String graphmlPath )
 	{
-		Stream.of ( "", GraphMLDataManager.NODE_FILE_EXTENSION, GraphMLDataManager.EDGE_FILE_EXTENSION )
+		Stream.of ( "", GraphMLDataManager.NODE_TMP_FILE_EXTENSION, GraphMLDataManager.EDGE_TMP_FILE_EXTENSION )
 		.map ( postfix -> graphmlPath + postfix )
 		.map ( Paths::get )
 		.forEach ( path -> Exceptions.sneak ().run ( () -> Files.deleteIfExists ( path ) ) );

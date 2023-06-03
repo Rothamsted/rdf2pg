@@ -1,9 +1,11 @@
 # Revision History
 
-* *This file has been last revised on 2023-02-03*. **Please, keep this note updated**.
+* *This file has been last revised on 2023-06-03*. **Please, keep this note updated**.
 
 ## 4.0.2-SNAPSHOT
 * Current snapshot.
+* Generalisation of the indexing functionality, with default simple TSV indexer
+* Complete review of the PG maker options, turned into proper maps.
 
 ## 4.0
 * **Turned into rdf2pg**. Now it has a new architecture, which makes it easy to write 

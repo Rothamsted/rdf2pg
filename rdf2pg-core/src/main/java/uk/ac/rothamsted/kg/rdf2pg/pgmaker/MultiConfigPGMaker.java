@@ -2,6 +2,9 @@ package uk.ac.rothamsted.kg.rdf2pg.pgmaker;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import uk.ac.ebi.utils.collections.OptionsMap;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.spring.SimplePGMakerFactory;
 
 
@@ -85,38 +89,75 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 		this.springContext = springContext;
 	}
 
+	/**
+	 * Does the job in a multi-configuration mode.
+	 * 
+	 * Namely, 
+	 * 
+	 * <p>First, runs {@link #makeBegin(String, OptionsMap)}</p>
+	 * 
+	 * <p>Then, for each of {@link SimplePGMaker} makeXXX methods 
+	 * (eg, {@link SimplePGMaker#makeNodes(String, OptionsMap)}, loops through all the
+	 * {@link #getConfigItems() configured items} and executes the respective configuration
+	 * (eg, node processing with the config's node-related SPARQL). This happens thanks to
+	 * {@link #makeStage(Consumer, ConfigItem, String)}.</p>
+	 * 
+	 * <p>Finally, runs {@link #makeEnd(String, OptionsMap)}.</p>
+	 * 
+	 */
 	@Override
-	public void make ( String tdbPath, Object... opts )
+	public void make ( String tdbPath, OptionsMap opts )
 	{
 		this.makeBegin ( tdbPath, opts );
 		
-		// First the nodes ( mode = 0 ) and then the relations ( mode = 1 )
-		// That ensures that cross-references made by different queries are taken  
-		for ( int mode = 0; mode <= 2; mode++ )
+		// First the nodes and then the relations
+		// That ensures that cross-references made by different queries are taken
+		
+		Stream<Consumer<SM>> stages = Stream.of ( 
+			sm -> sm.makeNodes ( tdbPath, opts ),
+			sm -> sm.makeRelations ( tdbPath, opts ),
+			sm -> sm.makeIndexes ( tdbPath, opts )
+		);
+
+		stages.forEach ( stage -> {
 			for ( CI cfg: this.getConfigItems () )
-				this.makeIteration ( mode, cfg, tdbPath, opts );
+				this.makeStage ( stage, cfg, tdbPath );
+		});
 		
 		this.makeEnd ( tdbPath, opts );
 	}
 	
 	/**
-	 * Just logs that it's beginning with the current maker.
+	 * This default just logs that it's beginning with the current maker.
+	 * 
+	 * @see #make(String, OptionsMap)
 	 */
-	protected void makeBegin ( String tdbPath, Object... opts )
+	protected void makeBegin ( String tdbPath, OptionsMap opts )
 	{
 		log.info ( "Using {} PG maker", this.getClass ().getSimpleName () );
 	}
 	
-	protected void makeIteration ( int mode, CI cfg, String tdbPath, Object... opts )
+	/**
+	 * @see #make(String, OptionsMap)
+	 * 
+	 * This uses {@link #getPGMakerFactory()} to run the current stage over a single config
+	 * maker.
+	 */
+	protected void makeStage ( Consumer<SM> stage, CI cfg, String tdbPath )
 	{
 		try ( SM pgSimpleMaker = this.getPGMakerFactory ().getObject (); )
 		{
 			cfg.configureMaker ( pgSimpleMaker );
-			pgSimpleMaker.make ( tdbPath, mode == 0, mode == 1, mode == 2 );
+			stage.accept ( pgSimpleMaker );
 		}
 	}
 	
-	protected void makeEnd ( String tdbPath, Object... opts )
+	/**
+	 * The default doesn't do anything.
+	 * 
+	 * @see #make(String, OptionsMap)
+	 */
+	protected void makeEnd ( String tdbPath, OptionsMap opts )
 	{
 		// Defaults to null
 	}
@@ -124,7 +165,7 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 	
 	
 	/**
-	 * A single configuration defines how Cypher nodes and relations are mapped from RDF.
+	 * A single configuration defines how nodes and relations are mapped from RDF.
 	 * 
 	 * @see {@link #make(String, Object...)} 
 	 */
@@ -141,8 +182,10 @@ public abstract class MultiConfigPGMaker<CI extends ConfigItem<SM>, SM extends S
 	}
 
 	/**
-	 * This is used to get a new {@link SimplePGMaker} to be used with a new configuration while iterating over
-	 * {@link #getConfigItems()}. This is designed this way in order to make it possible to configure/autowire
+	 * This is used in {@link #makeStage(Consumer, ConfigItem, String)}, to get a new {@link SimplePGMaker} 
+	 * to be used with a new configuration while iterating over {@link #getConfigItems()}. 
+	 * 
+	 * This is designed this way in order to make it possible to configure/autowire
 	 * a factory via Spring.
 	 * 
 	 */

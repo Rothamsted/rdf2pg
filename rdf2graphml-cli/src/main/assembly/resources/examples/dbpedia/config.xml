@@ -73,6 +73,17 @@
 				<constructor-arg value = "#{ pwd + '/dbpedia_rel_props.sparql' }" index = "0" />
 			</bean>
 		</property>
+		
+		<!-- 
+			This query defines those node labels and properties that need to be indexed.
+			The query can mention all the necessary index, even those about other datasets
+			in a multi-config.
+		-->			
+		<property name="indexesSparql">
+			<bean class = "uk.ac.ebi.utils.opt.io.IOUtils" factory-method = "readFile">
+				<constructor-arg value = "#{ pwd + '/dbpedia_node_indexes.sparql' }" index = "0" />
+			</bean>
+		</property>
 
 	</bean>
 

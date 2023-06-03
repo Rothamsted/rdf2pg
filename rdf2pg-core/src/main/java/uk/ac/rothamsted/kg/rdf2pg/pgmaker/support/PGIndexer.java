@@ -9,7 +9,6 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import info.marcobrandizi.rdfutils.jena.TDBEndPointHelper;
@@ -38,8 +37,8 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
  * You can always disable the indexing by omitting 
  * {@link ConfigItem#getIndexesSparql() the indexes SPARQL}.
  * 
- * Also, you want the {@link PGMakerSessionScope pgmakerSession scope}, since this reloads 
- * a {@link #getIndexesSparql() configuration-specific index specification}.
+ * Also, you might want the {@link PGMakerSessionScope pgmakerSession scope}, to allow it
+ * proper re-initialisation when a new {@link ConfigItem} is processed.
  * 
  * @author brandizi
  * <dl><dt>Date:</dt><dd>31 May 2023</dd></dl> (abstracted from the existing Cypher indexer)

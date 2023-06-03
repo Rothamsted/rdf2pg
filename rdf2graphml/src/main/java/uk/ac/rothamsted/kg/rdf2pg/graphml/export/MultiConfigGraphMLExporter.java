@@ -1,9 +1,14 @@
 package uk.ac.rothamsted.kg.rdf2pg.graphml.export;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import org.apache.jena.graph.impl.SimpleGraphMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.utils.collections.OptionsMap;
 import uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLDataManager;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.MultiConfigPGMaker;
@@ -33,42 +38,32 @@ public class MultiConfigGraphMLExporter
 	 */
 	public void export ( String tdbPath, String graphmlOutPath )
 	{
-		this.make ( tdbPath, graphmlOutPath );
-	}
-
-	@Override
-	protected void makeBegin ( String tdbPath, Object... opts )
-	{
-		super.makeBegin ( tdbPath, opts );
-		
-		if ( opts == null || opts.length != 1 ) throw new IllegalArgumentException ( String.format (
-			"%s needs the output file parameter", this.getClass ().getSimpleName ()
-		));
-		
-		String outPath = (String) opts [ 0 ];
-		this.graphmlDataMgr.setGraphmlOutputPath ( outPath );
+		var opts = OptionsMap.from ( Map.of ( "graphmlOutPath", graphmlOutPath ) );
+		this.make ( tdbPath, opts );
 	}
 
 	/**
-	 * Adds opts[0] (the output path) to to {@link SimpleGraphMLExporter#make(String, Object...)}. 
+	 * This takes "graphmlOutPath" from the opts and sets it in {@link #graphmlDataMgr}. 
 	 */
 	@Override
-	protected void makeIteration ( int mode, ConfigItem<SimpleGraphMLExporter> cfg, String tdbPath, Object... opts )
+	protected void makeBegin ( String tdbPath, OptionsMap opts )
 	{
-		String outPath = (String) opts [ 0 ];
-
-		try (  var graphMLExporter = this.getPGMakerFactory ().getObject (); )
-		{
-			cfg.configureMaker ( graphMLExporter );
-			graphMLExporter.make ( tdbPath, mode == 0, mode == 1, mode == 2, outPath );
-		}
+		super.makeBegin ( tdbPath, opts );
+				
+		String outPath = Optional.ofNullable ( opts )
+		.map ( o -> o.getString ( "graphmlOutPath" ) )
+		.orElseThrow ( () -> new IllegalArgumentException ( String.format (
+			"%s needs the graphmlOutPath option", this.getClass ().getSimpleName ()
+		)));
+		this.graphmlDataMgr.setGraphmlOutputPath ( outPath );
 	}
+
 
 	/**
 	 * Finalises the export via {@link GraphMLDataManager#writeGraphML()}.
 	 */
 	@Override
-	protected void makeEnd ( String tdbPath, Object... opts )
+	protected void makeEnd ( String tdbPath, OptionsMap opts )
 	{
 		graphmlDataMgr.writeGraphML ();
 	}	

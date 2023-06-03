@@ -118,13 +118,15 @@ public class ConfigItem<SM extends SimplePGMaker<?,?,?,?>>
 		relHandler.setRelationTypesSparql ( this.getRelationTypesSparql () );
 		relHandler.setRelationPropsSparql ( this.getRelationPropsSparql () );
 		
-		if ( this.indexesSparql == null ) return;
+		// if ( this.indexesSparql == null ) return;
 		var indexer = simpleMaker.getPgIndexer (); 
-		if ( indexer == null ) throw new UnsupportedOperationException ( String.format (
+		if ( indexer == null )
+		{
+			if ( this.indexesSparql != null ) throw new UnsupportedOperationException ( String.format (
 				"%san index SPARQL query was specified in the configuration, but there is no indexing "
 				+ "component for this PG target", simpleMaker.getCompNamePrefix () ));
-
-		indexer.setIndexesSparql ( indexesSparql );
-		
+		}
+		else
+			indexer.setIndexesSparql ( indexesSparql ); // which might go null
 	}
 }

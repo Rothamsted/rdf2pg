@@ -1,5 +1,7 @@
 package uk.ac.rothamsted.kg.rdf2pg.pgmaker;
 
+import java.util.function.Consumer;
+
 import org.apache.jena.query.Dataset;
 import org.apache.jena.system.Txn;
 import org.slf4j.Logger;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.utils.collections.OptionsMap;
 import uk.ac.ebi.utils.exceptions.ExceptionUtils;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.spring.PGMakerSessionScope;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGIndexer;
@@ -29,7 +32,7 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
  * @author Marco Brandizi
  * <dl><dt>Date:</dt><dd>26 Oct 2020</dd></dl>
  *
- * Note: We recommend that you extend your extension of this class with both
+ * Note: We recommend that you subclass your specific version of this class with both
  * {@code @Component} and {@code Scope} declarations. The special pgMakerSession puts simple makers
  * within the scope of a single-configuration conversion, and this is necessary for stateful operations 
  * like opening/closing a session for the {@link RdfDataManager}. See {@link PGMakerSessionScope} for 
@@ -53,83 +56,92 @@ public abstract class SimplePGMaker
 	
 	
 	/**
-	 *  This does the job.
-	 *  
-	 *  The default version invokes {@link #makeBegin(String, Object...)}, {@link #makeBody(String, Object...)}
-	 *  and {@link #makeEnd(String, Object...)}.
-	 *  
-	 *  Usually, the convention for the first three parameters is:
-	 * 	 
-	 * <p>
-	 * opts [ 0 ] = true, means process the PG nodes nodes.<br/>
-	 * opts [ 1 ] = true, means process the PG relations.<br/>
-	 * opts [ 2 ] = true, means do post-process stuff like indices.<br/>
-	 * </p>
 	 * 
-	 * <p>I opts is null, all the three operations above are run in the same sequence.</p>
+	 * This does the job.
 	 *  
-	 * <p>Nodes are always made before relations.</p>
+	 * It invokes all of {@link #makeNodes(String, OptionsMap)}, {@link #makeRelations(String, OptionsMap)} and
+	 * {@link #makeIndexes(String, OptionsMap)}, in this order, so that you've the relations linking referred
+	 * nodes correctly.
 	 * 
-	 * <p>TODO: this needs to change in favour of a key/value map of options.
+	 * This is not what is invoked by {@link MultiConfigPGMaker}, since that needs to invoke the stages mentioned 
+	 * above separately, see details there. 
+	 *  
+	 * All of the stage methods mentioned above uses {@link #make(String, OptionsMap, Consumer)}.
 	 * 
 	 */
 	@Override
-	public void make ( String tdbPath, Object... opts ) 
+	public void make ( String tdbPath, OptionsMap opts ) 
 	{
-		makeBegin ( tdbPath, opts );
-		makeBody ( tdbPath, opts );
-		makeEnd ( tdbPath, opts );		
+		makeNodes ( tdbPath, opts );
+		makeRelations ( tdbPath, opts );
+		makeIndexes ( tdbPath, opts );
+	}
+	
+	/**
+	 * @see #make(String, OptionsMap)
+	 */
+	public void makeNodes ( String tdbPath, OptionsMap opts ) 
+	{
+		make ( tdbPath, opts, this::makeBodyNodes );
 	}
 
-	protected void makeBegin ( String tdbPath, Object... opts )
+	/**
+	 * @see #make(String, OptionsMap)
+	 */
+	public void makeRelations ( String tdbPath, OptionsMap opts ) 
 	{
-		// Nothing needed on the default.
+		make ( tdbPath, opts, this::makeBodyRelations );
 	}
 
-	protected void makeEnd ( String tdbPath, Object... opts )
+	/**
+	 * @see #make(String, OptionsMap)
+	 */
+	public void makeIndexes ( String tdbPath, OptionsMap opts ) 
+	{
+		make ( tdbPath, opts, this::makeBodyIndexes );
+	}
+	
+	/**
+	 * @see #make(String, OptionsMap, Consumer) 
+	 */
+	protected void makeBegin ( String tdbPath, OptionsMap opts )
+	{
+		RdfDataManager rdfMgr = this.getRdfDataManager ();
+		rdfMgr.open ( tdbPath );
+		Dataset ds = rdfMgr.getDataSet ();
+		
+		final String namePrefx = this.getCompNamePrefix ();
+		
+		Txn.executeRead ( ds, () -> 
+			log.info ( "{}RDF source has about {} triple(s)", namePrefx, ds.getUnionModel().size () )
+		);
+	}
+
+	/**
+	 * @see #make(String, OptionsMap, Consumer) 
+	 */
+	protected void makeEnd ( OptionsMap opts )
 	{
 		log.info ( "{}RDF-PG conversion finished", getCompNamePrefix () );
 	}
 	
 	/**
-	 * This uses a {@link RdfDataManager} to load SPARQL queries that select PG elements, 
-	 * via {@link #getPGNodeMaker()}, then it runs a similar job using {@link #getPGRelationMaker()}.
+	 * The base method for all of the stage methods {@link #makeNodes(String, OptionsMap)},
+	 * {@link #makeRelations(String, OptionsMap)}, {@link #makeIndexes(String, OptionsMap)}.
+	 * 
+	 * This invokes {@link #makeBegin(String, OptionsMap)}, then the stage method passed as
+	 * parameter, then {@link #makeEnd(OptionsMap)}. 
+	 * 
+	 * The stage method is one of makeBodyXXX below, eg, {@link #makeBodyNodes(OptionsMap)}, which
+	 * one is decided by the invokers mentioned above.
 	 * 
 	 */
-	protected void makeBody ( String tdbPath, Object... opts )
-	{		
-		try
-		{
-			RdfDataManager rdfMgr = this.getRdfDataManager ();
-
-			rdfDataManager.open ( tdbPath );
-			Dataset ds = rdfMgr.getDataSet ();
-			
-			final String namePrefx = this.getCompNamePrefix ();
-			
-			Txn.executeRead ( ds, () -> 
-				log.info ( "{}RDF source has about {} triple(s)", namePrefx, ds.getUnionModel().size () )
-			);
-			
-			// Nodes
-			boolean doNodes = opts != null && opts.length > 0 ? (Boolean) opts [ 0 ] : true;
-			if ( doNodes ) this.getPGNodeMaker ().process ( rdfMgr, opts );
-	
-			// Relations
-			boolean doRels = opts != null && opts.length > 1 ? (Boolean) opts [ 1 ] : true;
-			if ( doRels ) this.getPGRelationMaker ().process ( rdfMgr, opts );
-			
-			// User-defined indices
-			boolean doIdx = opts != null && opts.length > 2 ? (Boolean) opts [ 2 ] : true;
-
-			if ( doIdx ) {
-				PGIndexer indexer = this.getPgIndexer ();
-				if ( indexer != null )
-				{
-					indexer.setComponentName ( this.getComponentName () );
-					indexer.index ();
-				}
-			}
+	protected void make ( String tdbPath, OptionsMap opts, Consumer<OptionsMap> stage ) 
+	{
+		try {
+			makeBegin ( tdbPath, opts );
+			stage.accept ( opts );
+			makeEnd ( opts );
 		}
 		catch ( Exception ex ) {
 			ExceptionUtils.throwEx ( RuntimeException.class, ex, 
@@ -137,6 +149,39 @@ public abstract class SimplePGMaker
 			);
 		}
 	}
+
+	/**
+	 * Uses {@link #getPGNodeMaker()}
+	 * @see #make(String, OptionsMap, Consumer)
+	 */
+	protected void makeBodyNodes ( OptionsMap opts )
+	{
+		this.getPGNodeMaker ().process ( this.getRdfDataManager (), opts );
+	}
+
+	/**
+	 * Uses {@link #getPGNodeMaker()}
+	 * @see #make(String, OptionsMap, Consumer)
+	 */
+	protected void makeBodyRelations ( OptionsMap opts )
+	{
+		this.getPGRelationMaker ().process ( this.getRdfDataManager (), opts );
+	}
+
+	/**
+	 * Uses {@link #getPGNodeMaker()}
+	 * @see #make(String, OptionsMap, Consumer)
+	 */
+	protected void makeBodyIndexes ( OptionsMap opts )
+	{
+		PGIndexer indexer = this.getPgIndexer ();
+		if ( indexer != null )
+		{
+			indexer.setComponentName ( this.getComponentName () );
+			indexer.index ();
+		}
+	}
+	
 	
 	/**
 	 * Closes dependency objects. It DOES NOT deal with Neo4j driver closing, since this could be reused 

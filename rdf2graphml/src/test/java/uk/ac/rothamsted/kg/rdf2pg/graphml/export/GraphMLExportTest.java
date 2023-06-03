@@ -111,7 +111,7 @@ public class GraphMLExportTest
 			MultiConfigGraphMLExporter mmaker = MultiConfigGraphMLExporter.getSpringInstance ( beanCtx, MultiConfigGraphMLExporter.class );				
 		)
 		{			
-			mmaker.make ( DataTestUtils.TDB_PATH, "target/test-mconfig-exporter.graphml" );
+			mmaker.export ( DataTestUtils.TDB_PATH, "target/test-mconfig-exporter.graphml" );
 			// TODO: test
 		}
 	}
@@ -128,7 +128,7 @@ public class GraphMLExportTest
 			MultiConfigGraphMLExporter mmaker = MultiConfigGraphMLExporter.getSpringInstance ( beanCtx, MultiConfigGraphMLExporter.class );				
 		)
 		{			
-			mmaker.make ( DataTestUtils.TDB_PATH, "target/test-indexing.graphml" );
+			mmaker.export ( DataTestUtils.TDB_PATH, "target/test-indexing.graphml" );
 			// Test the output file
 		}
 	}		
