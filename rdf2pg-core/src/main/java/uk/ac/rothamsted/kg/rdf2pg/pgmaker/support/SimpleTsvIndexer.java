@@ -50,6 +50,8 @@ public class SimpleTsvIndexer extends PGIndexer
 		
 			ICSVWriter tsvw = new CSVWriterBuilder ( w )
 			.withSeparator ( '\t' )
+			.withEscapeChar ( '\\' )
+			.withQuoteChar ( '\0' )
 			.build (); 
 		)
 		{
