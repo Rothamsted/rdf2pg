@@ -40,6 +40,11 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
  * Also, you might want the {@link PGMakerSessionScope pgmakerSession scope}, to allow it
  * proper re-initialisation when a new {@link ConfigItem} is processed.
  * 
+ * <b>WARNING</b>: we don't add the 'iri' property by default, since we can't know if the
+ * target needs it or not. It's up to the specific implementation of the indexer to possibly
+ * ass such property (for both nodes and relations), or, alternatively, it's up to the target
+ * PG node/relation makers to automatically index on iri.
+ * 
  * @author brandizi
  * <dl><dt>Date:</dt><dd>31 May 2023</dd></dl> (abstracted from the existing Cypher indexer)
  * 

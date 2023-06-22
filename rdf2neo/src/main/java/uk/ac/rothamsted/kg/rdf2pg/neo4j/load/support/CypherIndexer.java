@@ -64,6 +64,15 @@ public class CypherIndexer extends PGIndexer
 			var isRelation = idxDef.isRelation ();
 			var propName = idxDef.getPropertyName ();
 			
+			if ( "iri".equals ( propName ) ) {
+				log.warn ( 
+					"'iri' property met in the index definition, the Cypher indexer is ignoring this here, "
+					+ "since IRIs are  always indexed elsewhere" 
+				);
+				
+				continue;
+			}
+			
 			// *.* label or relation type indexing (available since Neo 4.3)
 			//
 			if ( equalsIgnoreCase ( "*", type ) && equalsIgnoreCase ( "_type_", propName ) )
