@@ -31,7 +31,7 @@
 	-->
 
 	<!-- Queries to map places -->
-	<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
+	<bean class = "uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem">
 		
 		<!--
 		  This is the name of this config item/subset of data. It is used only for communication purposes, 
@@ -91,7 +91,7 @@
 
 	<!-- Queries to map people -->
 
-	<bean class = "uk.ac.rothamsted.kg.rdf2pg.neo4j.load.Neo4jConfigItem">
+	<bean class = "uk.ac.rothamsted.kg.rdf2pg.pgmaker.ConfigItem">
 	
 		<property name = "name" value = "people" />
 
