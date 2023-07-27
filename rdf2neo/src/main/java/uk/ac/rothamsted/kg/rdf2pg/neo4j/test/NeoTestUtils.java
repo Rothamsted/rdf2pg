@@ -16,7 +16,7 @@ public class NeoTestUtils
 {
 	public static final String NEO_TEST_URL = "bolt://127.0.0.1:17690";
 	public static final String NEO_TEST_USER = "neo4j";
-	public static final String NEO_TEST_PWD = "test";
+	public static final String NEO_TEST_PWD = "testTest";
 	
 	
 	/**

@@ -7,9 +7,6 @@
 
 ## 5.0
 * Migrated to Java 17. **WARNING: no backward compatibility guaranteed**.
-* Neo4j dependency upgraded to 5.10.x
-* Neo4j server plug-in upgraded (following from above)
-
 
 ## 4.1
 * Generalisation of the indexing functionality, with default simple TSV indexer

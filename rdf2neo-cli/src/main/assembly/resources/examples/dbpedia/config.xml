@@ -137,7 +137,8 @@
 		<constructor-arg>
 			<bean class = "org.neo4j.driver.AuthTokens" factory-method = "basic">
 				<constructor-arg value = "neo4j" />
-				<constructor-arg value = "test" />
+				<!-- Since 5.10, Neo4j wants >8 passwords -->
+				<constructor-arg value = "testTest" />
 			</bean>
 		</constructor-arg>
 		
