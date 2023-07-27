@@ -1,9 +1,14 @@
 # Revision History
 
-* *This file has been last revised on 2023-06-03*. **Please, keep this note updated**.
+* *This file has been last revised on 2023-07-27*. **Please, keep this note updated**.
 
-## 4.0.2-SNAPSHOT
-* Current snapshot.
+## 5.0.1-SNAPSHOT
+* Current snapshot
+
+## 5.0
+* Migrated to Java 17. **WARNING: no backward compatibility guaranteed**.
+
+## 4.1
 * Generalisation of the indexing functionality, with default simple TSV indexer
 * Complete review of the PG maker options, turned into proper maps.
 
