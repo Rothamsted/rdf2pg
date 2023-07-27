@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
+	<modelVersion>4.0.0</modelVersion>
+	
 	<!-- 
 		Common Knetminer parent, defining stuff like our Nexus
-	-->  
+	-->	
 	<parent>
-	  <groupId>uk.ac.rothamsted.knetminer</groupId>
-	  <artifactId>knetminer-common</artifactId>
-	  <version>4.0</version>
-	</parent>  
-  
-  
-  <groupId>uk.ac.rothamsted.kg</groupId>
-  <artifactId>rdf2pg-pom</artifactId>
-  <packaging>pom</packaging>
-  
-  <version>5.0-SNAPSHOT</version>
-  
-  <name>rdf2pg-pom - top POM</name>
-  <url>https://github.com/Rothamsted/rdf2pg</url>
-      
-  <modules>
+		<groupId>uk.ac.rothamsted.knetminer</groupId>
+		<artifactId>knetminer-common</artifactId>
+		<version>4.0</version>
+	</parent>	
+	
+	
+	<groupId>uk.ac.rothamsted.kg</groupId>
+	<artifactId>rdf2pg-pom</artifactId>
+	<packaging>pom</packaging>
+	
+	<version>5.0-SNAPSHOT</version>
+	
+	<name>rdf2pg-pom - top POM</name>
+	<url>https://github.com/Rothamsted/rdf2pg</url>
+			
+	<modules>
 		<module>rdf2pg-core</module>
 		<module>rdf2pg-core-cli</module>
 		<module>neo4j-utils</module>
@@ -29,18 +29,18 @@
 		<module>rdf2graphml</module>
 		<module>rdf2neo-cli</module>
 		<module>rdf2graphml-cli</module>
-  </modules>
-  
-  <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+	</modules>
+	
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.36</slf4j.version>
-  </properties>
-  
-  <dependencyManagement>
-  		<dependencies>
-		  					           			      
+	</properties>
+	
+	<dependencyManagement>
+			<dependencies>
+													 						
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -50,7 +50,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-	      <version>1.2.11</version>
+				<version>1.2.11</version>
 			</dependency>
 						
 			<!-- 
@@ -66,48 +66,54 @@
 			
 			<!-- Same for Jakarta Commons Logging -->
 			<dependency>
-			  <groupId>org.slf4j</groupId>
-			  <artifactId>jcl-over-slf4j</artifactId>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
 			
 			<!-- Same for Java Logging -->
 			<!-- IMPORTANT: If you're really using this, you will probably want to fix performance too:
-			  http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html
-			  http://logback.qos.ch/manual/configuration.html#LevelChangePropagator
+				http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html
+				http://logback.qos.ch/manual/configuration.html#LevelChangePropagator
 			 -->
 			<dependency>
-			  <groupId>org.slf4j</groupId>
-			  <artifactId>jul-to-slf4j</artifactId>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jul-to-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>			
 
-  	</dependencies>
-  		
-  </dependencyManagement>
+		</dependencies>
+			
+	</dependencyManagement>
 
 
 	<build>
 		<pluginManagement>
 			<plugins>
 			
-			  <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-surefire-plugin</artifactId>
-			    <configuration>
-				    <!--
-				      Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
-				      See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
-				    -->
-				    <systemPropertyVariables>
-				      <rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
-				    </systemPropertyVariables>
-			      <environmentVariables>
-			      	<!-- Just to align to production files which are used for tests too -->
-			       	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
-			      </environmentVariables>
-			    </configuration>
-			  </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<!-- 
+						TODO: Upgrade the plug-in versions in knetminer-common. Also, systemProperties in surefire
+						is deprecated.
+					-->
+					<version>3.1.2</version>
+					
+					<configuration>
+						<!--
+							Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
+							See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
+						-->
+						<systemPropertyVariables>
+							<rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
+						</systemPropertyVariables>
+						<environmentVariables>
+							<!-- Just to align to production files which are used for tests too -->
+						 	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
+						</environmentVariables>
+					</configuration>
+				</plugin>
 			
 				<!-- 
 					A small plug-in that starts Neo4j, we inherited this from André and it is now at 
@@ -119,30 +125,31 @@
 				</plugin>
 				
 				<!-- Use this to start integration tests (*IT.java) -->
-		    <plugin>
-		      <artifactId>maven-failsafe-plugin</artifactId>
-		      <configuration>
-			      <properties>
-			        <property>
-			        	<!-- As above -->
-			          <name>listener</name>
-			          <value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
-			        </property>
-			      </properties>
-			      <environmentVariables>
-			      	<!-- Just to align to production files which are used for tests too -->
-			       	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
-			      </environmentVariables>
-			      <!--
-			      	Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
-			      	See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
-			      -->
-			      <systemPropertyVariables>
-			      	<rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
-			      </systemPropertyVariables>
-		      </configuration>
-		    </plugin>
-		    
+				<plugin>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.1.2</version>
+					<configuration>
+						<properties>
+							<property>
+								<!-- As above -->
+								<name>listener</name>
+								<value>uk.ac.ebi.utils.test.junit.TestOutputDecorator</value>
+							</property>
+						</properties>
+						<environmentVariables>
+							<!-- Just to align to production files which are used for tests too -->
+						 	<RDF2PG_HOME>${project.build.directory}/test-classes</RDF2PG_HOME>
+						</environmentVariables>
+						<!--
+							Command line tests can invoke a CLI test without this braking the build cycle with System.exit()
+							See uk.ac.rothamsted.kg.rdf2pg.cli.Rdf2PGCli for details. 
+						-->
+						<systemPropertyVariables>
+							<rdf2pg.no_jvm_exit>true</rdf2pg.no_jvm_exit>
+						</systemPropertyVariables>
+					</configuration>
+				</plugin>
+				
 				<!-- 
 					The package for line commands (*-cli modules) is built through this. Part of these files
 					come from the core package, downloaded from the Maven dependency plug-in (see below). 
@@ -188,84 +195,98 @@
 					files that are needed (by the Assembly plug-in above) to build the command line packages. Of course, that's
 					typical of *-cli modules (havea look at them for details on how to activate).
 				 -->
-	  		<plugin>
-	  			<artifactId>maven-dependency-plugin</artifactId>
-	  			<executions>
-	  				<!--
-	  					This downloads common test files from the core module.
-	  					This is active by default (via the <phase> default). 
-	  				-->
-	  				<execution>
-	  					<id>get-test-resources</id>
-	  					<phase>process-test-resources</phase>
-	  					<goals>
-	  						<goal>unpack</goal>
-	  					</goals>
-	  					<configuration>
-		          	<artifactItems>
-		            	<artifactItem>
-								    <groupId>uk.ac.rothamsted.kg</groupId>
-							  		<artifactId>rdf2pg-core</artifactId>
+				<plugin>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.6.0</version>
+					<executions>
+						<!--
+							This downloads common test files from the core module.
+							This is active by default (via the <phase> default). 
+						-->
+						<execution>
+							<id>get-test-resources</id>
+							<phase>process-test-resources</phase>
+							<goals>
+								<goal>unpack</goal>
+							</goals>
+							<configuration>
+								<artifactItems>
+									<artifactItem>
+										<groupId>uk.ac.rothamsted.kg</groupId>
+										<artifactId>rdf2pg-core</artifactId>
 										<version>${project.version}</version>
 										<classifier>tests</classifier>
 										<type>test-jar</type>
-	      	          <excludes>**/*.class</excludes>
-										<outputDirectory>${project.build.directory}/test-classes</outputDirectory>	               	
-		             	</artifactItem>
-		          	</artifactItems>
-	  					</configuration>
-	  				</execution>
-	  				<!-- 
-	  					As said above, these files are typically used in command line modules. By default it's disabled 
-	  					(bound to to the none phase).
-	  				 -->
-	  				<execution>
-	  					<id>get-cli-resources</id>
-	  					<!-- 
-	  						Recommended phase to activate it (see *-cli modules). The Assembly plug-in usually comes straight 
-	  					  after this (the package phase). 
-	  					-->
-	  					<!-- <phase>prepare-package</phase> -->
-	  					<phase>none</phase>
-	  					<goals>
-	  						<goal>unpack</goal>
-	  					</goals>
-	  					<configuration>
-		          	<artifactItems>
-		             	<!-- Base files to build the CLI -->
-		            	<artifactItem>
-								    <groupId>uk.ac.rothamsted.kg</groupId>
-							  		<artifactId>rdf2pg-core-cli</artifactId>
+										<excludes>**/*.class</excludes>
+										<outputDirectory>${project.build.directory}/test-classes</outputDirectory>								 	
+								 	</artifactItem>
+								</artifactItems>
+							</configuration>
+						</execution>
+						<!-- 
+							As said above, these files are typically used in command line modules. By default it's disabled 
+							(bound to to the none phase).
+						 -->
+						<execution>
+							<id>get-cli-resources</id>
+							<!-- 
+								Recommended phase to activate it (see *-cli modules). The Assembly plug-in usually comes straight 
+								after this (the package phase). 
+							-->
+							<!-- <phase>prepare-package</phase> -->
+							<phase>none</phase>
+							<goals>
+								<goal>unpack</goal>
+							</goals>
+							<configuration>
+								<artifactItems>
+								 	<!-- Base files to build the CLI -->
+									<artifactItem>
+										<groupId>uk.ac.rothamsted.kg</groupId>
+										<artifactId>rdf2pg-core-cli</artifactId>
 										<version>${project.version}</version>
-		               	<includes>assembly/**/*</includes>
-		               	<!-- This is target/assembly, the assembly plug-in picks from here -->
+									 	<includes>assembly/**/*</includes>
+									 	<!-- This is target/assembly, the assembly plug-in picks from here -->
 										<outputDirectory>${project.build.directory}</outputDirectory>
 										<!-- 
-										  The downloaded copy of this files is renamed.
-										  
+											The downloaded copy of this files is renamed.
+											
 											The replacement variables below are defined by *-cli modules and assign proper names to the 
 											particular line command needed for a particular rdf2pg flavour (eg, rdf2neo.sh, rdf2graphml.sh)
 										-->
 										<fileMappers>
-			                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+											<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
 												<pattern>\Qrdf2pg.sh\E</pattern>
 												<replacement>${rdf2pg.cli.rdf2pg}.sh</replacement>
 											</fileMapper>
-										</fileMappers>										               	
-		             	</artifactItem>	             	
-		          	</artifactItems>
-	  					</configuration>
-	  				</execution>	  				
-	  			</executions>
-	  		</plugin>
-	  										    				
+										</fileMappers>																	 	
+								 	</artifactItem>							 	
+								</artifactItems>
+							</configuration>
+						</execution>						
+					</executions>
+				</plugin>
+										
+										
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.11.0</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+											
 			</plugins>
 		</pluginManagement>		
 	</build>
 	
 	<repositories>
-	  <repository>
-	  	<!-- To pick the parent POM -->
+		<repository>
+			<!-- To pick the parent POM -->
 			<id>knetminer-repo</id>
 			<name>Knetminer Unified Repository</name>
 			<url>https://knetminer.com/artifactory/repository/maven-public</url>
