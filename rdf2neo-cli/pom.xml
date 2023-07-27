@@ -4,7 +4,7 @@
 	<parent>
     <artifactId>rdf2pg-pom</artifactId>
     <groupId>uk.ac.rothamsted.kg</groupId>
-    <version>5.0</version>
+    <version>5.0.1-SNAPSHOT</version>
   </parent>
   
 	<artifactId>rdf2neo-cli</artifactId>

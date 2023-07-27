@@ -16,7 +16,7 @@
 	<artifactId>rdf2pg-pom</artifactId>
 	<packaging>pom</packaging>
 	
-	<version>5.0</version>
+	<version>5.0.1-SNAPSHOT</version>
 	
 	<name>rdf2pg-pom - top POM</name>
 	<url>https://github.com/Rothamsted/rdf2pg</url>
