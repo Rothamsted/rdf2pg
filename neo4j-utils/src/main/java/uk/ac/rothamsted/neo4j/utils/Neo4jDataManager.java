@@ -130,8 +130,8 @@ public class Neo4jDataManager
 	
 
 	/**
-	 * The driver and target Neo4j destination used to send Cypher elements mapped from RDF.
-	 * We don't care about closing this, so the caller has to do it.
+	 * The driver used by this manager for its own operations, hence, this is also the target DB it operates
+	 * against. We don't deal with closing this driver instance, so the caller has to do it.
 	 */
 	public Driver getNeo4jDriver ()
 	{

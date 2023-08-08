@@ -1,9 +1,6 @@
 package uk.ac.rothamsted.neo4j.utils.test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -12,10 +9,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.neo4j.driver.internal.value.BooleanValue;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.Values;
+import org.neo4j.driver.internal.value.BooleanValue;
 import org.neo4j.driver.types.TypeSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
