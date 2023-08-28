@@ -61,7 +61,7 @@ int relOndexId = Optional.ofNullable ( qsol.get ( "ondexId" ) )
 	.orElse ( -1 );
 
 if ( ondexIds.contains ( relOndexId ) )
-	log.warn ( "==== DUPED ID {} IN PROCESSOR", relOndexId );
+	log.warn ( "==== DUPED ID {} IN HANDLER", relOndexId );
 else
 	ondexIds.add ( relOndexId );
 					
