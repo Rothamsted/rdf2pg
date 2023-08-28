@@ -55,10 +55,10 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 			PGRelation pgRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( pgRelation, this.getRelationPropsSparql () );
 
-			String type = pgRelation.getType ();
+			String relType = pgRelation.getType ();
 			
 			List<Map<String, Object>> cyRels = cyData.computeIfAbsent ( 
-				type, tk -> new LinkedList<> ()
+				relType, tk -> new LinkedList<> ()
 			);
 			
 			Map<String, Object> cyparams = new HashMap<> ();

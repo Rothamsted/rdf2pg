@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,8 +54,8 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	public static final String NODE_TMP_FILE_EXTENSION = "-Nodes-tmp"; 
 	public static final String EDGE_TMP_FILE_EXTENSION = "-Edges-tmp"; 
 	
-	private Set<String> gatheredNodeProperties = Collections.synchronizedSet ( new HashSet<>() );
-	private Set<String> gatheredEdgeProperties = Collections.synchronizedSet ( new HashSet<>() );
+	private Set<String> gatheredNodeProperties = ConcurrentHashMap.newKeySet ();
+	private Set<String> gatheredEdgeProperties = ConcurrentHashMap.newKeySet ();
 	
 	private String graphmlOutputPath = null;
 	
@@ -63,7 +64,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	/**
 	 * Used to synch file writing operations over file path, see {@link #appendOutput(String, String)}.
 	 */
-	private Map<String, Writer> outLocks;
+	private Map<String, Writer> outWriters;
 	
 	{
 		gatherNodeProperty ( "iri" );
@@ -78,7 +79,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	private void appendOutput ( String graphML, String outPath )
 	{		
 		try {
-			var writer = this.outLocks.get ( outPath );
+			var writer = this.outWriters.get ( outPath );
 			writer.append ( graphML );
 		}
 		catch ( IOException ex )
@@ -150,7 +151,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 			}
 		};
 		
-		outLocks = Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
+		outWriters = Stream.of ( getNodeTmpPath (), getEdgeTmpPath () )
 		.collect ( 
 			Collectors.toMap (
 				Function.identity (), 
@@ -171,7 +172,7 @@ public class GraphMLDataManager extends AbstractPGDataManager
 	
 	public void writeGraphML ()
 	{
-		outLocks.forEach ( (path, writer) -> 
+		outWriters.forEach ( (path, writer) -> 
 		{
 			try {
 				writer.close ();

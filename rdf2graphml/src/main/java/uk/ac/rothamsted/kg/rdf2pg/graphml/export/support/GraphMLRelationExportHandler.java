@@ -54,32 +54,13 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 	{
 		this.renameThread ( "graphmlRelX:" );
 		log.trace ( "Begin of {} relations", relRecords.size () );
-		
-Set<Integer> ondexIds = ConcurrentHashMap.newKeySet();
-		
+				
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
 		{			
 			PGRelation pgRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( pgRelation, this.getRelationPropsSparql () );
 
-// TODO: remove, debug
-int relOndexId = Optional.ofNullable ( pgRelation.getProperties ().get ( "ondexId" ) )
-	.map ( pv -> ((Set<Object>) pv) )
-	.filter ( pvset -> !pvset.isEmpty () )
-	.map ( pvset -> pvset.iterator ().next () )
-  .map ( String::valueOf )
-  .map ( Integer::valueOf )
-  .orElse ( -1 );
-
-if ( relOndexId != -1 )
-{
-	if ( ondexIds.contains ( relOndexId ) )
-		log.warn ( "==== DUPED ID {} IN HANDLER", relOndexId );
-	else
-		ondexIds.add ( relOndexId );
-}					
-			
 			String type = pgRelation.getType ();
 
 			Map<String, Object> relParams = graphmlDataMgr.flatPGProperties ( pgRelation );
