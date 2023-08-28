@@ -1,6 +1,9 @@
 package uk.ac.rothamsted.kg.rdf2pg.graphml.export.support;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import org.apache.jena.query.QuerySolution;
@@ -24,6 +27,8 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 @Component @Scope ( scopeName = "pgmakerSession" )
 public class GraphMLRelationExportProcessor extends PGRelationMakeProcessor<GraphMLRelationExportHandler>
 {
+private static Set<Integer> ondexIds = ConcurrentHashMap.newKeySet();
+  
 	public GraphMLRelationExportProcessor ()
 	{
 		super ();
@@ -49,24 +54,18 @@ public class GraphMLRelationExportProcessor extends PGRelationMakeProcessor<Grap
 			solProc -> rdfMgr.processRelationIris ( handler.getRelationTypesSparql (), 
 				qsol -> {
 
-					int relOndexId = Optional.ofNullable ( qsol.get ( "ondexId" ) )
-					.filter ( RDFNode::isLiteral )
-					.map ( RDFNode::asLiteral )
-					.map ( Literal::getInt )
-					.orElse ( -1 );
+int relOndexId = Optional.ofNullable ( qsol.get ( "ondexId" ) )
+	.filter ( RDFNode::isLiteral )
+	.map ( RDFNode::asLiteral )
+	.map ( Literal::getInt )
+	.orElse ( -1 );
 
-					if ( relOndexId == 677351 ) log.warn ( "====> THE TEST REL IS HERE (BEFORE) <======" );
+if ( ondexIds.contains ( relOndexId ) )
+	log.warn ( "==== DUPED ID {} IN PROCESSOR", relOndexId );
+else
+	ondexIds.add ( relOndexId );
 					
 					solProc.accept ( qsol );
-					
-					relOndexId = Optional.ofNullable ( qsol.get ( "ondexId" ) )
-					.filter ( RDFNode::isLiteral )
-					.map ( RDFNode::asLiteral )
-					.map ( Literal::getInt )
-					.orElse ( -1 );
-
-					if ( relOndexId == 677351 ) log.warn ( "====> THE TEST REL IS HERE (AFTER) <======" );
-
 				} 
 		);
 		

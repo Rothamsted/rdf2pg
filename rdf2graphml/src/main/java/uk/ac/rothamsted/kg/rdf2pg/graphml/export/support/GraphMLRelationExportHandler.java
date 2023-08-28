@@ -13,6 +13,7 @@ import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.wri
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.jena.query.QuerySolution;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 @Component
 @Scope ( scopeName = "pgmakerSession" )
 public class GraphMLRelationExportHandler extends PGRelationHandler
-{
+{	
 	@Autowired
 	private GraphMLDataManager graphmlDataMgr; 
 
@@ -54,21 +55,27 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 		this.renameThread ( "graphmlRelX:" );
 		log.trace ( "Begin of {} relations", relRecords.size () );
 		
+Set<Integer> ondexIds = ConcurrentHashMap.newKeySet();
+		
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
 		{			
 			PGRelation pgRelation = rdfMgr.getPGRelation ( row );
 			rdfMgr.setPGRelationProps ( pgRelation, this.getRelationPropsSparql () );
 
-			// TODO: remove, debug
-			int relOndexId = Optional.ofNullable ( pgRelation.getProperties ().get ( "ondexId" ) )
-				.map ( pv -> ((Set<Object>) pv) )
-				.filter ( pvset -> !pvset.isEmpty () )
-				.map ( pvset -> pvset.iterator ().next () )
-	      .map ( String::valueOf )
-	      .map ( Integer::valueOf )
-	      .orElse ( -1 );
-			if ( relOndexId == 677351 ) log.warn ( "====> THE TEST REL IS HERE (HANDLER) <======" );
+// TODO: remove, debug
+int relOndexId = Optional.ofNullable ( pgRelation.getProperties ().get ( "ondexId" ) )
+	.map ( pv -> ((Set<Object>) pv) )
+	.filter ( pvset -> !pvset.isEmpty () )
+	.map ( pvset -> pvset.iterator ().next () )
+  .map ( String::valueOf )
+  .map ( Integer::valueOf )
+  .orElse ( -1 );
+
+if ( ondexIds.contains ( relOndexId ) )
+	log.warn ( "==== DUPED ID {} IN PROCESSOR", relOndexId );
+else
+	ondexIds.add ( relOndexId );
 			
 			String type = pgRelation.getType ();
 
