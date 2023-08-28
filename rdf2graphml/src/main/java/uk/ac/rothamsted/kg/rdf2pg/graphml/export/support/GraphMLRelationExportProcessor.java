@@ -60,11 +60,13 @@ int relOndexId = Optional.ofNullable ( qsol.get ( "ondexId" ) )
 	.map ( Literal::getInt )
 	.orElse ( -1 );
 
-if ( ondexIds.contains ( relOndexId ) )
-	log.warn ( "==== DUPED ID {} IN HANDLER", relOndexId );
-else
-	ondexIds.add ( relOndexId );
-					
+if ( relOndexId != -1 )
+{
+	if ( ondexIds.contains ( relOndexId ) )
+		log.warn ( "==== DUPED ID {} IN PROCESSOR", relOndexId );
+	else
+		ondexIds.add ( relOndexId );
+}					
 					solProc.accept ( qsol );
 				} 
 		);
