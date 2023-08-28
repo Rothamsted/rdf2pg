@@ -151,7 +151,7 @@ public class GraphMLUtils
   		writeXMLAttrib ( KEY_ATTR, key, out );
   		out.append ( " >" );
  
-  		// TODO: probably you actually wand a CDATA block without unreliable escaping
+  		// TODO: probably you actually want a CDATA block without unreliable escaping
   		out.append ( StringEscapeUtils.escapeXml11 ( graphMLValue ( properties.get ( key ) ) ).replace ( "\"", "\\\"" ) );
   		out.append ( GraphMLUtils.DATA_TAG_END ); 
   	}

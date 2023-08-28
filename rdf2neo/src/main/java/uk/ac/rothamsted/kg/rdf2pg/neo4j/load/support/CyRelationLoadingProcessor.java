@@ -34,6 +34,8 @@ public class CyRelationLoadingProcessor extends PGRelationMakeProcessor<CyRelati
 	/**
 	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
+	 * 
+	 * TODO: the parent's implementation is identical, apart from the log messages.
 	 */
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{

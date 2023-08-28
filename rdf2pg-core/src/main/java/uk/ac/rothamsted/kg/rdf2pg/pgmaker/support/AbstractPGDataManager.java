@@ -30,17 +30,17 @@ public class AbstractPGDataManager
 	 * <p>This does some processing:
 	 *   <ul>
 	 *     <li>safeguards against empty values</li>
-	 *     <li>turns multiple values into an array object, which is what the Neo4j driver expects for them</li>
+	 *     <li>turns multiple values into an array object</li>
 	 *     <li>Adds a the {@link PGEntity#getIri() parameter IRI} as the 'iri' proerty to the result; this is because
-	 *     we want always to identify nodes/relations in Neo4j with their original IRI</li>
+	 *     we want always to identify nodes/relations in the target PG with their original IRI</li>
 	 *   </ul>
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> flatPGProperties ( PGEntity cyEnt )
+	public Map<String, Object> flatPGProperties ( PGEntity pgEntity )
 	{
 		Map<String, Object> pgProps = new HashMap<> ();
-		for ( Entry<String, Set<Object>> attre: cyEnt.getProperties ().entrySet () )
+		for ( Entry<String, Set<Object>> attre: pgEntity.getProperties ().entrySet () )
 		{
 			Set<Object> vals = attre.getValue ();
 			if ( vals.isEmpty () ) continue; // shouldn't happen, but just in case
@@ -49,7 +49,7 @@ public class AbstractPGDataManager
 			pgProps.put ( attre.getKey (), cyAttrVal );
 		}
 		
-		pgProps.put ( "iri", cyEnt.getIri () );
+		pgProps.put ( "iri", pgEntity.getIri () );
 		return pgProps;
 	}
 	

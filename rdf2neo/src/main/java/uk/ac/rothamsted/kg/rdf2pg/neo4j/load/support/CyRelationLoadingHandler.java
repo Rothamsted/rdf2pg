@@ -52,19 +52,21 @@ public class CyRelationLoadingHandler extends PGRelationHandler
 		//
 		for ( QuerySolution row: relRecords )
 		{
-			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
-			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
+			PGRelation pgRelation = rdfMgr.getPGRelation ( row );
+			rdfMgr.setPGRelationProps ( pgRelation, this.getRelationPropsSparql () );
 
-			String type = cyRelation.getType ();
-			List<Map<String, Object>> cyRels = cyData.get ( type );
-			if ( cyRels == null ) cyData.put ( type, cyRels = new LinkedList<> () );
-
+			String type = pgRelation.getType ();
+			
+			List<Map<String, Object>> cyRels = cyData.computeIfAbsent ( 
+				type, tk -> new LinkedList<> ()
+			);
+			
 			Map<String, Object> cyparams = new HashMap<> ();
 			// We have a top map containing basic relation elements (from, to, properties)
-			cyparams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
-			cyparams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
+			cyparams.put ( "fromIri", String.valueOf ( pgRelation.getFromIri () ) );
+			cyparams.put ( "toIri", String.valueOf ( pgRelation.getToIri () ) );
 			// And then we have an inner map containing the relation properties/attributes
-			cyparams.put ( "properties", neoMgr.flatPGProperties ( cyRelation ) );
+			cyparams.put ( "properties", neoMgr.flatPGProperties ( pgRelation ) );
 			cyRels.add ( cyparams );				
 		}
 		

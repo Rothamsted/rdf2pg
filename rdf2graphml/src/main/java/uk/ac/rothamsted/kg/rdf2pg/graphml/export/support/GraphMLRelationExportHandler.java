@@ -11,6 +11,7 @@ import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.wri
 import static uk.ac.rothamsted.kg.rdf2pg.graphml.export.support.GraphMLUtils.writeXMLAttrib;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.jena.query.QuerySolution;
@@ -56,17 +57,24 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 		RdfDataManager rdfMgr = this.getRdfDataManager ();
 		for ( QuerySolution row : relRecords )
 		{			
-			PGRelation cyRelation = rdfMgr.getPGRelation ( row );
-			rdfMgr.setPGRelationProps ( cyRelation, this.getRelationPropsSparql () );
+			PGRelation pgRelation = rdfMgr.getPGRelation ( row );
+			rdfMgr.setPGRelationProps ( pgRelation, this.getRelationPropsSparql () );
 
-			String type = cyRelation.getType ();
+			// TODO: remove, debug
+			int relOndexId = Optional.ofNullable ( pgRelation.getProperties ().get ( "ondexId" ) )
+	      .map ( String::valueOf )
+	      .map ( Integer::valueOf )
+	      .orElse ( -1 );
+			if ( relOndexId == 677351 ) log.warn ( "====> THE TEST REL IS HERE (HANDLER) <======" );
+			
+			String type = pgRelation.getType ();
 
-			Map<String, Object> relParams = graphmlDataMgr.flatPGProperties ( cyRelation );
+			Map<String, Object> relParams = graphmlDataMgr.flatPGProperties ( pgRelation );
 			
 			// We have a top map containing basic relation elements (from, to, properties)
-			relParams.put ( "fromIri", String.valueOf ( cyRelation.getFromIri () ) );
-			relParams.put ( "toIri", String.valueOf ( cyRelation.getToIri () ) );
-			relParams.put ( "iri", String.valueOf ( cyRelation.getIri () ) );
+			relParams.put ( "fromIri", String.valueOf ( pgRelation.getFromIri () ) );
+			relParams.put ( "toIri", String.valueOf ( pgRelation.getToIri () ) );
+			relParams.put ( "iri", String.valueOf ( pgRelation.getIri () ) );
 			
 			// We need to gather property types, which go to the GraphML header
 			relParams
