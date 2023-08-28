@@ -124,13 +124,13 @@ public class RdfDataManager extends TDBEndPointHelper
 	 * It doesn't do anything if the query is null.
 	 * 
 	 */
-	protected void addPGProps ( PGEntity cyEnt, String propsSparql )
+	protected void addPGProps ( PGEntity pgEntity, String propsSparql )
 	{
 		ensureOpen ();		
 		Dataset dataSet = this.getDataSet ();
 		
 		QuerySolutionMap params = new QuerySolutionMap ();
-		params.add ( "iri", dataSet.getUnionModel().getResource ( cyEnt.getIri () ) );
+		params.add ( "iri", dataSet.getUnionModel().getResource ( pgEntity.getIri () ) );
 
 		// It may be omitted, if you don't have any property except the IRI.
 		if ( propsSparql == null ) return;
@@ -143,11 +143,11 @@ public class RdfDataManager extends TDBEndPointHelper
 			{
 				String propName = this.getPGId ( row.get ( "name" ), propIdConverter );
 				if ( propName == null ) throw new IllegalArgumentException ( 
-					"Null property name for " + cyEnt.getIri () 
+					"Null property name for " + pgEntity.getIri () 
 				);
 				
 				String propValue = JENAUTILS.literal2Value ( row.getLiteral ( "value" ) ).get ();
-				cyEnt.addPropValue ( propName, propValue );
+				pgEntity.addPropValue ( propName, propValue );
 			},
 			params
 		);

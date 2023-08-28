@@ -62,6 +62,9 @@ public class GraphMLRelationExportHandler extends PGRelationHandler
 
 			// TODO: remove, debug
 			int relOndexId = Optional.ofNullable ( pgRelation.getProperties ().get ( "ondexId" ) )
+				.map ( pv -> ((Set<Object>) pv) )
+				.filter ( pvset -> !pvset.isEmpty () )
+				.map ( pvset -> pvset.iterator ().next () )
 	      .map ( String::valueOf )
 	      .map ( Integer::valueOf )
 	      .orElse ( -1 );
