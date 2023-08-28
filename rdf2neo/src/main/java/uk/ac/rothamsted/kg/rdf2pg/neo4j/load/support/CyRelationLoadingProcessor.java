@@ -2,14 +2,12 @@ package uk.ac.rothamsted.kg.rdf2pg.neo4j.load.support;
 
 import java.util.function.Consumer;
 
-import org.apache.jena.query.QuerySolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.PGRelationMakeProcessor;
 import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.entities.PGRelation;
-import uk.ac.rothamsted.kg.rdf2pg.pgmaker.support.rdf.RdfDataManager;
 
 /**
  * <H1>The Relation Loading processor for Neo4j</H1>
@@ -35,8 +33,8 @@ public class CyRelationLoadingProcessor extends PGRelationMakeProcessor<CyRelati
 	 * This takes the relations mapped via {@link CyRelationLoadingHandler#getRelationTypesSparql()} and creates
 	 * sets of {@link QuerySolution}s that are sent to {@link CyRelationLoadingHandler} tasks.
 	 * 
-	 * TODO: the parent's implementation is identical, apart from the log messages.
-	 */
+	 * TODO: remove. The parent's implementation is identical, apart from the log messages.
+	 *
 	public void process ( RdfDataManager rdfMgr, Object...opts )
 	{
 		log.info ( "Starting Cypher Relations Loading" );
@@ -50,7 +48,7 @@ public class CyRelationLoadingProcessor extends PGRelationMakeProcessor<CyRelati
 		
 		super.process ( relIriProcessor );
 		log.info ( "Cypher Relations Loading ended" );
-	}
+	}*/
 
 	/**
 	 * Does nothing but invoking {@link #setBatchJob(Consumer)}. It's here just to accommodate Spring annotations. 
