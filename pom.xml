@@ -20,6 +20,18 @@
 	
 	<name>rdf2pg-pom - top POM</name>
 	<url>https://github.com/Rothamsted/rdf2pg</url>
+	
+	<developers>
+		<developer>
+			<name>Marco Brandizi</name>
+		</developer>
+	</developers>
+	
+	<contributors>
+		<contributor>
+			<name>Carlos Bobed</name>
+		</contributor>
+	</contributors>
 			
 	<modules>
 		<module>rdf2pg-core</module>
