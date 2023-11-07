@@ -27,6 +27,10 @@ public class GraphMLUtils
 {	
 	/** Some constants related to GraphML **/ 
 	
+	/* In janusgraph, the following words are reserved ones: vertex, element, edge, property, label, key 
+	 they cannot be used for properties of either the nodes or the edges */ 
+	
+	
 	public static final String GRAPHML_TAG_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + 
 			"<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" \n" + 
 			"    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" + 
