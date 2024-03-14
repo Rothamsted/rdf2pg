@@ -2,6 +2,7 @@ package uk.ac.rothamsted.neo4j.utils;
 
 import java.util.concurrent.CompletionStage;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.neo4j.driver.AuthToken;
 import org.neo4j.driver.BaseSession;
 import org.neo4j.driver.BookmarkManager;
@@ -23,7 +24,7 @@ import org.neo4j.driver.types.TypeSystem;
  * some utilities, such as keeping a default DB name and using it with a 
  * {@link #defaultSessionConfig()}.
  * 
- * TODO: 
+ * TODO: write tests.
  *
  * @author Marco Brandizi
  * <dl><dt>Date:</dt><dd>13 Mar 2024</dd></dl>
@@ -85,7 +86,8 @@ public class XNeo4jDriver implements Driver
 	public SessionConfig.Builder sessionConfigBuilder ()
 	{
 		SessionConfig.Builder builder = SessionConfig.builder ();
-		if ( databaseName != null ) builder = builder.withDatabase ( databaseName );
+		if ( !ObjectUtils.isEmpty ( databaseName ) ) 
+			builder = builder.withDatabase ( databaseName );
 		return builder;
 	}
 	
