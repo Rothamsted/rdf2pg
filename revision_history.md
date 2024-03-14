@@ -1,9 +1,10 @@
 # Revision History
 
-* *This file has been last revised on 2023-11-07*. **Please, keep this note updated**.
+* *This file has been last revised on 2024-03-14*. **Please, keep this note updated**.
 
 ## 5.1.1-SNAPSHOT
-* Current snapshot.
+* `XNeo4jDriver` added.
+* `GenericNeo4jException` deprecated (see comments)
 
 ## 5.1
 * Code cleaning and improvement.
