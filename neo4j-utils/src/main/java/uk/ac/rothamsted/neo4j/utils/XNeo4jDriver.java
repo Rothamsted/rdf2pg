@@ -22,6 +22,8 @@ import org.neo4j.driver.types.TypeSystem;
  * An extended version of the {@link Driver Neo4j driver class}, which has 
  * some utilities, such as keeping a default DB name and using it with a 
  * {@link #defaultSessionConfig()}.
+ * 
+ * TODO: 
  *
  * @author Marco Brandizi
  * <dl><dt>Date:</dt><dd>13 Mar 2024</dd></dl>
@@ -30,15 +32,14 @@ import org.neo4j.driver.types.TypeSystem;
 public class XNeo4jDriver implements Driver
 {
 	private Driver driver;
+	private String databaseName;
 	private SessionConfig defaultSessionConfig;
 		
 	public XNeo4jDriver ( Driver driver, String databaseName )
 	{
 		super ();
 		this.driver = driver;
-		this.defaultSessionConfig = databaseName == null 
-			? SessionConfig.defaultConfig ()
-			: SessionConfig.forDatabase ( databaseName );
+		this.defaultSessionConfig = sessionConfigBuilder ().build ();
 	}
 	
 	/**
@@ -58,14 +59,37 @@ public class XNeo4jDriver implements Driver
 	 * with this default, eg, {@link #session()}, {@link #session(Class)} create
 	 * sessions that use this.
 	 * 
+	 * If the database name is null, this defaults to {@link SessionConfig#defaultConfig()}.
+	 * 
+	 * Note that this session config is cached, so, if you don't need a custom session config,
+	 * this is a bit faster than {@link #sessionConfigBuilder()}.
+	 * 
 	 * The original database name can be fetched via {@link SessionConfig#database()}.
 	 * 
-	 * If the database name is null, this defaults to {@link SessionConfig#defaultConfig()}.
+	 * 
 	 */
 	public SessionConfig defaultSessionConfig ()
 	{
 		return defaultSessionConfig;
 	}
+	
+	/**
+	 * An initial session builder which embeds the database name.
+	 * 
+	 * This can be used as an alternative to {@link #defaultSessionConfig()}, 
+	 * to build a custom session with the parameters you wish.
+	 * 
+	 * Note that {@link #defaultSessionConfig()} is cached, so, if you don't need
+	 * a special session, use that method.  
+	 */
+	public SessionConfig.Builder sessionConfigBuilder ()
+	{
+		SessionConfig.Builder builder = SessionConfig.builder ();
+		if ( databaseName != null ) builder = builder.withDatabase ( databaseName );
+		return builder;
+	}
+	
+	
 	
 	public ExecutableQuery executableQuery ( String query )
 	{
