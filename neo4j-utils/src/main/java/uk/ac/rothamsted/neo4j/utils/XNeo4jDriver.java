@@ -40,6 +40,7 @@ public class XNeo4jDriver implements Driver
 	{
 		super ();
 		this.driver = driver;
+		this.databaseName = databaseName;
 		this.defaultSessionConfig = sessionConfigBuilder ().build ();
 	}
 	
