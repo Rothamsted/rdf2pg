@@ -5,6 +5,7 @@
 ## 5.1.1-SNAPSHOT
 * `XNeo4jDriver` added.
 * `GenericNeo4jException` deprecated (see comments)
+* `Neo4jReactorUtils`
 
 ## 5.1
 * Code cleaning and improvement.
