@@ -4,9 +4,10 @@
 
 ## 5.1.1-SNAPSHOT
 * `XNeo4jDriver` added.
-* `GenericNeo4jException` deprecated (see comments)
-* `Neo4jReactorUtils`
+* `GenericNeo4jException` deprecated (see comments).
+* `Neo4jReactorUtils` added.
 * Dependencies upgraded.
+* Logger configuration improved.
 
 ## 5.1
 * Code cleaning and improvement.
