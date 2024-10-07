@@ -1,6 +1,6 @@
 # Revision History
 
-* *This file has been last revised on 2024-08-21*. **Please, keep this note updated**.
+* *This file has been last revised on 2024-10-07*. **Please, keep this note updated**.
 
 ## 5.1.1-SNAPSHOT
 * `XNeo4jDriver` added.
@@ -8,6 +8,7 @@
 * `Neo4jReactorUtils` added.
 * Dependencies upgraded.
 * Logger configuration improved.
+* `CypherPager` added to `neo4j-utils`.
 
 ## 5.1
 * Code cleaning and improvement.

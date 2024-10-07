@@ -62,7 +62,7 @@
 	    </plugin>
 
 			<!-- 
-				These are needed in other modules.
+				Some test files are needed in other modules.
 			-->				
 			<plugin>
 		    <groupId>org.apache.maven.plugins</groupId>

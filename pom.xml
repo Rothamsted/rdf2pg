@@ -92,6 +92,12 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>jul-to-slf4j</artifactId>
 				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.13.2</version>
 			</dependency>			
 
 		</dependencies>
@@ -197,7 +203,7 @@
 					
 					If you include the plugin and also override the get-cli-resources execution, then it additionally will download
 					files that are needed (by the Assembly plug-in above) to build the command line packages. Of course, that's
-					typical of *-cli modules (havea look at them for details on how to activate).
+					typical of *-cli modules (have a look at them for details on how to activate).
 				 -->
 				<plugin>
 					<artifactId>maven-dependency-plugin</artifactId>
@@ -229,7 +235,7 @@
 						</execution>
 						<!-- 
 							As said above, these files are typically used in command line modules. By default it's disabled 
-							(bound to to the none phase).
+							(bound to the none phase).
 						 -->
 						<execution>
 							<id>get-cli-resources</id>
