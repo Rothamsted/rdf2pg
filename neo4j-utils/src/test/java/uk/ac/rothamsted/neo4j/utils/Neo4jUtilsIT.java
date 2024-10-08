@@ -18,7 +18,7 @@ import org.junit.AfterClass;
  * <dl><dt>Date:</dt><dd>7 Oct 2024</dd></dl>
  *
  */
-public class CypherPagerIT
+public class Neo4jUtilsIT
 {
 	// TODO: duplicated from rdf2neo, factorise
 	
@@ -68,7 +68,7 @@ public class CypherPagerIT
 	public void testScan ()
 	{
 		long pageSize = 20;
-		CypherPager pager = new CypherPager (
+		var pager = Neo4jUtils.paginatedRead (
 			(tx, offset) -> tx.run (
 				"MATCH ( n: PagerTestNode ) RETURN n.idx AS idx SKIP $offset LIMIT $pageSize",
 				Values.parameters ( "offset", offset, "pageSize", pageSize )
@@ -88,7 +88,7 @@ public class CypherPagerIT
 	public void testScanEmpty ()
 	{
 		long pageSize = 20;
-		CypherPager pager = new CypherPager (
+		var pager = Neo4jUtils.paginatedRead (
 			(tx, offset) -> tx.run (
 				"MATCH ( n: PagerTestNodeFoo ) RETURN n.idx AS idx SKIP $offset LIMIT $pageSize",
 				Values.parameters ( "offset", offset, "pageSize", pageSize )
@@ -104,7 +104,7 @@ public class CypherPagerIT
 	public void testScanSinglePage ()
 	{
 		long pageSize = testNodesSize;
-		CypherPager pager = new CypherPager (
+		var pager = Neo4jUtils.paginatedRead (
 			(tx, offset) -> tx.run (
 				"MATCH ( n: PagerTestNode ) RETURN n.idx AS idx SKIP $offset LIMIT $pageSize",
 				Values.parameters ( "offset", offset, "pageSize", pageSize )

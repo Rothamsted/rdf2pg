@@ -1,9 +1,14 @@
 package uk.ac.rothamsted.neo4j.utils;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.TransactionContext;
 import org.neo4j.driver.exceptions.ClientException;
 import org.neo4j.driver.reactivestreams.ReactiveResult;
 import org.neo4j.driver.reactivestreams.ReactiveSession;
@@ -14,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import uk.ac.ebi.utils.collections.PaginationIterator;
 import uk.ac.ebi.utils.exceptions.ExceptionUtils;
 
 /**
@@ -25,10 +31,13 @@ import uk.ac.ebi.utils.exceptions.ExceptionUtils;
  * <dl><dt>Date:</dt><dd>29 Jun 2024</dd></dl>
  *
  */
-public class Neo4jReactorUtils
+public class Neo4jUtils
 {
-	private static Logger log = LoggerFactory.getLogger ( Neo4jReactorUtils.class );
+	private static Logger log = LoggerFactory.getLogger ( Neo4jUtils.class );
 	
+	private Neo4jUtils () {}
+
+
 	/**
 	 * Helper to process a Neo4j read query in a reactive style.
 	 * 
@@ -47,19 +56,12 @@ public class Neo4jReactorUtils
 	 * we do downstream processing. Typically, this is done via {@link ReactiveTransactionContext#run(String)}
 	 * and its variants (see the examples above)
 	 * 
-	 * @param recordMapper We use {@link ReactiveResult#records()} to get the records that the callBack's 
-	 * returns and then we map them to R objects. The mapping is based on {@link Mono#flatMapMany(Function)},
-	 * so it's a flux-to-flux mapping (again, see the linked examples).
-	 * 
 	 * @param neoDriver obviously, you need a Neo4j driver to talk to.
 	 * 
-	 * @return a reactive {@link Flux} of objects, where each object correspond to a Cypher
-	 * record, in the way explained above.
-	 * 
+	 * @return a reactive {@link Flux} of {@link Record}.
 	 */
-	public static <R> Flux<R> reactiveRead ( 
+	public static Flux<Record> reactiveRead ( 
 		Function<ReactiveTransactionContext, Publisher<ReactiveResult>> callBack,
-		Function<Record, R> recordMapper,
 		Driver neoDriver )
 	{
 		return Flux.usingWhen (
@@ -72,8 +74,6 @@ public class Neo4jReactorUtils
 				Mono.fromDirect ( callBack.apply ( tx ) )
 				// which is mapped onto its records
 				.flatMapMany ( ReactiveResult::records )
-				// and then records are mapped by our custom mapper, the result is Flux<R>
-				.map ( recordMapper )
 			), // executeRead(), usingWhen(), closure publisher
 			
 			ReactiveSession::close, // usingWhen(), flux cleanup in case of completion
@@ -95,4 +95,40 @@ public class Neo4jReactorUtils
 	
 	} // static reactiveRead()
 	
+	
+	/**
+	 * An helper to deal with the pagination of read-only queries.
+	 * 
+	 * This is an {@link Iterator} based on a Cypher query that has OFFSET/LIMIT clauses.
+	 * This is based on {@link PaginationIterator}.
+	 * 
+	 * @param callBack The Cypher query from which to get a page result. TODO: more
+	 * @param neoDriver
+	 * @param pageSize The iterator buffers results in memory, with a buffer having the same size as pageSize, 
+	 * so take this into account.
+	 */
+	public static Iterator<Record> paginatedRead ( BiFunction<TransactionContext, Long, Result> callBack, Driver neoDriver, Long pageSize )
+	{
+		if ( pageSize == null ) pageSize = 2500L; // From past experience
+
+		Function<Long, List<Record>> pageSelector = offset -> {
+			try ( var session = neoDriver.session () )
+			{
+				List<Record> page = session.executeRead ( 
+					tx -> callBack.apply ( tx, offset )
+						.list ()
+				);
+				return page.isEmpty () ? null : page;
+			}			
+		};
+		
+		return new PaginationIterator<> ( 
+			pageSelector, pageSize, List::iterator 
+		);		
+	}
+
+	public Iterator<Record> paginatedRead ( BiFunction<TransactionContext, Long, Result> callBack, Driver neoDriver )
+	{
+		return paginatedRead ( callBack, neoDriver, null );
+	}	
 }
