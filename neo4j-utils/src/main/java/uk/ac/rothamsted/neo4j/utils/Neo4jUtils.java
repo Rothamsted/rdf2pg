@@ -102,32 +102,38 @@ public class Neo4jUtils
 	 * This is an {@link Iterator} based on a Cypher query that has OFFSET/LIMIT clauses.
 	 * This is based on {@link PaginationIterator}.
 	 * 
-	 * @param callBack The Cypher query from which to get a page result. TODO: more
+	 * @param callBack The Cypher query from which to get a page result. This is run 
+	 * through {@link #reactiveRead(Function, Driver)}.
+	 * 
 	 * @param neoDriver
+	 * 
 	 * @param pageSize The iterator buffers results in memory, with a buffer having the same size as pageSize, 
 	 * so take this into account.
 	 */
-	public static Iterator<Record> paginatedRead ( BiFunction<TransactionContext, Long, Result> callBack, Driver neoDriver, Long pageSize )
+	public static Iterator<Record> paginatedRead ( BiFunction<ReactiveTransactionContext, Long, Publisher<ReactiveResult>> callBack, Driver neoDriver, Long pageSize )
 	{
 		if ( pageSize == null ) pageSize = 2500L; // From past experience
 
-		Function<Long, List<Record>> pageSelector = offset -> {
-			try ( var session = neoDriver.session () )
-			{
-				List<Record> page = session.executeRead ( 
-					tx -> callBack.apply ( tx, offset )
-						.list ()
-				);
-				return page.isEmpty () ? null : page;
-			}			
+		// As explained in PaginationIterator, here we can return the page elements iterator,
+		// or null when the current page has not elements anymore.
+		Function<Long, Iterator<Record>> pageSelector = offset ->
+		{
+		  Iterator<Record> pageItr = reactiveRead ( tx -> callBack.apply ( tx, offset), neoDriver )
+		    .toIterable ()
+		    .iterator ();
+		  
+		  return pageItr.hasNext () ? pageItr : null;
 		};
-		
+				
 		return new PaginationIterator<> ( 
-			pageSelector, pageSize, List::iterator 
+			pageSelector, pageSize, Function.identity () 
 		);		
 	}
 
-	public Iterator<Record> paginatedRead ( BiFunction<TransactionContext, Long, Result> callBack, Driver neoDriver )
+	/**
+	 * Default page size.
+	 */
+	public Iterator<Record> paginatedRead ( BiFunction<ReactiveTransactionContext, Long, Publisher<ReactiveResult>> callBack, Driver neoDriver )
 	{
 		return paginatedRead ( callBack, neoDriver, null );
 	}	

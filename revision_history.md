@@ -8,7 +8,7 @@
 * `Neo4jReactorUtils` added.
 * Dependencies upgraded.
 * Logger configuration improved.
-* `CypherPager` added to `neo4j-utils`.
+* paginated reads added to `neo4j-utils`.
 
 ## 5.1
 * Code cleaning and improvement.

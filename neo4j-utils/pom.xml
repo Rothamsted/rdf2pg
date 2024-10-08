@@ -29,18 +29,30 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
 		
 		<dependency>
 	    <groupId>junit</groupId>
 	    <artifactId>junit</artifactId>
 	    <scope>test</scope>
 		</dependency>			
-		
   
   </dependencies>
   
   <build>
   	<plugins>
+			
+			<!--
+				See the main POM. 
+			 -->
+  		<plugin>
+  			<artifactId>maven-dependency-plugin</artifactId>
+  		</plugin>			
 			
 			<!-- Detailed configurations are on the top POM -->
 			<plugin>
