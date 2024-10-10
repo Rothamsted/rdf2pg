@@ -41,9 +41,8 @@ public class Neo4jUtils
 	/**
 	 * Helper to process a Neo4j read query in a reactive style.
 	 * 
-	 * In a nutshell, prepares a {@link Flux} that pushes an R object for each record
-	 * returned by the query in the callback. Records are mapped to R by the recordMapper
-	 * function.
+	 * In a nutshell, prepares a {@link Flux} that publishes each record
+	 * returned by the query in the callback.
 	 * 
 	 * This is a template based on the approach described
 	 * 
@@ -118,7 +117,7 @@ public class Neo4jUtils
 		// or null when the current page has not elements anymore.
 		Function<Long, Iterator<Record>> pageSelector = offset ->
 		{
-		  Iterator<Record> pageItr = reactiveRead ( tx -> callBack.apply ( tx, offset), neoDriver )
+		  Iterator<Record> pageItr = reactiveRead ( tx -> callBack.apply (tx, offset), neoDriver )
 		    .toIterable ()
 		    .iterator ();
 		  
