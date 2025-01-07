@@ -131,10 +131,13 @@
 				<!-- 
 					A small plug-in that starts Neo4j, we inherited this from André and it is now at 
 					https://github.com/Rothamsted/neo4j-server-maven-plugin
+
+					TODO: migrate to Harness.
 				 -->
 				<plugin>
 					<groupId>com.github.harti2006</groupId>
 					<artifactId>neo4j-server-maven-plugin</artifactId>
+					<version>4.0.1-SNAPSHOT</version>
 				</plugin>
 				
 				<!-- Use this to start integration tests (*IT.java) -->
