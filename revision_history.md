@@ -1,8 +1,9 @@
 # Revision History
 
-* *This file has been last revised on 2024-10-07*. **Please, keep this note updated**.
+* *This file has been last revised on 2025-01-07*. **Please, keep this note updated**.
 
 ## 5.1.1-SNAPSHOT
+* Migration to the new AWS Maven repository.
 * `XNeo4jDriver` added.
 * `GenericNeo4jException` deprecated (see comments).
 * `Neo4jReactorUtils` added.

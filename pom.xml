@@ -44,15 +44,15 @@
 	</modules>
 	
 	<properties>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>2.0.9</slf4j.version>
 		<jutils.version>14.1-SNAPSHOT</jutils.version>		
 	</properties>
 	
 	<dependencyManagement>
-			<dependencies>
+		<dependencies>
 													 						
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -298,7 +298,7 @@
 			<!-- To pick the parent POM -->
 			<id>knetminer-repo</id>
 			<name>Knetminer Unified Repository</name>
-			<url>https://knetminer.com/artifactory/repository/maven-public</url>
+			<url>https://artifactory.knetminer.com/public</url>
 			<snapshots><enabled>true</enabled></snapshots>
 			<releases><enabled>true</enabled></releases>
 		</repository>
