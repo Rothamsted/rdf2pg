@@ -102,7 +102,8 @@ public class Neo4jUtils
 	 * This is based on {@link PaginationIterator}.
 	 * 
 	 * @param callBack The Cypher query from which to get a page result. This is run 
-	 * through {@link #reactiveRead(Function, Driver)}.
+	 * through {@link #reactiveRead(Function, Driver)}. This receives the current result offset 
+	 * as second parameter, so that the query can return the publisher for the next page or null.
 	 * 
 	 * @param neoDriver
 	 * 
