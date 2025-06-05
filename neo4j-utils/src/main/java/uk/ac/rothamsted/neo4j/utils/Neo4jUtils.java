@@ -46,8 +46,8 @@ public class Neo4jUtils
 	 * 
 	 * This is a template based on the approach described
 	 * 
-	 * <a href = "https://neo4j.com/docs/java-manual/current/reactive">here</a>
-	 * <a href = "https://graphaware.com/neo4j/2021/01/14/reactive-data-copy.html">here</>.
+	 * <a href = "https://neo4j.com/docs/java-manual/current/reactive">here</a> and
+	 * <a href = "https://medium.com/neo4j/importing-data-into-neo4j-using-rxjs-ed017004bb25">here</>.
 	 * 
 	 * @param callBack this is passed to 
 	 * {@link ReactiveSession#executeRead(org.neo4j.driver.reactivestreams.ReactiveTransactionCallback)}
