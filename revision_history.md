@@ -3,7 +3,7 @@
 * *This file has been last revised on 2025-04-23*. **Please, keep this note updated**.
 
 ## 6.0.1-SNAPSHOT
-* Next snapshot.
+* `Neo4jUtils.executeReadWithTimeout` added.
 
 ## 6.0
 * Migration to the new AWS Maven repository.
