@@ -82,6 +82,7 @@ public class Neo4jUtils
 			
 			// usingWhen(), flux cleanup in case of error
 			(rsession, ex) -> {
+				rsession.close ();
 				throw ExceptionUtils.buildEx ( 
 					ClientException.class, ex, "Error while running reactive Neo4j query: $cause"
 				);
@@ -90,6 +91,7 @@ public class Neo4jUtils
 			// usingWhen(), flux cleanup in case of cancelling
 			rsession -> {
 				log.debug ( "Neo4j reactive query cancelled" );
+				rsession.close ();
 				return Flux.empty ();
 			}
 			
