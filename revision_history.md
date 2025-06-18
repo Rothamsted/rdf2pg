@@ -1,8 +1,8 @@
 # Revision History
 
-* *This file has been last revised on 2025-06-18*. **Please, keep this note updated**.
+* *This file has been last revised on 2025-06-19*. **Please, keep this note updated**.
 
-## 6.0.1-SNAPSHOT
+## 7.0-SNAPSHOT
 * `Neo4jUtils.executeReadWithTimeout` added.
 * `rdfutils-jena` dependency updated, which implies Jena dependency update
 * Neo4j dependencies updated
