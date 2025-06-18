@@ -48,7 +48,8 @@
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>2.0.9</slf4j.version>
-		<jutils.version>16.0</jutils.version>		
+		<jutils.version>16.0</jutils.version>
+		<neo4j.server.version>5.26.8</neo4j.server.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -99,7 +100,13 @@
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>
 		    <version>4.13.2</version>
-			</dependency>			
+			</dependency>
+			
+      <dependency>
+        <groupId>org.neo4j.driver</groupId>
+        <artifactId>neo4j-java-driver</artifactId>
+        <version>5.28.4</version>
+      </dependency>			
 
 		</dependencies>
 			
