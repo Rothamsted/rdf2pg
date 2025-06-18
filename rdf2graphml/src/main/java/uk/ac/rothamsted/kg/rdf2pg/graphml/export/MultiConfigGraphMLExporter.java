@@ -2,9 +2,7 @@ package uk.ac.rothamsted.kg.rdf2pg.graphml.export;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import org.apache.jena.graph.impl.SimpleGraphMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
