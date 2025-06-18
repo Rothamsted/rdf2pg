@@ -25,4 +25,3 @@ Java libraries). Please refer to the [Download Page][30] for that.
 A list of rdf2pg publications is [here][40].
 
 [40]: https://github.com/Rothamsted/rdf2pg/wiki/Publications
-
