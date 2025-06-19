@@ -5,7 +5,7 @@
   <appender name="ConsoleApp" class="ch.qos.logback.core.ConsoleAppender">
   	<target>System.err</target>
     <encoder>
-      <pattern>%date{HH:mm:ss.SSS} %-5level [%-6thread] %logger{1.3} %message%n</pattern>
+      <pattern>%date{HH:mm:ss.SSS} %-5level [%-6thread] %logger{25} %message%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>INFO</level>
@@ -24,7 +24,7 @@
 		</rollingPolicy>
     <encoder>
     	<!-- TODO: %%line are useful, but possibly slow, is it worth to ship with these? -->
-      <pattern>%date{dd MMM yyyy HH:mm:ss.SSS} %-5level [%-6thread] %logger{1.3}:%line %message%n</pattern>
+      <pattern>%date{dd MMM yyyy HH:mm:ss.SSS} %-5level [%-6thread] %logger{25}:%line %message%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>ALL</level>
