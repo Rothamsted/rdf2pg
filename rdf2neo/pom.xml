@@ -5,7 +5,7 @@
   <parent>
     <groupId>uk.ac.rothamsted.kg</groupId>
     <artifactId>rdf2pg-pom</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.2-SNAPSHOT</version>
   </parent>
   
   <artifactId>rdf2neo</artifactId>
