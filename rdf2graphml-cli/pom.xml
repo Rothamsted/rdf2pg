@@ -4,7 +4,7 @@
 	<parent>
     <artifactId>rdf2pg-pom</artifactId>
     <groupId>uk.ac.rothamsted.kg</groupId>
-    <version>7.0</version>
+    <version>7.0.1-SNAPSHOT</version>
   </parent>
   
 	<artifactId>rdf2graphml-cli</artifactId>
